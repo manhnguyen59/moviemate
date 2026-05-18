@@ -1,23 +1,82 @@
-﻿@extends('layouts.user')
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - MovieMate</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body class="bg-dark-main text-text-main font-sans antialiased min-h-screen flex items-center justify-center p-4 overflow-hidden relative">
+    
+    <!-- Background Effects -->
+    <div class="absolute inset-0 z-0">
+        <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-start/10 rounded-full blur-[150px] -translate-y-1/2 translate-x-1/3"></div>
+        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-ai-start/10 rounded-full blur-[120px] translate-y-1/3 -translate-x-1/3"></div>
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+    </div>
 
-@section('title', 'ÄÄƒng nháº­p Admin - MovieMate')
-
-@section('content')
-
-<section class="flex min-h-screen items-center justify-center bg-[#080A12] px-6 py-16">
-    <div class="w-full max-w-md rounded-[32px] border border-white/10 bg-[#151A27] p-8">
-        <div class="mb-8 text-center">
-            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-r from-[#7C3AED] to-[#2563EB] text-3xl">âš™ï¸</div>
-            <h1 class="text-3xl font-black">MovieMate Admin</h1>
-            <p class="mt-2 text-gray-400">Quáº£n lÃ½ há»‡ thá»‘ng Ä‘áº·t vÃ© xem phim.</p>
+    <div class="w-full max-w-md relative z-20">
+        
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center justify-center w-24 h-24 rounded-[2rem] bg-dark-card border border-dark-border shadow-2xl mb-6 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-tr from-brand-start/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <i class="ph-fill ph-film-strip text-5xl text-brand-start"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-2 tracking-tight">MovieMate Admin</h1>
+            <p class="text-text-sub">Hệ thống quản trị đặt vé xem phim</p>
         </div>
 
-        <form class="space-y-5">
-            <input placeholder="Email admin" class="w-full rounded-2xl border border-white/10 bg-[#080A12] px-5 py-4 outline-none focus:border-[#7C3AED]">
-            <input placeholder="Máº­t kháº©u" type="password" class="w-full rounded-2xl border border-white/10 bg-[#080A12] px-5 py-4 outline-none focus:border-[#7C3AED]">
-            <a href="/admin/dashboard" class="block rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#2563EB] py-4 text-center font-bold">ÄÄƒng nháº­p</a>
-        </form>
-    </div>
-</section>
+        <div class="bg-dark-card/80 backdrop-blur-xl border border-dark-border rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+            <!-- Top line highlight -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-start to-brand-end"></div>
 
-@endsection
+            <form action="{{ route('admin.dashboard') }}" method="GET" class="space-y-6">
+                
+                <div>
+                    <label for="email" class="block text-sm font-medium text-text-sub mb-2">Email quản trị</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="ph ph-envelope-simple text-text-sub text-lg"></i>
+                        </div>
+                        <input type="email" id="email" name="email" class="w-full pl-11 pr-4 py-3.5 bg-dark-main border border-dark-border rounded-xl text-white focus:outline-none focus:border-brand-start focus:ring-1 focus:ring-brand-start transition-colors placeholder-text-sub/50" placeholder="admin@moviemate.vn" required>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="password" class="block text-sm font-medium text-text-sub">Mật khẩu</label>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="ph ph-lock-key text-text-sub text-lg"></i>
+                        </div>
+                        <input type="password" id="password" name="password" class="w-full pl-11 pr-11 py-3.5 bg-dark-main border border-dark-border rounded-xl text-white focus:outline-none focus:border-brand-start focus:ring-1 focus:ring-brand-start transition-colors placeholder-text-sub/50" placeholder="••••••••" required>
+                        <button type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center text-text-sub hover:text-white transition-colors">
+                            <i class="ph ph-eye text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center gap-2 cursor-pointer group">
+                        <div class="relative flex items-center justify-center w-5 h-5 rounded bg-dark-main border border-dark-border group-hover:border-brand-start transition-colors">
+                            <input type="checkbox" class="peer sr-only">
+                            <i class="ph-bold ph-check text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                            <div class="absolute inset-0 rounded bg-brand-start opacity-0 peer-checked:opacity-100 -z-10 transition-opacity"></div>
+                        </div>
+                        <span class="text-sm text-text-sub group-hover:text-white transition-colors">Ghi nhớ đăng nhập</span>
+                    </label>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full flex justify-center items-center gap-2 py-4 px-4 rounded-xl font-bold text-white bg-gradient-to-r from-brand-start to-brand-end hover:shadow-lg hover:shadow-brand-start/25 transition-all transform hover:-translate-y-0.5">
+                        Đăng nhập Dashboard <i class="ph-bold ph-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>

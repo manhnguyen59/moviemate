@@ -1,84 +1,100 @@
 @extends('layouts.user')
 
-@section('title', 'Vé của tôi - MovieMate')
+@section('title', 'Vé Của Tôi - MovieMate')
 
 @section('content')
-
-<section class="min-h-screen bg-[#080A12] px-6 py-12">
-
-    <div class="mx-auto max-w-3xl">
-
-        <div class="mb-10 text-center">
-            <p class="mb-2 text-sm font-bold uppercase tracking-[0.3em] text-[#FF7A18]">My Ticket</p>
-            <h1 class="text-4xl font-black">Vé điện tử</h1>
-            <p class="mt-3 text-gray-400">Đưa mã QR này cho nhân viên để kiểm tra vé.</p>
-        </div>
-
-        <div class="overflow-hidden rounded-[36px] border border-white/10 bg-[#151A27] shadow-2xl">
-
-            <div class="bg-gradient-to-r from-[#FF3D57] to-[#FF7A18] p-6">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-2xl font-black">MovieMate Ticket</h2>
-                    <span class="rounded-full bg-white/20 px-4 py-2 text-sm font-bold">
-                        Chưa sử dụng
-                    </span>
-                </div>
+    <div class="min-h-[80vh] py-12 px-4 sm:px-6 lg:px-8 flex justify-center items-start">
+        
+        <div class="w-full max-w-md">
+            
+            <!-- Ticket Header -->
+            <div class="flex items-center justify-between mb-6 px-4">
+                <a href="{{ route('user.bookings.history') }}" class="text-text-sub hover:text-white transition-colors flex items-center gap-2">
+                    <i class="ph-bold ph-arrow-left"></i> Lịch sử
+                </a>
+                <button class="text-text-sub hover:text-white transition-colors flex items-center gap-2" onclick="window.print()">
+                    <i class="ph-bold ph-download-simple"></i> Lưu vé
+                </button>
             </div>
 
-            <div class="grid gap-8 p-8 md:grid-cols-[1fr_220px]">
-
-                <div class="space-y-5">
-                    <div>
-                        <p class="text-sm text-gray-400">Phim</p>
-                        <h3 class="text-2xl font-black">Thanh Gươm Diệt Quỷ</h3>
-                    </div>
-
-                    <div class="grid gap-4 md:grid-cols-2">
-                        <div>
-                            <p class="text-sm text-gray-400">Rạp</p>
-                            <p class="font-bold">MovieMate Hà Nội</p>
-                        </div>
-
-                        <div>
-                            <p class="text-sm text-gray-400">Phòng</p>
-                            <p class="font-bold">Room 01</p>
-                        </div>
-
-                        <div>
-                            <p class="text-sm text-gray-400">Ngày giờ</p>
-                            <p class="font-bold">20:45 - 20/05/2026</p>
-                        </div>
-
-                        <div>
-                            <p class="text-sm text-gray-400">Ghế</p>
-                            <p class="font-bold text-[#FF7A18]">E5, E6</p>
-                        </div>
-
-                        <div>
-                            <p class="text-sm text-gray-400">Mã vé</p>
-                            <p class="font-bold">MMT-2026-0001</p>
-                        </div>
-
-                        <div>
-                            <p class="text-sm text-gray-400">Tổng tiền</p>
-                            <p class="font-bold">180.000đ</p>
-                        </div>
+            <!-- Ticket Card -->
+            <div class="bg-white rounded-3xl overflow-hidden shadow-2xl relative">
+                
+                <!-- Ticket Top (Branding) -->
+                <div class="bg-gradient-to-r from-brand-start to-brand-end p-6 text-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                    <div class="relative z-10">
+                        <i class="ph-fill ph-film-strip text-4xl text-white/80 mb-2"></i>
+                        <h2 class="text-2xl font-bold text-white tracking-widest uppercase">MovieMate Ticket</h2>
                     </div>
                 </div>
 
-                <div class="flex flex-col items-center justify-center">
-                    <div class="flex h-52 w-52 items-center justify-center rounded-3xl bg-white text-5xl font-black text-black">
-                        QR
+                <!-- Ticket Middle (QR) -->
+                <div class="p-8 text-center bg-white border-b-2 border-dashed border-gray-200 relative">
+                    <!-- Notches -->
+                    <div class="absolute -bottom-4 -left-4 w-8 h-8 bg-dark-main rounded-full"></div>
+                    <div class="absolute -bottom-4 -right-4 w-8 h-8 bg-dark-main rounded-full"></div>
+                    
+                    <div class="inline-block p-4 border-4 border-gray-100 rounded-2xl mb-4">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=MMT-2026-0001&color=FF3D57&bgcolor=ffffff" alt="QR Code" class="w-40 h-40">
                     </div>
-                    <p class="mt-4 text-center text-sm text-gray-400">Mã QR soát vé</p>
+                    <p class="text-gray-500 text-sm font-medium">Mã quét vé tại cổng rạp</p>
+                    <p class="text-2xl font-bold text-gray-900 font-mono mt-1 tracking-widest">MMT-2026-0001</p>
                 </div>
 
+                <!-- Ticket Bottom (Info) -->
+                <div class="p-8 bg-white text-gray-900">
+                    <div class="text-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Thanh Gươm Diệt Quỷ</h3>
+                        <p class="text-gray-500 font-medium">2D Phụ Đề Việt</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-y-6 gap-x-4 mb-6">
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Ngày chiếu</p>
+                            <p class="font-bold text-gray-900">19/05/2026</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Giờ chiếu</p>
+                            <p class="font-bold text-gray-900 text-brand-start">09:30</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Rạp</p>
+                            <p class="font-bold text-gray-900">MovieMate Cầu Giấy</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Phòng chiếu</p>
+                            <p class="font-bold text-gray-900">Phòng 3</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-4 flex justify-between items-center mb-6">
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Ghế ngồi</p>
+                            <p class="text-2xl font-bold text-gray-900">F7, F8</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Tổng tiền</p>
+                            <p class="text-lg font-bold text-gray-900">160.000đ</p>
+                        </div>
+                    </div>
+
+                    <div class="text-center flex justify-center">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-sm font-bold border border-green-200">
+                            <i class="ph-fill ph-check-circle"></i> Chưa sử dụng
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Notes -->
+            <div class="mt-6 text-center text-xs text-text-sub space-y-2">
+                <p>Vui lòng xuất trình mã QR này cho nhân viên soát vé tại rạp.</p>
+                <p>Nên đến rạp trước 15 phút để đảm bảo trải nghiệm tốt nhất.</p>
             </div>
 
         </div>
 
     </div>
-
-</section>
-
 @endsection

@@ -1,112 +1,124 @@
 @extends('layouts.user')
 
-@section('title', 'Danh sách phim - MovieMate')
+@section('title', 'Khám phá Phim - MovieMate')
 
 @section('content')
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-<section class="min-h-screen bg-[#080A12] px-6 py-12 lg:px-10">
+        <!-- Header & Search -->
+        <div class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold app-text mb-6">Khám phá <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-start to-brand-end">Phim</span></h1>
 
-    <div class="mx-auto max-w-[1440px]">
+            <div class="app-card border app-border p-4 rounded-2xl">
+                <div class="flex flex-col md:flex-row gap-3">
+                    <div class="flex-grow relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="ph ph-magnifying-glass app-muted text-lg"></i>
+                        </div>
+                        <input type="text" class="app-input w-full pl-11 pr-4 py-2.5 border app-border rounded-xl focus:outline-none focus:border-brand-start transition-colors text-sm" placeholder="Tìm kiếm tên phim, đạo diễn, diễn viên...">
+                    </div>
 
-        <div class="mb-10">
-            <p class="mb-2 text-sm font-bold uppercase tracking-[0.3em] text-[#FF7A18]">Movies</p>
-            <h1 class="text-5xl font-black">Khám phá phim</h1>
-            <p class="mt-4 max-w-2xl text-gray-400">
-                Tìm kiếm phim đang chiếu, sắp chiếu và nhận gợi ý phim phù hợp với sở thích của bạn.
-            </p>
-        </div>
+                    <div class="flex flex-wrap gap-3">
+                        <select class="app-input px-4 py-2.5 border app-border rounded-xl focus:outline-none focus:border-brand-start transition-colors appearance-none text-sm min-w-[140px]">
+                            <option value="">Tất cả thể loại</option>
+                            <option>Hành động</option>
+                            <option>Hài hước</option>
+                            <option>Kinh dị</option>
+                            <option>Tình cảm</option>
+                            <option>Hoạt hình</option>
+                        </select>
 
-        <div class="mb-10 rounded-[24px] border border-white/10 bg-[#151A27] p-5">
-            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+                        <select class="app-input px-4 py-2.5 border app-border rounded-xl focus:outline-none focus:border-brand-start transition-colors appearance-none text-sm min-w-[130px]">
+                            <option value="now-showing">Đang chiếu</option>
+                            <option value="coming-soon">Sắp chiếu</option>
+                        </select>
 
-                <input
-                    type="text"
-                    placeholder="Tìm tên phim..."
-                    class="h-12 rounded-2xl border border-white/10 bg-[#080A12] px-4 text-sm outline-none placeholder:text-gray-500 focus:border-[#FF7A18] lg:col-span-2"
-                >
-
-                <select class="h-12 rounded-2xl border border-white/10 bg-[#080A12] px-4 text-sm outline-none focus:border-[#FF7A18]">
-                    <option>Thể loại</option>
-                    <option>Hành động</option>
-                    <option>Kinh dị</option>
-                    <option>Hài</option>
-                    <option>Tình cảm</option>
-                </select>
-
-                <select class="h-12 rounded-2xl border border-white/10 bg-[#080A12] px-4 text-sm outline-none focus:border-[#FF7A18]">
-                    <option>Trạng thái</option>
-                    <option>Đang chiếu</option>
-                    <option>Sắp chiếu</option>
-                    <option>Sắp ra mắt</option>
-                </select>
-
-                <select class="h-12 rounded-2xl border border-white/10 bg-[#080A12] px-4 text-sm outline-none focus:border-[#FF7A18]">
-                    <option>Quốc gia</option>
-                    <option>Việt Nam</option>
-                    <option>Mỹ</option>
-                    <option>Hàn Quốc</option>
-                    <option>Nhật Bản</option>
-                </select>
-
-                <button class="h-12 rounded-2xl bg-gradient-to-r from-[#FF3D57] to-[#FF7A18] text-sm font-bold">
-                    Lọc phim
-                </button>
+                        <button class="app-secondary border app-border hover:border-brand-start hover:text-brand-start rounded-xl font-medium transition-colors app-muted flex items-center gap-2 px-4 py-2.5 text-sm">
+                            <i class="ph ph-sliders-horizontal"></i> Bộ lọc
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+        <!-- Movies Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+            @php
+                $movies = [
+                    ['id' => 1, 'title' => 'Thanh Gươm Diệt Quỷ', 'genre' => 'Hoạt hình, Hành động', 'rating' => 9.2, 'poster' => 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg', 'age' => 'T13', 'status' => 'now'],
+                    ['id' => 2, 'title' => 'Avengers: Secret Wars', 'genre' => 'Hành động, Viễn tưởng', 'rating' => 8.8, 'poster' => 'https://image.tmdb.org/t/p/w500/RYMX2wcKCBAr24UyPD7xwmja8y.jpg', 'age' => 'T13', 'status' => 'now'],
+                    ['id' => 3, 'title' => 'Lật Mặt 8', 'genre' => 'Hài, Gia đình', 'rating' => 8.5, 'poster' => 'https://image.tmdb.org/t/p/w500/xZNQic0r2D02VAvw5L2uQ6D2Hk4.jpg', 'age' => 'K', 'status' => 'now'],
+                    ['id' => 4, 'title' => 'Doraemon Movie 43', 'genre' => 'Hoạt hình', 'rating' => 9.0, 'poster' => 'https://image.tmdb.org/t/p/w500/tK1zy5BsKkwk0a1aAto3M366t4j.jpg', 'age' => 'P', 'status' => 'now'],
+                    ['id' => 5, 'title' => 'Conan Movie 27', 'genre' => 'Hoạt hình, Trinh thám', 'rating' => 8.9, 'poster' => 'https://image.tmdb.org/t/p/w500/7P13C9E27xYhL18g10vV273s12z.jpg', 'age' => 'T13', 'status' => 'coming'],
+                    ['id' => 6, 'title' => 'Joker: Folie à Deux', 'genre' => 'Tâm lý, Giật gân', 'rating' => 0, 'poster' => 'https://image.tmdb.org/t/p/w500/1Xdd1rB9RoxBwF4oHIn7u9iHwIf.jpg', 'age' => 'T18', 'status' => 'coming'],
+                    ['id' => 7, 'title' => 'Deadpool & Wolverine', 'genre' => 'Hành động, Hài', 'rating' => 8.7, 'poster' => 'https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg', 'age' => 'T18', 'status' => 'now'],
+                    ['id' => 8, 'title' => 'Dune: Part Two', 'genre' => 'Khoa học viễn tưởng', 'rating' => 8.8, 'poster' => 'https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2JGjjcNsV.jpg', 'age' => 'T16', 'status' => 'now'],
+                    ['id' => 9, 'title' => 'Godzilla x Kong', 'genre' => 'Hành động, Viễn tưởng', 'rating' => 7.9, 'poster' => 'https://image.tmdb.org/t/p/w500/tMefBSflR6PGQLvLuPE31clYe3D.jpg', 'age' => 'T13', 'status' => 'now'],
+                    ['id' => 10, 'title' => 'Furiosa', 'genre' => 'Hành động', 'rating' => 8.1, 'poster' => 'https://image.tmdb.org/t/p/w500/iADOJ8Zymht2JPMoy3R7xceZprc.jpg', 'age' => 'T16', 'status' => 'now'],
+                ];
+            @endphp
 
-            @foreach (range(1, 15) as $i)
-                <div class="group overflow-hidden rounded-[24px] border border-white/10 bg-[#151A27] p-3 transition duration-300 hover:-translate-y-2 hover:border-[#FF7A18]/60 hover:shadow-2xl hover:shadow-red-500/20">
+            @foreach($movies as $movie)
+                <div class="group app-card border app-border rounded-2xl overflow-hidden hover:border-brand-start/60 transition-all hover:shadow-xl hover:shadow-brand-start/10 hover:-translate-y-1">
+                    <!-- Poster – fixed aspect ratio using padding-top trick -->
+                    <div class="relative overflow-hidden" style="padding-top: 150%">
+                        <img src="{{ $movie['poster'] }}" alt="{{ $movie['title'] }}"
+                             loading="lazy"
+                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
 
-                    <div class="relative overflow-hidden rounded-[20px]">
-                        <img
-                            src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=600&auto=format&fit=crop"
-                            class="h-[310px] w-full object-cover transition duration-500 group-hover:scale-110"
-                            alt="Movie"
-                        >
+                        @if($movie['status'] == 'now')
+                            <div class="absolute top-2 left-2 bg-brand-start text-white text-[10px] uppercase font-bold px-1.5 py-0.5 rounded">Đang chiếu</div>
+                        @else
+                            <div class="absolute top-2 left-2 bg-ai-start text-white text-[10px] uppercase font-bold px-1.5 py-0.5 rounded">Sắp chiếu</div>
+                        @endif
 
-                        <div class="absolute left-3 top-3 rounded-full bg-green-500 px-3 py-1 text-xs font-bold">
-                            Đang chiếu
-                        </div>
+                        @if($movie['rating'] > 0)
+                            <div class="absolute top-2 right-2 bg-black/70 backdrop-blur text-warning text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                <i class="ph-fill ph-star text-xs"></i> {{ $movie['rating'] }}
+                            </div>
+                        @endif
 
-                        <div class="absolute bottom-3 left-3 rounded-full bg-black/70 px-3 py-1 text-xs font-bold text-yellow-300">
-                            ⭐ 4.8
+                        <!-- Hover Actions -->
+                        <div class="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2 p-3">
+                            <a href="{{ route('user.movies.show', $movie['id']) }}" class="w-full py-2 app-card border app-border app-text text-center rounded-lg hover:bg-brand-start/20 transition-colors font-medium text-sm">
+                                Chi tiết
+                            </a>
+                            @if($movie['status'] == 'now')
+                            <a href="{{ route('user.bookings.selectSeat') }}" class="w-full py-2 bg-gradient-to-r from-brand-start to-brand-end text-white text-center rounded-lg font-medium text-sm">
+                                Đặt vé ngay
+                            </a>
+                            @endif
                         </div>
                     </div>
 
                     <div class="p-3">
-                        <h3 class="line-clamp-1 text-lg font-black">
-                            Thanh Gươm Diệt Quỷ
+                        <div class="flex items-center gap-2 mb-1 text-[11px] app-muted">
+                            <span class="px-1 py-0.5 rounded border app-border app-text font-medium">{{ $movie['age'] }}</span>
+                            <span class="truncate">{{ $movie['genre'] }}</span>
+                        </div>
+                        <h3 class="font-bold text-sm app-text line-clamp-1 group-hover:text-brand-start transition-colors">
+                            <a href="{{ route('user.movies.show', $movie['id']) }}">{{ $movie['title'] }}</a>
                         </h3>
-
-                        <p class="mt-2 text-sm text-gray-400">
-                            Hành động, Hoạt hình
-                        </p>
-
-                        <div class="mt-3 flex items-center justify-between text-sm text-gray-400">
-                            <span>115 phút</span>
-                            <span class="rounded-lg bg-white/10 px-2 py-1 text-xs">T16</span>
-                        </div>
-
-                        <div class="mt-5 grid grid-cols-2 gap-3">
-                            <a href="/movies/{{ $i }}" class="rounded-xl border border-white/10 py-3 text-center text-sm font-bold transition hover:border-[#FF7A18] hover:text-[#FF7A18]">
-                                Chi tiết
-                            </a>
-
-                            <a href="/movies/{{ $i }}#showtimes" class="rounded-xl bg-gradient-to-r from-[#FF3D57] to-[#FF7A18] py-3 text-center text-sm font-bold transition hover:scale-105">
-                                Đặt vé
-                            </a>
-                        </div>
                     </div>
-
                 </div>
             @endforeach
-
         </div>
 
+        <!-- Pagination -->
+        <div class="mt-12 flex justify-center">
+            <nav class="flex items-center gap-2">
+                <a href="#" class="w-9 h-9 flex items-center justify-center rounded-xl border app-border app-muted hover:border-brand-start hover:text-brand-start transition-colors text-sm">
+                    <i class="ph ph-caret-left"></i>
+                </a>
+                <a href="#" class="w-9 h-9 flex items-center justify-center rounded-xl bg-gradient-to-r from-brand-start to-brand-end text-white font-bold shadow-lg shadow-brand-start/20 text-sm">1</a>
+                <a href="#" class="w-9 h-9 flex items-center justify-center rounded-xl border app-border app-muted hover:border-brand-start hover:text-brand-start transition-colors text-sm">2</a>
+                <a href="#" class="w-9 h-9 flex items-center justify-center rounded-xl border app-border app-muted hover:border-brand-start hover:text-brand-start transition-colors text-sm">3</a>
+                <span class="app-muted text-sm">...</span>
+                <a href="#" class="w-9 h-9 flex items-center justify-center rounded-xl border app-border app-muted hover:border-brand-start hover:text-brand-start transition-colors text-sm">8</a>
+                <a href="#" class="w-9 h-9 flex items-center justify-center rounded-xl border app-border app-muted hover:border-brand-start hover:text-brand-start transition-colors text-sm">
+                    <i class="ph ph-caret-right"></i>
+                </a>
+            </nav>
+        </div>
     </div>
-
-</section>
-
 @endsection

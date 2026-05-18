@@ -1,79 +1,189 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'MovieMate Admin')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <title>@yield('title', 'MovieMate Admin Panel')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Be Vietnam Pro', sans-serif;
-        }
-    </style>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    {{-- Prevent theme flash --}}
+    <script>
+        (function() {
+            var t = localStorage.getItem('moviemate_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light');
+            else document.documentElement.classList.remove('light');
+        })();
+    </script>
 </head>
+<body class="app-bg font-sans antialiased flex h-screen overflow-hidden">
 
-<body class="bg-[#080A12] text-white">
+    <!-- Mobile Sidebar Backdrop -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden hidden"></div>
 
-<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 app-sidebar border-r app-border transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col h-full">
 
-    <aside class="fixed left-0 top-0 hidden h-screen w-72 border-r border-white/10 bg-[#0B0F1A] p-6 lg:block">
-        <a href="/admin/dashboard" class="mb-10 flex items-center gap-3">
-            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#FF3D57] to-[#FF7A18]">ðŸŽ¬</div>
-            <div>
-                <h1 class="text-xl font-black">Movie<span class="text-[#FF7A18]">Mate</span></h1>
-                <p class="text-xs text-gray-400">Admin Panel</p>
-            </div>
-        </a>
+        <!-- Logo -->
+        <div class="h-16 lg:h-20 flex items-center px-6 border-b app-border shrink-0">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2">
+                <i class="ph-fill ph-film-strip text-3xl text-brand-start"></i>
+                <div class="leading-tight">
+                    <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-start to-brand-end">
+                        MovieMate
+                    </span>
+                    <span class="block text-[10px] uppercase tracking-widest app-muted font-bold">Admin Panel</span>
+                </div>
+            </a>
+        </div>
 
-        <nav class="space-y-1 text-sm font-semibold text-gray-300">
-            <a href="/admin/dashboard" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">Dashboard</a>
-            <a href="/admin/movies" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">Quáº£n lÃ½ phim</a>
-            <a href="/admin/genres" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">Thá»ƒ loáº¡i</a>
-            <a href="/admin/cinemas" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">Ráº¡p chiáº¿u</a>
-            <a href="/admin/rooms" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">PhÃ²ng chiáº¿u</a>
-            <a href="/admin/seats" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">Gháº¿</a>
-            <a href="/admin/showtimes" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">Suáº¥t chiáº¿u</a>
-            <a href="/admin/bookings" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">VÃ© Ä‘áº·t</a>
-            <a href="/admin/users" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">NgÆ°á»i dÃ¹ng</a>
-            <a href="/admin/reviews" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">ÄÃ¡nh giÃ¡</a>
-            <a href="/admin/analytics/revenue" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">Doanh thu</a>
-            <a href="/admin/analytics/top-movies" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">Phim bÃ¡n cháº¡y</a>
-            <a href="/admin/ai/movie-content" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">AI Tools</a>
-            <a href="/" class="block rounded-2xl px-4 py-3 hover:bg-white/10 hover:text-white">Vá» website</a>
+        <!-- Menu -->
+        <nav class="flex-grow py-4 px-4 space-y-0.5 overflow-y-auto hide-scrollbar">
+
+            <p class="px-3 text-[10px] font-bold app-muted uppercase tracking-wider mb-1 mt-4 first:mt-0">Tổng quan</p>
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.dashboard') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.dashboard') ? 'ph-fill' : 'ph' }} ph-squares-four text-lg"></i>
+                Dashboard
+            </a>
+
+            <p class="px-3 text-[10px] font-bold app-muted uppercase tracking-wider mb-1 mt-5">Quản lý rạp & phim</p>
+            <a href="{{ route('admin.movies.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.movies.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.movies.*') ? 'ph-fill' : 'ph' }} ph-film-slate text-lg"></i>
+                Phim
+            </a>
+            <a href="{{ route('admin.genres.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.genres.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.genres.*') ? 'ph-fill' : 'ph' }} ph-tag text-lg"></i>
+                Thể loại
+            </a>
+            <a href="{{ route('admin.cinemas.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.cinemas.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.cinemas.*') ? 'ph-fill' : 'ph' }} ph-buildings text-lg"></i>
+                Rạp chiếu
+            </a>
+            <a href="{{ route('admin.rooms.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.rooms.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.rooms.*') ? 'ph-fill' : 'ph' }} ph-projector-screen text-lg"></i>
+                Phòng chiếu
+            </a>
+            <a href="{{ route('admin.seats.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.seats.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.seats.*') ? 'ph-fill' : 'ph' }} ph-armchair text-lg"></i>
+                Ghế
+            </a>
+            <a href="{{ route('admin.showtimes.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.showtimes.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.showtimes.*') ? 'ph-fill' : 'ph' }} ph-calendar-plus text-lg"></i>
+                Suất chiếu
+            </a>
+
+            <p class="px-3 text-[10px] font-bold app-muted uppercase tracking-wider mb-1 mt-5">Kinh doanh</p>
+            <a href="{{ route('admin.bookings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.bookings.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.bookings.*') ? 'ph-fill' : 'ph' }} ph-ticket text-lg"></i>
+                Vé đặt
+            </a>
+            <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.users.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.users.*') ? 'ph-fill' : 'ph' }} ph-users text-lg"></i>
+                Người dùng
+            </a>
+            <a href="{{ route('admin.reviews.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.reviews.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.reviews.*') ? 'ph-fill' : 'ph' }} ph-star text-lg"></i>
+                Đánh giá
+            </a>
+
+            <p class="px-3 text-[10px] font-bold app-muted uppercase tracking-wider mb-1 mt-5">Báo cáo & AI</p>
+            <a href="{{ route('admin.analytics.revenue') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.analytics.revenue') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.analytics.revenue') ? 'ph-fill' : 'ph' }} ph-chart-line-up text-lg"></i>
+                Doanh thu
+            </a>
+            <a href="{{ route('admin.analytics.topMovies') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.analytics.topMovies') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.analytics.topMovies') ? 'ph-fill' : 'ph' }} ph-crown text-lg"></i>
+                Phim bán chạy
+            </a>
+            <a href="{{ route('admin.ai.movieContent') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.ai.*') ? 'bg-ai-start/10 text-ai-start font-bold border border-ai-start/20' : 'app-muted hover:bg-ai-start/5 hover:text-ai-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.ai.*') ? 'ph-fill' : 'ph' }} ph-magic-wand text-lg"></i>
+                AI Tools
+            </a>
+
         </nav>
+
+        <!-- Bottom Action -->
+        <div class="p-4 border-t app-border shrink-0">
+            <a href="{{ route('home') }}" target="_blank" class="flex items-center justify-center gap-2 w-full py-2.5 app-card border app-border app-muted rounded-xl hover:text-brand-start hover:border-brand-start transition-colors text-sm font-medium">
+                <i class="ph ph-arrow-square-out text-lg"></i> Về website
+            </a>
+        </div>
     </aside>
 
-    <div class="min-h-screen flex-1 lg:ml-72">
-        <header class="sticky top-0 z-40 border-b border-white/10 bg-[#080A12]/80 px-6 py-4 backdrop-blur-xl">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-xl font-black">@yield('page-title', 'Admin Panel')</h2>
-                    <p class="text-sm text-gray-400">Quáº£n lÃ½ toÃ n bá»™ há»‡ thá»‘ng MovieMate</p>
+    <!-- Main Content -->
+    <main class="flex-grow flex flex-col min-w-0 app-bg relative h-full overflow-hidden">
+
+        <!-- Topbar -->
+        <header class="h-16 lg:h-20 flex items-center justify-between px-4 sm:px-8 border-b app-border app-card backdrop-blur-md sticky top-0 z-30 shrink-0">
+
+            <div class="flex items-center gap-4">
+                <button id="mobile-menu-btn" class="lg:hidden app-muted hover:app-text">
+                    <i class="ph ph-list text-2xl"></i>
+                </button>
+                <h1 class="text-lg font-bold app-text hidden sm:block">@yield('page-title')</h1>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <!-- Search -->
+                <div class="relative hidden md:block w-56">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="ph ph-magnifying-glass app-muted text-sm"></i>
+                    </div>
+                    <input type="text" class="app-input w-full pl-9 pr-3 py-2 rounded-lg border app-border focus:outline-none focus:border-brand-start transition-colors text-sm" placeholder="Tìm kiếm (Ctrl+K)">
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <input type="text" placeholder="TÃ¬m kiáº¿m..." class="hidden h-11 rounded-2xl border border-white/10 bg-[#151A27] px-4 text-sm outline-none focus:border-[#FF7A18] md:block">
-                    <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2">
-                        <div class="h-9 w-9 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#2563EB]"></div>
-                        <div>
-                            <p class="text-sm font-bold">Admin</p>
-                            <p class="text-xs text-gray-400">Quáº£n trá»‹ viÃªn</p>
-                        </div>
+                <!-- Notifications -->
+                <button class="relative app-muted hover:app-text transition-colors p-2">
+                    <i class="ph ph-bell text-lg"></i>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-brand-start rounded-full"></span>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button data-theme-toggle type="button"
+                    class="flex items-center gap-1.5 px-3 py-2 rounded-xl app-card border app-border app-muted hover:border-brand-start transition-all text-sm">
+                    <span class="theme-icon">🌙</span>
+                    <span class="theme-text hidden lg:inline text-xs font-medium">Tối</span>
+                </button>
+
+                <!-- Admin Profile -->
+                <div class="flex items-center gap-3 pl-3 border-l app-border">
+                    <div class="hidden sm:block text-right">
+                        <p class="text-sm font-bold app-text leading-tight">Admin MovieMate</p>
+                        <p class="text-[10px] uppercase tracking-wider text-brand-start font-bold">Quản trị viên</p>
+                    </div>
+                    <div class="w-9 h-9 rounded-full app-bg border app-border overflow-hidden cursor-pointer hover:border-brand-start transition-colors">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=FF3D57&color=fff" alt="Admin" class="w-full h-full object-cover">
                     </div>
                 </div>
             </div>
+
         </header>
 
-        <main class="p-6">
-            @yield('content')
-        </main>
-    </div>
+        <!-- Content Area -->
+        <div class="flex-grow p-4 sm:p-6 lg:p-8 overflow-y-auto">
+            <div class="max-w-[1600px] mx-auto pb-10">
+                <div class="sm:hidden mb-4">
+                    <h1 class="text-xl font-bold app-text">@yield('page-title')</h1>
+                </div>
+                @yield('content')
+            </div>
+        </div>
 
-</div>
+    </main>
 
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const toggleBtn = document.getElementById('mobile-menu-btn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            backdrop.classList.toggle('hidden');
+        }
+
+        toggleBtn.addEventListener('click', toggleSidebar);
+        backdrop.addEventListener('click', toggleSidebar);
+    </script>
+
+    @stack('scripts')
 </body>
 </html>

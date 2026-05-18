@@ -1,138 +1,200 @@
 @extends('layouts.user')
 
-@section('title', 'Chi tiết phim - MovieMate')
+@section('title', 'Thanh Gươm Diệt Quỷ - MovieMate')
 
 @section('content')
-
-<section class="relative min-h-screen overflow-hidden bg-[#080A12]">
-
-    <div class="absolute inset-x-0 top-0 h-[650px]">
-        <img
-            src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=1600&auto=format&fit=crop"
-            class="h-full w-full object-cover opacity-40"
-            alt="Cover"
-        >
-        <div class="absolute inset-0 bg-gradient-to-r from-[#080A12] via-[#080A12]/90 to-[#080A12]/50"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-[#080A12] via-transparent to-transparent"></div>
-    </div>
-
-    <div class="relative mx-auto max-w-[1440px] px-6 py-16 lg:px-10">
-
-        <div class="grid gap-10 lg:grid-cols-[360px_1fr]">
-
-            <div>
-                <div class="overflow-hidden rounded-[30px] border border-white/10 bg-white/10 p-3 shadow-2xl shadow-red-500/20 backdrop-blur">
-                    <img
-                        src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=700&auto=format&fit=crop"
-                        class="h-[540px] w-full rounded-[24px] object-cover"
-                        alt="Poster"
-                    >
-                </div>
-            </div>
-
-            <div class="pt-10">
-                <div class="mb-5 flex flex-wrap gap-3">
-                    <span class="rounded-full bg-green-500 px-4 py-2 text-sm font-bold">
-                        Đang chiếu
-                    </span>
-                    <span class="rounded-full bg-white/10 px-4 py-2 text-sm font-bold">
-                        T16
-                    </span>
-                    <span class="rounded-full bg-yellow-500/20 px-4 py-2 text-sm font-bold text-yellow-300">
-                        ⭐ 4.8
-                    </span>
-                </div>
-
-                <h1 class="text-5xl font-black leading-tight md:text-7xl">
-                    Thanh Gươm Diệt Quỷ
-                </h1>
-
-                <p class="mt-5 max-w-3xl text-lg leading-8 text-gray-300">
-                    Một cuộc phiêu lưu đầy kịch tính, nơi các nhân vật phải chiến đấu để bảo vệ những điều quan trọng nhất.
-                    Bộ phim mang đến trải nghiệm điện ảnh hấp dẫn với hình ảnh mãn nhãn và cảm xúc mạnh mẽ.
-                </p>
-
-                <div class="mt-8 grid max-w-3xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                        <p class="text-sm text-gray-400">Thể loại</p>
-                        <h3 class="mt-1 font-bold">Hành động</h3>
-                    </div>
-
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                        <p class="text-sm text-gray-400">Thời lượng</p>
-                        <h3 class="mt-1 font-bold">115 phút</h3>
-                    </div>
-
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                        <p class="text-sm text-gray-400">Quốc gia</p>
-                        <h3 class="mt-1 font-bold">Nhật Bản</h3>
-                    </div>
-
-                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                        <p class="text-sm text-gray-400">Khởi chiếu</p>
-                        <h3 class="mt-1 font-bold">20/05/2026</h3>
-                    </div>
-                </div>
-
-                <div class="mt-9 flex flex-wrap gap-4">
-                    <a href="#showtimes" class="rounded-2xl bg-gradient-to-r from-[#FF3D57] to-[#FF7A18] px-8 py-4 font-bold shadow-xl shadow-red-500/30 transition hover:scale-105">
-                        Đặt vé ngay
-                    </a>
-
-                    <button class="rounded-2xl border border-white/10 bg-white/5 px-8 py-4 font-bold transition hover:border-[#FF7A18] hover:text-[#FF7A18]">
-                        Xem trailer
-                    </button>
-
-                    <a href="/ai/recommend" class="rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#2563EB] px-8 py-4 font-bold shadow-xl shadow-purple-500/30 transition hover:scale-105">
-                        Hỏi AI về phim này
-                    </a>
-                </div>
-            </div>
-
+    <!-- Movie Hero Section -->
+    <section class="relative min-h-[70vh] flex items-end pb-12 pt-32">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark-main via-dark-main/90 to-dark-main/30 z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-dark-main via-dark-main/80 to-transparent z-10"></div>
+            <!-- Cover image -->
+            <img src="https://image.tmdb.org/t/p/original/9Hk9qFzSRFcPammFEEhbS0G0531.jpg" alt="Cover" class="w-full h-full object-cover opacity-30">
         </div>
 
-        <div id="showtimes" class="mt-24 rounded-[32px] border border-white/10 bg-[#151A27] p-8">
-            <div class="mb-8">
-                <p class="mb-2 text-sm font-bold uppercase tracking-[0.3em] text-[#FF7A18]">Showtimes</p>
-                <h2 class="text-4xl font-black">Lịch chiếu</h2>
-            </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full">
+            <div class="flex flex-col md:flex-row gap-8 lg:gap-12 items-end md:items-start">
+                <!-- Poster -->
+                <div class="w-48 md:w-64 lg:w-72 flex-shrink-0 mx-auto md:mx-0 -mt-32 md:mt-0 shadow-2xl shadow-black rounded-2xl overflow-hidden border-2 border-dark-border">
+                    <img src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="Poster" class="w-full h-auto object-cover">
+                </div>
 
-            <div class="mb-8 flex gap-4 overflow-x-auto pb-2">
-                @foreach (['Hôm nay', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'] as $day)
-                    <button class="min-w-[130px] rounded-2xl border border-white/10 bg-[#080A12] p-4 text-left transition hover:border-[#FF7A18] hover:bg-[#FF7A18]/10">
-                        <p class="font-bold">{{ $day }}</p>
-                        <p class="mt-1 text-sm text-gray-400">20/05</p>
-                    </button>
-                @endforeach
-            </div>
+                <!-- Info -->
+                <div class="flex-grow text-center md:text-left">
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-4">
+                        <span class="bg-brand-start text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Đang chiếu</span>
+                        <span class="border border-dark-border text-white text-xs font-bold px-3 py-1 rounded-full">T13</span>
+                        <span class="border border-dark-border text-white text-xs font-bold px-3 py-1 rounded-full">2D, IMAX 2D</span>
+                    </div>
 
-            @foreach (range(1, 3) as $c)
-                <div class="mb-6 rounded-[24px] border border-white/10 bg-[#080A12] p-6">
-                    <div class="mb-5 flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                        <div>
-                            <h3 class="text-2xl font-black">MovieMate Cinema {{ $c }}</h3>
-                            <p class="mt-2 text-sm text-gray-400">Tầng 5, Vincom Bà Triệu, Hà Nội</p>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2">Thanh Gươm Diệt Quỷ</h1>
+                    <p class="text-lg text-text-sub mb-6">Demon Slayer: Kimetsu no Yaiba - To the Hashira Training</p>
+
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-6 text-sm text-text-sub mb-8">
+                        <div class="flex items-center gap-2">
+                            <i class="ph-fill ph-star text-warning text-xl"></i>
+                            <span class="text-white font-bold text-lg">9.2</span>/10 (12.4k đánh giá)
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="ph ph-clock text-xl"></i> 120 phút
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="ph ph-calendar-blank text-xl"></i> Khởi chiếu: 23/02/2026
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="ph ph-globe-hemisphere-west text-xl"></i> Nhật Bản
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                        <a href="#showtimes" class="px-8 py-3.5 bg-gradient-to-r from-brand-start to-brand-end text-white rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-brand-start/30 transition-all transform hover:-translate-y-1">
+                            Đặt vé ngay
+                        </a>
+                        <button class="px-8 py-3.5 bg-dark-card border border-dark-border text-white rounded-xl font-bold text-lg hover:bg-dark-border transition-colors flex items-center gap-2">
+                            <i class="ph-fill ph-play-circle text-2xl"></i> Xem trailer
+                        </button>
+                        <a href="{{ route('user.ai.chatbot') }}" class="px-6 py-3.5 border border-ai-start/50 text-ai-start rounded-xl font-bold hover:bg-ai-start hover:text-white transition-colors flex items-center gap-2">
+                            <i class="ph-fill ph-robot"></i> Hỏi AI về phim này
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            
+            <!-- Left Content: Plot & Cast -->
+            <div class="lg:col-span-2 space-y-12">
+                
+                <!-- Nội dung phim -->
+                <section>
+                    <h2 class="text-2xl font-bold text-white mb-4 border-l-4 border-brand-start pl-4">Nội dung phim</h2>
+                    <p class="text-text-sub leading-relaxed text-lg">
+                        Bộ phim là sự kết hợp của tập 11 trong phần Làng Thợ Rèn với màn kết thúc trận chiến ác liệt chống lại Hantengu - Thượng Huyền Tứ và bước nhảy vọt của Nezuko trong việc chinh phục mặt trời. Đi cùng với đó là tập 1 của phần phim Huấn Luyện Trụ Cột, tập trung vào sự khởi đầu cho quá trình huấn luyện do các Trụ Cột tiến hành để chuẩn bị cho trận chiến cuối cùng đẫm máu với Muzan Kibutsuji.
+                    </p>
+                    <div class="mt-4 flex flex-wrap gap-2 text-sm">
+                        <span class="px-3 py-1 bg-dark-card border border-dark-border rounded-lg text-text-sub">Hành động</span>
+                        <span class="px-3 py-1 bg-dark-card border border-dark-border rounded-lg text-text-sub">Hoạt hình</span>
+                        <span class="px-3 py-1 bg-dark-card border border-dark-border rounded-lg text-text-sub">Kỳ ảo</span>
+                    </div>
+                </section>
+
+                <!-- Lịch chiếu -->
+                <section id="showtimes" class="scroll-mt-24">
+                    <h2 class="text-2xl font-bold text-white mb-6 border-l-4 border-brand-start pl-4">Lịch chiếu</h2>
+                    
+                    <!-- Date Picker -->
+                    <div class="flex gap-4 overflow-x-auto pb-4 mb-6 hide-scrollbar">
+                        <button class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-20 rounded-xl bg-gradient-to-b from-brand-start to-brand-end text-white border border-transparent">
+                            <span class="text-xs font-medium">Hôm nay</span>
+                            <span class="text-2xl font-bold">18</span>
+                            <span class="text-xs">Tháng 5</span>
+                        </button>
+                        <button class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-20 rounded-xl bg-dark-card border border-dark-border text-text-sub hover:border-brand-start hover:text-white transition-colors">
+                            <span class="text-xs font-medium">Thứ 3</span>
+                            <span class="text-2xl font-bold">19</span>
+                            <span class="text-xs">Tháng 5</span>
+                        </button>
+                        <button class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-20 rounded-xl bg-dark-card border border-dark-border text-text-sub hover:border-brand-start hover:text-white transition-colors">
+                            <span class="text-xs font-medium">Thứ 4</span>
+                            <span class="text-2xl font-bold">20</span>
+                            <span class="text-xs">Tháng 5</span>
+                        </button>
+                        <button class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-20 rounded-xl bg-dark-card border border-dark-border text-text-sub hover:border-brand-start hover:text-white transition-colors">
+                            <span class="text-xs font-medium">Thứ 5</span>
+                            <span class="text-2xl font-bold">21</span>
+                            <span class="text-xs">Tháng 5</span>
+                        </button>
+                    </div>
+
+                    <!-- Cinema List -->
+                    <div class="space-y-6">
+                        <!-- Cinema 1 -->
+                        <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
+                            <h3 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
+                                MovieMate Cầu Giấy
+                                <span class="text-xs px-2 py-0.5 bg-dark-border rounded text-text-sub font-normal">Cách bạn 2.5km</span>
+                            </h3>
+                            <p class="text-sm text-text-sub mb-4">Tầng 3, Indochina Plaza, 241 Xuân Thủy, Cầu Giấy, Hà Nội</p>
+                            
+                            <div class="mb-2 text-sm font-medium text-white">2D Phụ Đề Việt</div>
+                            <div class="flex flex-wrap gap-3">
+                                <a href="{{ route('user.bookings.selectSeat') }}" class="px-4 py-2 border border-dark-border rounded-lg text-white hover:border-brand-start hover:bg-brand-start/10 transition-colors">
+                                    09:30
+                                </a>
+                                <a href="{{ route('user.bookings.selectSeat') }}" class="px-4 py-2 border border-dark-border rounded-lg text-white hover:border-brand-start hover:bg-brand-start/10 transition-colors">
+                                    11:45
+                                </a>
+                                <a href="{{ route('user.bookings.selectSeat') }}" class="px-4 py-2 border border-dark-border rounded-lg text-white hover:border-brand-start hover:bg-brand-start/10 transition-colors">
+                                    14:00
+                                </a>
+                                <a href="{{ route('user.bookings.selectSeat') }}" class="px-4 py-2 border border-dark-border rounded-lg text-white hover:border-brand-start hover:bg-brand-start/10 transition-colors">
+                                    18:30
+                                </a>
+                            </div>
                         </div>
 
-                        <span class="rounded-full bg-green-500/20 px-4 py-2 text-sm font-bold text-green-400">
-                            Còn vé
-                        </span>
+                        <!-- Cinema 2 -->
+                        <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
+                            <h3 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
+                                MovieMate Hà Đông
+                            </h3>
+                            <p class="text-sm text-text-sub mb-4">Tầng 5, MAC Plaza, 10 Trần Phú, Hà Đông, Hà Nội</p>
+                            
+                            <div class="mb-2 text-sm font-medium text-white">2D Phụ Đề Việt</div>
+                            <div class="flex flex-wrap gap-3">
+                                <a href="{{ route('user.bookings.selectSeat') }}" class="px-4 py-2 border border-dark-border rounded-lg text-white hover:border-brand-start hover:bg-brand-start/10 transition-colors">
+                                    10:00
+                                </a>
+                                <a href="{{ route('user.bookings.selectSeat') }}" class="px-4 py-2 border border-dark-border rounded-lg text-white hover:border-brand-start hover:bg-brand-start/10 transition-colors opacity-50 cursor-not-allowed" onclick="event.preventDefault()">
+                                    13:15 (Hết vé)
+                                </a>
+                                <a href="{{ route('user.bookings.selectSeat') }}" class="px-4 py-2 border border-dark-border rounded-lg text-white hover:border-brand-start hover:bg-brand-start/10 transition-colors">
+                                    20:45
+                                </a>
+                            </div>
+                        </div>
                     </div>
+                </section>
+            </div>
 
-                    <div class="flex flex-wrap gap-3">
-                        @foreach (['09:30', '11:45', '14:00', '18:30', '20:45', '22:30'] as $time)
-                            <a href="/booking/select-seat"
-                               class="rounded-xl border border-white/10 px-5 py-3 font-bold transition hover:border-[#FF7A18] hover:bg-gradient-to-r hover:from-[#FF3D57] hover:to-[#FF7A18]">
-                                {{ $time }}
-                            </a>
-                        @endforeach
-                    </div>
+            <!-- Right Content: Info & Reviews -->
+            <div class="space-y-8">
+                <!-- Cast & Crew -->
+                <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
+                    <h3 class="font-bold text-white mb-4">Thông tin thêm</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex justify-between border-b border-dark-border pb-2">
+                            <span class="text-text-sub">Đạo diễn</span>
+                            <span class="text-white font-medium text-right">Haruo Sotozaki</span>
+                        </li>
+                        <li class="flex justify-between border-b border-dark-border pb-2">
+                            <span class="text-text-sub">Diễn viên</span>
+                            <span class="text-white font-medium text-right max-w-[60%]">Natsuki Hanae, Kengo Kawanishi, Akari Kito</span>
+                        </li>
+                        <li class="flex justify-between border-b border-dark-border pb-2">
+                            <span class="text-text-sub">Ngôn ngữ</span>
+                            <span class="text-white font-medium text-right">Tiếng Nhật (Phụ đề Tiếng Việt)</span>
+                        </li>
+                    </ul>
                 </div>
-            @endforeach
 
+                <!-- AI Insight -->
+                <div class="bg-gradient-to-br from-dark-card to-[#1E1B4B] border border-ai-start/30 rounded-2xl p-6 relative overflow-hidden">
+                    <i class="ph-fill ph-sparkle absolute -top-4 -right-4 text-6xl text-ai-start/20"></i>
+                    <h3 class="font-bold text-white mb-2 flex items-center gap-2 text-ai-start">
+                        <i class="ph-fill ph-magic-wand"></i> AI Insight
+                    </h3>
+                    <p class="text-sm text-text-sub leading-relaxed mb-4">
+                        Dựa trên sở thích của bạn, AI đánh giá bạn có <strong class="text-success">95%</strong> khả năng sẽ thích bộ phim này. Đồ họa xuất sắc và cốt truyện cảm động là điểm nhấn lớn nhất.
+                    </p>
+                    <a href="{{ route('user.ai.recommend') }}" class="text-sm font-medium text-ai-start hover:text-white transition-colors">
+                        Xem thêm gợi ý →
+                    </a>
+                </div>
+            </div>
         </div>
-
     </div>
-</section>
-
 @endsection

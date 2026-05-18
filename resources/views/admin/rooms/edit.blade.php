@@ -1,26 +1,63 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 
-@section('title', 'Form quáº£n lÃ½ - MovieMate')
-@section('page-title', 'ThÃªm/Sá»­a dá»¯ liá»‡u')
+@section('title', 'Chỉnh sửa phòng chiếu - MovieMate Admin')
+@section('page-title', 'Chỉnh sửa phòng chiếu')
 
 @section('content')
+    <form action="#" class="max-w-3xl">
+        <div class="bg-dark-card border border-dark-border rounded-2xl p-6 md:p-8 space-y-6">
+            
+            <div>
+                <label class="block text-sm font-medium text-text-sub mb-2">Chọn rạp chiếu</label>
+                <select class="w-full px-4 py-2.5 bg-dark-main border border-dark-border rounded-xl text-white focus:outline-none focus:border-brand-start transition-colors appearance-none" disabled>
+                    <option selected>MovieMate Hà Nội</option>
+                    <option>MovieMate Cầu Giấy</option>
+                </select>
+                <p class="text-[10px] text-warning mt-1"><i class="ph-fill ph-warning-circle"></i> Không thể thay đổi rạp chiếu sau khi phòng đã được tạo.</p>
+            </div>
 
-<div class="mx-auto max-w-4xl rounded-[28px] border border-white/10 bg-[#151A27] p-6">
-    <h1 class="text-3xl font-black">Form nháº­p dá»¯ liá»‡u</h1>
-    <p class="mt-2 text-gray-400">Giao diá»‡n form máº«u cho chá»©c nÄƒng quáº£n trá»‹.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-text-sub mb-2">Tên phòng chiếu</label>
+                    <input type="text" class="w-full px-4 py-2.5 bg-dark-main border border-dark-border rounded-xl text-white focus:outline-none focus:border-brand-start transition-colors" value="Room 01">
+                </div>
 
-    <form class="mt-8 grid gap-5 md:grid-cols-2">
-        <input placeholder="TÃªn" class="rounded-2xl border border-white/10 bg-[#080A12] px-5 py-4 outline-none focus:border-[#FF7A18]">
-        <input placeholder="MÃ£ / slug" class="rounded-2xl border border-white/10 bg-[#080A12] px-5 py-4 outline-none focus:border-[#FF7A18]">
-        <input placeholder="ThÃ´ng tin phá»¥" class="rounded-2xl border border-white/10 bg-[#080A12] px-5 py-4 outline-none focus:border-[#FF7A18]">
-        <select class="rounded-2xl border border-white/10 bg-[#080A12] px-5 py-4 outline-none focus:border-[#FF7A18]"><option>Tráº¡ng thÃ¡i hoáº¡t Ä‘á»™ng</option></select>
-        <textarea rows="6" placeholder="MÃ´ táº£" class="rounded-2xl border border-white/10 bg-[#080A12] px-5 py-4 outline-none focus:border-[#FF7A18] md:col-span-2"></textarea>
+                <div>
+                    <label class="block text-sm font-medium text-text-sub mb-2">Loại phòng</label>
+                    <select class="w-full px-4 py-2.5 bg-dark-main border border-dark-border rounded-xl text-white focus:outline-none focus:border-brand-start transition-colors appearance-none">
+                        <option selected>2D</option>
+                        <option>3D</option>
+                        <option>IMAX</option>
+                        <option>VIP</option>
+                    </select>
+                </div>
+            </div>
 
-        <div class="flex gap-4 md:col-span-2">
-            <button type="button" class="rounded-2xl bg-gradient-to-r from-[#FF3D57] to-[#FF7A18] px-8 py-4 font-bold">LÆ°u dá»¯ liá»‡u</button>
-            <a href="/admin/dashboard" class="rounded-2xl border border-white/10 px-8 py-4 font-bold">Há»§y</a>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-text-sub mb-2">Tổng số lượng ghế</label>
+                    <input type="number" class="w-full px-4 py-2.5 bg-dark-main border border-dark-border rounded-xl text-white focus:outline-none focus:border-brand-start transition-colors" value="120" readonly>
+                    <p class="text-[10px] text-text-sub mt-1">Số lượng này được tính tự động dựa trên Sơ đồ ghế.</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-text-sub mb-2">Trạng thái</label>
+                    <select class="w-full px-4 py-2.5 bg-dark-main border border-dark-border rounded-xl text-success focus:outline-none focus:border-brand-start transition-colors font-bold appearance-none">
+                        <option value="active" class="text-success" selected>Hoạt động</option>
+                        <option value="maintenance" class="text-warning">Bảo trì</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-4 flex gap-3">
+                <button type="submit" class="px-6 py-2.5 bg-brand-start text-white font-bold rounded-xl hover:bg-brand-end transition-colors">
+                    Cập nhật phòng chiếu
+                </button>
+                <a href="{{ route('admin.rooms.index') }}" class="px-6 py-2.5 bg-dark-main border border-dark-border text-white font-medium rounded-xl hover:bg-dark-border transition-colors">
+                    Hủy
+                </a>
+            </div>
+
         </div>
     </form>
-</div>
-
 @endsection

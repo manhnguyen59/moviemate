@@ -1,121 +1,205 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="dark">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'MovieMate - Đặt vé xem phim thông minh')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <title>@yield('title', 'MovieMate - Đặt vé xem phim thông minh cùng AI')</title>
+    <meta name="description" content="@yield('meta_description', 'MovieMate - Nền tảng đặt vé xem phim trực tuyến tích hợp AI thông minh.')">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Be Vietnam Pro', sans-serif;
-        }
-    </style>
+    {{-- Inline script to prevent theme flash --}}
+    <script>
+        (function() {
+            var t = localStorage.getItem('moviemate_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light');
+            else document.documentElement.classList.remove('light');
+        })();
+    </script>
 </head>
+<body class="app-bg font-sans antialiased flex flex-col min-h-screen overflow-x-hidden">
 
-<body class="bg-[#080A12] text-white">
+    <!-- Header -->
+    <header class="app-header fixed w-full top-0 z-50 backdrop-blur-md border-b app-border transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
 
-    <header class="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-[#080A12]/80 backdrop-blur-xl">
-        <div class="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-6 lg:px-10">
-
-            <a href="/" class="flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#FF3D57] to-[#FF7A18] shadow-lg shadow-red-500/30">
-                    🎬
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="{{ route('home') }}" class="flex items-center gap-2">
+                        <i class="ph-fill ph-film-strip text-3xl md:text-4xl text-brand-start"></i>
+                        <span class="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-start to-brand-end">
+                            MovieMate
+                        </span>
+                    </a>
                 </div>
 
-                <div>
-                    <h1 class="text-xl font-black">
-                        Movie<span class="text-[#FF7A18]">Mate</span>
-                    </h1>
-                    <p class="text-[11px] text-gray-400">AI Cinema Booking</p>
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="{{ route('home') }}" class="app-text hover:text-brand-start transition-colors font-medium text-sm">Trang chủ</a>
+                    <a href="{{ route('user.movies.index') }}" class="app-muted hover:text-brand-start transition-colors font-medium text-sm">Phim</a>
+                    <a href="{{ route('user.movies.index') }}" class="app-muted hover:text-brand-start transition-colors font-medium text-sm">Lịch chiếu</a>
+                    <a href="{{ route('user.ai.recommend') }}" class="flex items-center gap-1 app-muted hover:text-ai-start transition-colors font-medium text-sm">
+                        <i class="ph-fill ph-sparkle text-ai-start"></i> AI Gợi ý
+                    </a>
+                    <a href="{{ route('user.bookings.history') }}" class="app-muted hover:text-brand-start transition-colors font-medium text-sm">Vé của tôi</a>
+                </nav>
+
+                <!-- Right Side Actions -->
+                <div class="hidden md:flex items-center gap-3">
+                    <!-- Theme Toggle Button -->
+                    <button data-theme-toggle type="button"
+                        class="flex items-center gap-1.5 px-3 py-2 rounded-xl app-card border app-border hover:border-brand-start transition-all text-sm app-muted hover:app-text"
+                        title="Đổi giao diện sáng/tối">
+                        <span class="theme-icon">🌙</span>
+                        <span class="theme-text hidden lg:inline">Tối</span>
+                    </button>
+
+                    <a href="{{ route('login') }}" class="app-muted hover:app-text font-medium transition-colors text-sm">Đăng nhập</a>
+                    <a href="{{ route('register') }}" class="bg-gradient-to-r from-brand-start to-brand-end text-white px-5 py-2 rounded-full font-medium text-sm hover:shadow-lg hover:shadow-brand-start/20 transition-all transform hover:-translate-y-0.5">
+                        Đăng ký
+                    </a>
                 </div>
-            </a>
 
-            <nav class="hidden items-center gap-8 text-sm font-medium text-gray-300 lg:flex">
-                <a href="/" class="transition hover:text-[#FF7A18]">Trang chủ</a>
-                <a href="/movies" class="transition hover:text-[#FF7A18]">Phim</a>
-                <a href="/movies/1#showtimes" class="transition hover:text-[#FF7A18]">Lịch chiếu</a>
-                <a href="/ai/recommend" class="transition hover:text-[#7C3AED]">AI gợi ý</a>
-                <a href="/booking-history" class="transition hover:text-[#FF7A18]">Vé của tôi</a>
-                <a href="/staff/dashboard" class="transition hover:text-[#FF7A18]">Staff</a>
-                <a href="/admin/dashboard" class="transition hover:text-[#FF7A18]">Admin</a>
-            </nav>
-
-            <div class="hidden items-center gap-3 lg:flex">
-                <a href="/login" class="rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold transition hover:border-[#FF7A18] hover:text-[#FF7A18]">
-                    Đăng nhập
-                </a>
-
-                <a href="/register" class="rounded-xl bg-gradient-to-r from-[#FF3D57] to-[#FF7A18] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-red-500/30 transition hover:scale-105">
-                    Đăng ký
-                </a>
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center gap-2">
+                    <!-- Mobile Theme Toggle -->
+                    <button data-theme-toggle type="button"
+                        class="flex items-center gap-1 px-2 py-1.5 rounded-lg app-card border app-border text-sm app-muted">
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                    <button id="mobile-menu-btn" class="app-muted hover:app-text focus:outline-none p-1">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                </div>
             </div>
+        </div>
 
-            <button class="lg:hidden rounded-xl border border-white/10 p-3">
-                ☰
-            </button>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden app-secondary border-b app-border">
+            <div class="px-4 pt-2 pb-4 space-y-1">
+                <a href="{{ route('home') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-text hover:bg-brand-start/10 hover:text-brand-start transition-colors">Trang chủ</a>
+                <a href="{{ route('user.movies.index') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-muted hover:bg-brand-start/10 hover:text-brand-start transition-colors">Phim</a>
+                <a href="{{ route('user.movies.index') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-muted hover:bg-brand-start/10 hover:text-brand-start transition-colors">Lịch chiếu</a>
+                <a href="{{ route('user.ai.recommend') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-ai-start hover:bg-ai-start/10 transition-colors">
+                    <i class="ph-fill ph-sparkle"></i> AI Gợi ý
+                </a>
+                <a href="{{ route('user.bookings.history') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-muted hover:bg-brand-start/10 hover:text-brand-start transition-colors">Vé của tôi</a>
+                <div class="pt-3 mt-3 border-t app-border flex flex-col gap-2">
+                    <a href="{{ route('login') }}" class="block px-3 py-2.5 text-sm font-medium app-muted hover:app-text text-center border app-border rounded-lg">Đăng nhập</a>
+                    <a href="{{ route('register') }}" class="block px-3 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-brand-start to-brand-end text-center rounded-lg">Đăng ký</a>
+                </div>
+            </div>
         </div>
     </header>
 
-    <main class="pt-20">
+    <!-- Main Content -->
+    <main class="flex-grow pt-16 md:pt-20">
         @yield('content')
     </main>
 
-    <footer class="border-t border-white/10 bg-[#0B0F1A]">
-        <div class="mx-auto grid max-w-[1440px] gap-10 px-6 py-12 md:grid-cols-4 lg:px-10">
+    <!-- Footer -->
+    <footer class="app-secondary border-t app-border mt-16 pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
 
-            <div>
-                <div class="mb-4 flex items-center gap-3">
-                    <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#FF3D57] to-[#FF7A18]">
-                        🎬
+                <!-- Brand -->
+                <div class="col-span-2 md:col-span-1">
+                    <a href="{{ route('home') }}" class="flex items-center gap-2 mb-4">
+                        <i class="ph-fill ph-film-strip text-3xl text-brand-start"></i>
+                        <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-start to-brand-end">
+                            MovieMate
+                        </span>
+                    </a>
+                    <p class="app-muted text-sm leading-relaxed mb-5">
+                        Nền tảng đặt vé xem phim tích hợp AI thông minh, mang đến trải nghiệm điện ảnh tiện lợi nhất.
+                    </p>
+                    <div class="flex gap-3">
+                        <a href="#" class="w-9 h-9 rounded-full app-card border app-border flex items-center justify-center app-muted hover:text-brand-start hover:border-brand-start transition-all">
+                            <i class="ph-fill ph-facebook-logo text-lg"></i>
+                        </a>
+                        <a href="#" class="w-9 h-9 rounded-full app-card border app-border flex items-center justify-center app-muted hover:text-brand-start hover:border-brand-start transition-all">
+                            <i class="ph-fill ph-instagram-logo text-lg"></i>
+                        </a>
+                        <a href="#" class="w-9 h-9 rounded-full app-card border app-border flex items-center justify-center app-muted hover:text-brand-start hover:border-brand-start transition-all">
+                            <i class="ph-fill ph-youtube-logo text-lg"></i>
+                        </a>
                     </div>
-                    <h2 class="text-xl font-black">
-                        Movie<span class="text-[#FF7A18]">Mate</span>
-                    </h2>
                 </div>
 
-                <p class="text-sm leading-6 text-gray-400">
-                    Nền tảng đặt vé xem phim trực tuyến tích hợp AI gợi ý phim và chatbot hỗ trợ khách hàng.
+                <!-- Links -->
+                <div>
+                    <h3 class="app-text font-semibold mb-4 uppercase tracking-wider text-xs">Về MovieMate</h3>
+                    <ul class="space-y-2.5">
+                        <li><a href="#" class="app-muted hover:text-brand-start transition-colors text-sm">Giới thiệu</a></li>
+                        <li><a href="#" class="app-muted hover:text-brand-start transition-colors text-sm">Hệ thống rạp chiếu</a></li>
+                        <li><a href="#" class="app-muted hover:text-brand-start transition-colors text-sm">Tuyển dụng</a></li>
+                        <li><a href="#" class="app-muted hover:text-brand-start transition-colors text-sm">Liên hệ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div>
+                    <h3 class="app-text font-semibold mb-4 uppercase tracking-wider text-xs">Hỗ trợ</h3>
+                    <ul class="space-y-2.5">
+                        <li><a href="#" class="app-muted hover:text-brand-start transition-colors text-sm">Câu hỏi thường gặp</a></li>
+                        <li><a href="#" class="app-muted hover:text-brand-start transition-colors text-sm">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="app-muted hover:text-brand-start transition-colors text-sm">Điều khoản sử dụng</a></li>
+                        <li><a href="#" class="app-muted hover:text-brand-start transition-colors text-sm">Quy định đổi trả</a></li>
+                    </ul>
+                </div>
+
+                <!-- App Downloads -->
+                <div>
+                    <h3 class="app-text font-semibold mb-4 uppercase tracking-wider text-xs">Tải ứng dụng</h3>
+                    <p class="app-muted text-sm mb-4">Trải nghiệm đặt vé mượt mà trên app MovieMate.</p>
+                    <div class="space-y-2.5">
+                        <a href="#" class="flex items-center gap-3 app-card border app-border rounded-xl px-4 py-2.5 hover:border-brand-start transition-colors">
+                            <i class="ph-fill ph-apple-logo text-2xl app-text"></i>
+                            <div>
+                                <p class="text-xs app-muted">Download on the</p>
+                                <p class="text-sm font-semibold app-text">App Store</p>
+                            </div>
+                        </a>
+                        <a href="#" class="flex items-center gap-3 app-card border app-border rounded-xl px-4 py-2.5 hover:border-brand-start transition-colors">
+                            <i class="ph-fill ph-google-play-logo text-2xl text-brand-start"></i>
+                            <div>
+                                <p class="text-xs app-muted">GET IT ON</p>
+                                <p class="text-sm font-semibold app-text">Google Play</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="border-t app-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <p class="app-muted text-sm">
+                    &copy; {{ date('Y') }} MovieMate. Tất cả quyền được bảo lưu. Dự án Tốt nghiệp.
                 </p>
+                <!-- Payment badges (text) -->
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 app-card border app-border rounded text-xs font-bold app-muted tracking-widest">VISA</span>
+                    <span class="px-3 py-1 app-card border app-border rounded text-xs font-bold app-muted tracking-widest">MASTERCARD</span>
+                    <span class="px-3 py-1 app-card border app-border rounded text-xs font-bold text-blue-400 tracking-widest">VNPAY</span>
+                    <span class="px-3 py-1 app-card border app-border rounded text-xs font-bold text-pink-400 tracking-widest">MOMO</span>
+                </div>
             </div>
-
-            <div>
-                <h3 class="mb-4 font-bold">Khám phá</h3>
-                <ul class="space-y-3 text-sm text-gray-400">
-                    <li>Phim đang chiếu</li>
-                    <li>Phim sắp chiếu</li>
-                    <li>Lịch chiếu</li>
-                    <li>Ưu đãi</li>
-                </ul>
-            </div>
-
-            <div>
-                <h3 class="mb-4 font-bold">Hỗ trợ</h3>
-                <ul class="space-y-3 text-sm text-gray-400">
-                    <li>Hướng dẫn đặt vé</li>
-                    <li>Chính sách vé</li>
-                    <li>Chatbot AI</li>
-                    <li>Liên hệ</li>
-                </ul>
-            </div>
-
-            <div>
-                <h3 class="mb-4 font-bold">Liên hệ</h3>
-                <ul class="space-y-3 text-sm text-gray-400">
-                    <li>Email: support@moviemate.vn</li>
-                    <li>Hotline: 1900 9999</li>
-                    <li>Địa chỉ: Hà Nội, Việt Nam</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="border-t border-white/10 py-5 text-center text-sm text-gray-500">
-            © 2026 MovieMate. All rights reserved.
         </div>
     </footer>
 
+    <!-- Chatbot Floating Button -->
+    <a href="{{ route('user.ai.chatbot') }}" class="fixed bottom-6 right-6 w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-ai-start to-ai-end rounded-full shadow-lg shadow-ai-start/30 flex items-center justify-center text-white hover:scale-110 transition-transform z-50" title="Chat với AI">
+        <i class="ph-fill ph-robot text-2xl md:text-3xl"></i>
+    </a>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+
+    @stack('scripts')
 </body>
 </html>

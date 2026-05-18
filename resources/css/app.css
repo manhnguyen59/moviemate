@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -5,7 +6,134 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+/* ─── Tailwind Theme Tokens ─────────────────────────────── */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+
+    /* Dark palette (Tailwind utility classes - always fixed) */
+    --color-dark-main:   #080A12;
+    --color-dark-sub:    #0B0F1A;
+    --color-dark-card:   #151A27;
+    --color-dark-border: #2D3343;
+
+    --color-text-main: #FFFFFF;
+    --color-text-sub:  #9CA3AF;
+
+    --color-brand-start: #FF3D57;
+    --color-brand-end:   #FF7A18;
+
+    --color-ai-start: #7C3AED;
+    --color-ai-end:   #2563EB;
+
+    --color-success: #22C55E;
+    --color-warning: #F59E0B;
+    --color-error:   #EF4444;
+}
+
+/* ─── CSS Variables for Theming ─────────────────────────── */
+/* Default = Dark Mode */
+:root {
+    --bg-main:       #080A12;
+    --bg-secondary:  #0B0F1A;
+    --card-bg:       #151A27;
+    --border-color:  rgba(255, 255, 255, 0.10);
+    --text-primary:  #FFFFFF;
+    --text-muted:    #9CA3AF;
+    --input-bg:      #0B0F1A;
+    --sidebar-bg:    #151A27;
+    --header-bg:     rgba(8, 10, 18, 0.85);
+    --scrollbar-thumb: #2D3343;
+}
+
+/* Light Mode */
+html.light {
+    --bg-main:       #F1F5F9;
+    --bg-secondary:  #FFFFFF;
+    --card-bg:       #FFFFFF;
+    --border-color:  rgba(15, 23, 42, 0.12);
+    --text-primary:  #0F172A;
+    --text-muted:    #64748B;
+    --input-bg:      #F8FAFC;
+    --sidebar-bg:    #FFFFFF;
+    --header-bg:     rgba(255, 255, 255, 0.92);
+    --scrollbar-thumb: #CBD5E1;
+}
+
+/* ─── Semantic Utility Classes ───────────────────────────── */
+.app-bg        { background-color: var(--bg-main);      color: var(--text-primary); }
+.app-secondary { background-color: var(--bg-secondary); }
+.app-card      { background-color: var(--card-bg);      border-color: var(--border-color); }
+.app-border    { border-color: var(--border-color); }
+.app-text      { color: var(--text-primary); }
+.app-muted     { color: var(--text-muted); }
+.app-input     { background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-primary); }
+.app-sidebar   { background-color: var(--sidebar-bg);   border-color: var(--border-color); }
+.app-header    { background-color: var(--header-bg); border-color: var(--border-color); }
+
+/* ─── Base Styles ────────────────────────────────────────── */
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+    body {
+        background-color: var(--bg-main);
+        color: var(--text-primary);
+        font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+        min-height: 100vh;
+    }
+    ::selection {
+        background-color: #FF3D57;
+        color: #ffffff;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+}
+
+/* ─── Component Helpers ──────────────────────────────────── */
+/* Hide scrollbar but keep scroll functionality */
+.hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Primary gradient */
+.primary-gradient {
+    background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
+}
+
+/* AI gradient */
+.ai-gradient {
+    background: linear-gradient(135deg, var(--color-ai-start), var(--color-ai-end));
+}
+
+/* Movie card uniform height */
+.movie-poster {
+    aspect-ratio: 2 / 3;
+    width: 100%;
+    overflow: hidden;
+}
+.movie-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ─── Light mode overrides for key components ───────────── */
+html.light .app-header {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 1px 24px rgba(15,23,42,0.08);
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+    color: #94a3b8;
+}
+
+html.light .app-card {
+    box-shadow: 0 1px 3px rgba(15,23,42,0.07), 0 4px 16px rgba(15,23,42,0.04);
 }

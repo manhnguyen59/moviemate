@@ -1,229 +1,238 @@
 @extends('layouts.user')
 
 @section('title', 'MovieMate - Đặt vé xem phim thông minh cùng AI')
+@section('meta_description', 'Nền tảng đặt vé xem phim trực tuyến hàng đầu, tích hợp AI gợi ý phim thông minh, chọn ghế trực quan và vé QR Code.')
 
 @section('content')
-
-<section class="relative min-h-[760px] overflow-hidden bg-[#080A12]">
-
-    <div class="absolute inset-0">
-        <img
-            src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1600&auto=format&fit=crop"
-            class="h-full w-full object-cover opacity-40"
-            alt="Cinema"
-        >
-        <div class="absolute inset-0 bg-gradient-to-r from-[#080A12] via-[#080A12]/90 to-[#080A12]/40"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-[#080A12] via-transparent to-transparent"></div>
-    </div>
-
-    <div class="absolute left-20 top-32 h-72 w-72 rounded-full bg-[#FF3D57]/20 blur-[120px]"></div>
-    <div class="absolute right-20 top-40 h-72 w-72 rounded-full bg-[#7C3AED]/25 blur-[120px]"></div>
-
-    <div class="relative mx-auto grid min-h-[760px] max-w-[1440px] items-center gap-10 px-6 lg:grid-cols-2 lg:px-10">
-
-        <div>
-            <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-[#7C3AED]/40 bg-[#7C3AED]/10 px-4 py-2 text-sm font-semibold text-purple-200">
-                <span>✨</span>
-                <span>AI Movie Recommendation</span>
-            </div>
-
-            <h1 class="max-w-3xl text-5xl font-black leading-tight md:text-7xl">
-                Đặt vé xem phim
-                <span class="bg-gradient-to-r from-[#FF3D57] to-[#FFB703] bg-clip-text text-transparent">
-                    thông minh
-                </span>
-                cùng AI
-            </h1>
-
-            <p class="mt-6 max-w-2xl text-lg leading-8 text-gray-300">
-                MovieMate giúp bạn tìm phim phù hợp, chọn rạp, chọn suất chiếu,
-                chọn ghế yêu thích và đặt vé nhanh chóng chỉ trong vài bước.
-            </p>
-
-            <div class="mt-9 flex flex-wrap gap-4">
-                <a href="/movies" class="rounded-2xl bg-gradient-to-r from-[#FF3D57] to-[#FF7A18] px-8 py-4 font-bold text-white shadow-xl shadow-red-500/30 transition hover:scale-105">
-                    Đặt vé ngay
-                </a>
-
-                <a href="/ai/recommend" class="rounded-2xl border border-white/10 bg-white/5 px-8 py-4 font-bold text-white backdrop-blur transition hover:border-[#7C3AED] hover:text-purple-300">
-                    Hỏi AI gợi ý phim
-                </a>
-            </div>
-
-            <div class="mt-10 grid max-w-xl grid-cols-3 gap-4">
-                <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                    <h3 class="text-2xl font-black">100+</h3>
-                    <p class="mt-1 text-sm text-gray-400">Phim hấp dẫn</p>
-                </div>
-
-                <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                    <h3 class="text-2xl font-black">20+</h3>
-                    <p class="mt-1 text-sm text-gray-400">Rạp chiếu</p>
-                </div>
-
-                <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                    <h3 class="text-2xl font-black">AI</h3>
-                    <p class="mt-1 text-sm text-gray-400">Gợi ý chuẩn gu</p>
-                </div>
-            </div>
+    <!-- Hero Section -->
+    <section class="relative min-h-[85vh] flex items-center">
+        <!-- Background Banner -->
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-[var(--bg-main)] via-[var(--bg-main)]/85 to-transparent z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-main)] via-transparent to-[var(--bg-main)]/60 z-10"></div>
+            <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+                 alt="Cinema Banner"
+                 class="w-full h-full object-cover object-center opacity-40">
         </div>
 
-        <div class="relative hidden lg:block">
-            <div class="absolute -left-8 top-12 z-10 rounded-3xl border border-white/10 bg-[#151A27]/80 p-5 shadow-2xl backdrop-blur-xl">
-                <div class="flex items-center gap-3">
-                    <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7C3AED] to-[#2563EB]">
-                        ✨
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full py-20 lg:py-0">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+                <!-- Left: Text Content -->
+                <div>
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full app-card border app-border backdrop-blur-sm mb-6">
+                        <i class="ph-fill ph-sparkle text-brand-start text-sm"></i>
+                        <span class="text-sm font-medium app-muted">Trải nghiệm điện ảnh thế hệ mới</span>
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-400">AI đề xuất</p>
-                        <h4 class="font-bold">Phim phù hợp với bạn</h4>
+
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold app-text mb-5 leading-[1.1] tracking-tight">
+                        Đặt vé xem phim<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-start to-brand-end">thông minh cùng AI</span>
+                    </h1>
+
+                    <p class="text-base md:text-lg app-muted mb-8 max-w-xl leading-relaxed">
+                        Khám phá hệ thống rạp chiếu hiện đại, chọn ghế trực quan và để AI tìm kiếm những bộ phim hoàn hảo nhất dành riêng cho bạn.
+                    </p>
+
+                    <div class="flex flex-wrap items-center gap-3">
+                        <a href="{{ route('user.movies.index') }}" class="px-6 py-3 md:px-8 md:py-3.5 bg-gradient-to-r from-brand-start to-brand-end text-white rounded-full font-bold text-sm md:text-base hover:shadow-lg hover:shadow-brand-start/30 transition-all transform hover:-translate-y-0.5">
+                            Đặt vé ngay
+                        </a>
+                        <a href="{{ route('user.ai.recommend') }}" class="px-6 py-3 md:px-8 md:py-3.5 app-card border app-border app-text rounded-full font-bold text-sm md:text-base hover:border-ai-start hover:text-ai-start transition-all flex items-center gap-2">
+                            <i class="ph-fill ph-robot text-ai-start"></i> Hỏi AI gợi ý phim
+                        </a>
                     </div>
                 </div>
-            </div>
 
-            <div class="ml-auto w-[420px] rotate-3 rounded-[32px] border border-white/10 bg-white/10 p-4 shadow-2xl shadow-red-500/20 backdrop-blur">
-                <img
-                    src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=900&auto=format&fit=crop"
-                    class="h-[560px] w-full rounded-[26px] object-cover"
-                    alt="Movie Poster"
-                >
+                <!-- Right: Floating AI Card (Desktop only) -->
+                <div class="hidden lg:flex justify-end">
+                    <div class="w-80 bg-[var(--card-bg)]/90 backdrop-blur-md border border-ai-start/30 rounded-2xl p-6 shadow-2xl shadow-ai-start/10">
+                        <div class="flex items-center gap-3 mb-4 pb-4 border-b app-border">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-ai-start to-ai-end flex items-center justify-center flex-shrink-0">
+                                <i class="ph-fill ph-sparkle text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold app-text">AI Đề xuất hôm nay</p>
+                                <p class="text-xs app-muted">Phù hợp với gu của bạn</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-20 h-28 rounded-lg overflow-hidden flex-shrink-0 bg-dark-border">
+                                <img src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="Poster" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-bold app-text text-sm mb-1 line-clamp-2">Thanh Gươm Diệt Quỷ</h4>
+                                <div class="flex items-center gap-1 text-xs text-warning mb-2">
+                                    <i class="ph-fill ph-star"></i> 9.2
+                                </div>
+                                <p class="text-xs app-muted mb-3">Hành động · Hoạt hình · 115 phút</p>
+                                <a href="{{ route('user.movies.show', 1) }}" class="text-xs text-brand-start hover:text-brand-end font-bold flex items-center gap-1">
+                                    Đặt vé <i class="ph-bold ph-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="relative -mt-24 z-20 px-6">
-    <div class="mx-auto max-w-6xl rounded-[28px] border border-white/10 bg-[#151A27]/90 p-6 shadow-2xl shadow-purple-500/10 backdrop-blur-xl">
-        <div class="grid gap-4 lg:grid-cols-[1fr_auto]">
+    <!-- AI Search Bar Section -->
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 -mt-6 mb-16 relative z-30">
+        <div class="app-card border border-ai-start/30 rounded-2xl p-3 md:p-4 shadow-2xl">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="flex-grow flex items-center gap-3 app-input rounded-xl px-4 py-3 border app-border focus-within:border-ai-start transition-colors">
+                    <i class="ph ph-sparkle text-xl text-ai-start flex-shrink-0"></i>
+                    <input type="text" placeholder="Ví dụ: Tôi thích phim hành động, muốn xem tối nay ở Hà Nội..." class="w-full bg-transparent border-none focus:outline-none app-text text-sm">
+                </div>
+                <a href="{{ route('user.ai.recommend') }}" class="px-6 py-3 bg-gradient-to-r from-ai-start to-ai-end text-white rounded-xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-ai-start/20 transition-all text-sm flex-shrink-0">
+                    <i class="ph-fill ph-sparkle"></i> Gợi ý bằng AI
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Now Showing Section -->
+    <section class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-8">
             <div>
-                <h2 class="text-2xl font-black">Bạn muốn xem phim gì hôm nay?</h2>
-                <p class="mt-2 text-sm text-gray-400">
-                    Nhập sở thích của bạn, MovieMate AI sẽ gợi ý phim phù hợp.
-                </p>
+                <h2 class="text-2xl md:text-3xl font-bold app-text mb-1">Phim <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-start to-brand-end">Đang Chiếu</span></h2>
+                <p class="app-muted text-sm">Những bom tấn không thể bỏ lỡ tại rạp</p>
             </div>
-
-            <div class="flex flex-col gap-3 sm:flex-row">
-                <input
-                    type="text"
-                    placeholder="Tôi thích phim hành động, muốn xem tối nay ở Hà Nội..."
-                    class="h-14 w-full rounded-2xl border border-white/10 bg-[#080A12] px-5 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-[#7C3AED] sm:w-[520px]"
-                >
-
-                <a href="/ai/recommend" class="flex h-14 items-center justify-center rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#2563EB] px-7 font-bold shadow-lg shadow-purple-500/30 transition hover:scale-105">
-                    Gợi ý bằng AI
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="mx-auto max-w-[1440px] px-6 py-24 lg:px-10">
-    <div class="mb-10 flex items-end justify-between">
-        <div>
-            <p class="mb-2 text-sm font-bold uppercase tracking-[0.3em] text-[#FF7A18]">Now Showing</p>
-            <h2 class="text-4xl font-black">Phim đang chiếu</h2>
-            <p class="mt-3 text-gray-400">Những bộ phim hot nhất đang được yêu thích.</p>
+            <a href="{{ route('user.movies.index') }}" class="hidden md:flex items-center gap-1 text-brand-start hover:text-brand-end font-medium transition-colors text-sm">
+                Xem tất cả <i class="ph-bold ph-arrow-right"></i>
+            </a>
         </div>
 
-        <a href="/movies" class="hidden rounded-xl border border-white/10 px-5 py-3 text-sm font-bold text-gray-300 transition hover:border-[#FF7A18] hover:text-[#FF7A18] md:block">
-            Xem tất cả
-        </a>
-    </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+            @php
+                $movies = [
+                    ['id' => 1, 'title' => 'Thanh Gươm Diệt Quỷ', 'genre' => 'Hoạt hình, Hành động', 'rating' => 9.2, 'poster' => 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg', 'age' => 'T13', 'time' => '115 phút'],
+                    ['id' => 2, 'title' => 'Dune: Part Two', 'genre' => 'Khoa học viễn tưởng', 'rating' => 8.8, 'poster' => 'https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2JGjjcNsV.jpg', 'age' => 'T16', 'time' => '166 phút'],
+                    ['id' => 3, 'title' => 'Lật Mặt 8', 'genre' => 'Hài, Gia đình', 'rating' => 8.5, 'poster' => 'https://image.tmdb.org/t/p/w500/xZNQic0r2D02VAvw5L2uQ6D2Hk4.jpg', 'age' => 'K', 'time' => '115 phút'],
+                    ['id' => 4, 'title' => 'Godzilla x Kong', 'genre' => 'Hành động, Viễn tưởng', 'rating' => 7.9, 'poster' => 'https://image.tmdb.org/t/p/w500/tMefBSflR6PGQLvLuPE31clYe3D.jpg', 'age' => 'T13', 'time' => '115 phút'],
+                ];
+            @endphp
 
-    <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            @foreach($movies as $movie)
+                <div class="group app-card border app-border rounded-2xl overflow-hidden hover:border-brand-start/60 transition-all hover:shadow-xl hover:shadow-brand-start/10 hover:-translate-y-1">
+                    <!-- Poster Container – fixed aspect ratio -->
+                    <div class="relative overflow-hidden" style="padding-top: 150%">
+                        <img src="{{ $movie['poster'] }}"
+                             alt="{{ $movie['title'] }}"
+                             loading="lazy"
+                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
 
-        @foreach (range(1, 5) as $i)
-            <div class="group overflow-hidden rounded-[24px] border border-white/10 bg-[#151A27] p-3 transition duration-300 hover:-translate-y-2 hover:border-[#FF7A18]/60 hover:shadow-2xl hover:shadow-red-500/20">
-                <div class="relative overflow-hidden rounded-[20px]">
-                    <img
-                        src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop"
-                        class="h-[300px] w-full object-cover transition duration-500 group-hover:scale-110"
-                        alt="Movie"
-                    >
+                        <!-- Badges -->
+                        <div class="absolute top-2 left-2 bg-brand-start text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                            Đang chiếu
+                        </div>
+                        <div class="absolute top-2 right-2 bg-black/70 backdrop-blur text-warning text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                            <i class="ph-fill ph-star text-xs"></i> {{ $movie['rating'] }}
+                        </div>
 
-                    <div class="absolute left-3 top-3 rounded-full bg-green-500 px-3 py-1 text-xs font-bold text-white">
-                        Đang chiếu
+                        <!-- Hover Actions -->
+                        <div class="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2 p-3">
+                            <a href="{{ route('user.movies.show', $movie['id']) }}" class="w-full py-2 app-card border app-border text-center rounded-lg hover:bg-brand-start/20 transition-colors font-medium text-sm app-text">
+                                Chi tiết
+                            </a>
+                            <a href="{{ route('user.bookings.selectSeat') }}" class="w-full py-2 bg-gradient-to-r from-brand-start to-brand-end text-white text-center rounded-lg font-medium text-sm">
+                                Đặt vé ngay
+                            </a>
+                        </div>
                     </div>
 
-                    <div class="absolute right-3 top-3 rounded-full bg-black/70 px-3 py-1 text-xs font-bold text-yellow-300">
-                        ⭐ 4.8
+                    <!-- Info -->
+                    <div class="p-3 md:p-4">
+                        <div class="flex items-center gap-2 mb-1.5 text-xs app-muted">
+                            <span class="px-1.5 py-0.5 rounded border app-border app-text font-medium">{{ $movie['age'] }}</span>
+                            <span>{{ $movie['time'] }}</span>
+                        </div>
+                        <h3 class="font-bold text-sm md:text-base app-text mb-0.5 line-clamp-1 group-hover:text-brand-start transition-colors">
+                            <a href="{{ route('user.movies.show', $movie['id']) }}">{{ $movie['title'] }}</a>
+                        </h3>
+                        <p class="text-xs app-muted line-clamp-1">{{ $movie['genre'] }}</p>
                     </div>
                 </div>
-
-                <div class="p-3">
-                    <h3 class="line-clamp-1 text-lg font-black">Biệt Đội Siêu Anh Hùng</h3>
-                    <p class="mt-2 text-sm text-gray-400">Hành động, Phiêu lưu</p>
-
-                    <div class="mt-3 flex items-center justify-between text-sm text-gray-400">
-                        <span>120 phút</span>
-                        <span class="rounded-lg bg-white/10 px-2 py-1 text-xs">T13</span>
-                    </div>
-
-                    <div class="mt-5 grid grid-cols-2 gap-3">
-                        <a href="/movies/{{ $i }}" class="rounded-xl border border-white/10 py-3 text-center text-sm font-bold transition hover:border-[#FF7A18] hover:text-[#FF7A18]">
-                            Chi tiết
-                        </a>
-
-                        <a href="/movies/{{ $i }}#showtimes" class="rounded-xl bg-gradient-to-r from-[#FF3D57] to-[#FF7A18] py-3 text-center text-sm font-bold transition hover:scale-105">
-                            Đặt vé
-                        </a>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-
-    </div>
-</section>
-
-<section class="bg-[#0B0F1A] py-20">
-    <div class="mx-auto max-w-[1440px] px-6 lg:px-10">
-        <div class="mb-12 text-center">
-            <p class="mb-2 text-sm font-bold uppercase tracking-[0.3em] text-[#7C3AED]">Why MovieMate</p>
-            <h2 class="text-4xl font-black">Trải nghiệm đặt vé thông minh hơn</h2>
+            @endforeach
         </div>
 
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <div class="rounded-[24px] border border-white/10 bg-[#151A27] p-7">
-                <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7C3AED] to-[#2563EB] text-2xl">
-                    ✨
-                </div>
-                <h3 class="text-xl font-black">AI gợi ý chuẩn gu</h3>
-                <p class="mt-3 text-sm leading-6 text-gray-400">
-                    Gợi ý phim theo sở thích, tâm trạng và thời gian rảnh của bạn.
-                </p>
-            </div>
+        <div class="mt-6 text-center md:hidden">
+            <a href="{{ route('user.movies.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 border border-brand-start text-brand-start rounded-full font-medium text-sm hover:bg-brand-start hover:text-white transition-colors">
+                Xem tất cả phim
+            </a>
+        </div>
+    </section>
 
-            <div class="rounded-[24px] border border-white/10 bg-[#151A27] p-7">
-                <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#FF3D57] to-[#FF7A18] text-2xl">
-                    💺
-                </div>
-                <h3 class="text-xl font-black">Chọn ghế trực quan</h3>
-                <p class="mt-3 text-sm leading-6 text-gray-400">
-                    Sơ đồ ghế rõ ràng, dễ chọn và hiển thị ghế đã đặt.
-                </p>
-            </div>
+    <!-- Coming Soon Section -->
+    <section class="py-12 app-secondary border-t app-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl md:text-3xl font-bold app-text mb-8 text-center">Phim <span class="text-transparent bg-clip-text bg-gradient-to-r from-ai-start to-ai-end">Sắp Chiếu</span></h2>
 
-            <div class="rounded-[24px] border border-white/10 bg-[#151A27] p-7">
-                <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#22C55E] to-[#16A34A] text-2xl">
-                    🎟️
-                </div>
-                <h3 class="text-xl font-black">QR vé nhanh chóng</h3>
-                <p class="mt-3 text-sm leading-6 text-gray-400">
-                    Nhận vé điện tử với mã QR để nhân viên kiểm tra dễ dàng.
-                </p>
-            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+                @php
+                    $coming_movies = [
+                        ['id' => 5, 'title' => 'Deadpool & Wolverine', 'genre' => 'Hành động, Hài', 'poster' => 'https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg', 'date' => '26/07/2026'],
+                        ['id' => 6, 'title' => 'Joker: Folie à Deux', 'genre' => 'Tâm lý, Giật gân', 'poster' => 'https://image.tmdb.org/t/p/w500/1Xdd1rB9RoxBwF4oHIn7u9iHwIf.jpg', 'date' => '04/10/2026'],
+                        ['id' => 7, 'title' => 'Conan Movie 27', 'genre' => 'Hoạt hình, Trinh thám', 'poster' => 'https://image.tmdb.org/t/p/w500/7P13C9E27xYhL18g10vV273s12z.jpg', 'date' => 'Tháng 8/2026'],
+                        ['id' => 8, 'title' => 'Avatar 3', 'genre' => 'Khoa học viễn tưởng', 'poster' => 'https://image.tmdb.org/t/p/w500/t6HIqrNDIGGL9RVwwcbEEOz287P.jpg', 'date' => 'Sắp công bố'],
+                    ];
+                @endphp
 
-            <div class="rounded-[24px] border border-white/10 bg-[#151A27] p-7">
-                <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#F59E0B] to-[#FF7A18] text-2xl">
-                    📊
-                </div>
-                <h3 class="text-xl font-black">Quản lý chuyên nghiệp</h3>
-                <p class="mt-3 text-sm leading-6 text-gray-400">
-                    Admin quản lý phim, rạp, suất chiếu, vé và thống kê doanh thu.
-                </p>
+                @foreach($coming_movies as $movie)
+                    <div class="group">
+                        <div class="relative rounded-2xl overflow-hidden mb-3" style="padding-top: 150%">
+                            <img src="{{ $movie['poster'] }}"
+                                 alt="{{ $movie['title'] }}"
+                                 loading="lazy"
+                                 class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                            <div class="absolute top-2 left-2 bg-ai-start text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                                Sắp chiếu
+                            </div>
+                        </div>
+                        <h3 class="font-bold text-sm md:text-base app-text mb-0.5 line-clamp-1">{{ $movie['title'] }}</h3>
+                        <p class="text-xs app-muted mb-1">{{ $movie['genre'] }}</p>
+                        <p class="text-xs text-ai-start font-medium flex items-center gap-1">
+                            <i class="ph ph-calendar-blank"></i> {{ $movie['date'] }}
+                        </p>
+                    </div>
+                @endforeach
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
+    <!-- Why Choose Us -->
+    <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-2xl md:text-3xl font-bold app-text mb-3">Vì sao chọn <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-start to-brand-end">MovieMate?</span></h2>
+            <p class="app-muted max-w-xl mx-auto text-sm md:text-base">Nền tảng đặt vé hiện đại với nhiều tiện ích độc quyền.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="app-card border app-border p-6 md:p-8 rounded-3xl text-center hover:border-ai-start/50 transition-colors group">
+                <div class="w-14 h-14 md:w-16 md:h-16 mx-auto bg-ai-start/20 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-ai-start/30 transition-colors">
+                    <i class="ph-fill ph-brain text-2xl md:text-3xl text-ai-start"></i>
+                </div>
+                <h3 class="text-lg md:text-xl font-bold app-text mb-2">AI Gợi Ý Chuẩn Gu</h3>
+                <p class="app-muted text-sm leading-relaxed">Không biết xem gì? AI của chúng tôi sẽ phân tích sở thích và tìm ra bộ phim hoàn hảo dành riêng cho bạn.</p>
+            </div>
+
+            <div class="app-card border app-border p-6 md:p-8 rounded-3xl text-center hover:border-brand-start/50 transition-colors group">
+                <div class="w-14 h-14 md:w-16 md:h-16 mx-auto bg-brand-start/20 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-brand-start/30 transition-colors">
+                    <i class="ph-fill ph-armchair text-2xl md:text-3xl text-brand-start"></i>
+                </div>
+                <h3 class="text-lg md:text-xl font-bold app-text mb-2">Chọn Ghế Trực Quan</h3>
+                <p class="app-muted text-sm leading-relaxed">Trải nghiệm đặt ghế với giao diện trực quan, dễ dàng chọn được vị trí đẹp nhất trong rạp chiếu.</p>
+            </div>
+
+            <div class="app-card border app-border p-6 md:p-8 rounded-3xl text-center hover:border-success/50 transition-colors group">
+                <div class="w-14 h-14 md:w-16 md:h-16 mx-auto bg-success/20 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-success/30 transition-colors">
+                    <i class="ph-fill ph-qr-code text-2xl md:text-3xl text-success"></i>
+                </div>
+                <h3 class="text-lg md:text-xl font-bold app-text mb-2">Vé QR Code Nhanh Chóng</h3>
+                <p class="app-muted text-sm leading-relaxed">Không cần xếp hàng in vé, sử dụng mã QR trên điện thoại để vào rạp trực tiếp tiện lợi và nhanh chóng.</p>
+            </div>
+        </div>
+    </section>
 @endsection

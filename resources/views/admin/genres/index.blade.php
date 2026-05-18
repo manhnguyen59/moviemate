@@ -1,61 +1,88 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 
-@section('title', 'Quáº£n lÃ½ thá»ƒ loáº¡i - MovieMate')
-@section('page-title', 'Quáº£n lÃ½ thá»ƒ loáº¡i')
+@section('title', 'Quản lý thể loại - MovieMate Admin')
+@section('page-title', 'Quản lý thể loại')
 
 @section('content')
+    <div class="bg-dark-card border border-dark-border rounded-2xl overflow-hidden shadow-lg">
+        
+        <!-- Header & Filters -->
+        <div class="p-6 border-b border-dark-border">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                
+                <!-- Search -->
+                <div class="relative w-full md:w-96">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="ph ph-magnifying-glass text-text-sub text-lg"></i>
+                    </div>
+                    <input type="text" class="w-full pl-11 pr-4 py-2.5 bg-dark-main border border-dark-border rounded-xl text-white focus:outline-none focus:border-brand-start transition-colors text-sm" placeholder="Tìm tên thể loại...">
+                </div>
 
-<div class="rounded-[28px] border border-white/10 bg-[#151A27] p-6">
-    <div class="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-            <h1 class="text-3xl font-black">Quáº£n lÃ½ thá»ƒ loáº¡i</h1>
-            <p class="mt-2 text-gray-400">Danh sÃ¡ch thá»ƒ loáº¡i phim</p>
+                <!-- Add Button -->
+                <a href="{{ route('admin.genres.create') }}" class="w-full md:w-auto px-6 py-2.5 bg-brand-start text-white font-bold rounded-xl hover:bg-brand-end transition-colors flex items-center justify-center gap-2">
+                    <i class="ph-bold ph-plus"></i> Thêm thể loại
+                </a>
+                
+            </div>
         </div>
 
-        <a href="/admin/genres/create" class="rounded-2xl bg-gradient-to-r from-[#FF3D57] to-[#FF7A18] px-5 py-3 text-sm font-bold">
-            ThÃªm thá»ƒ loáº¡i
-        </a>
-    </div>
+        <!-- Table -->
+        <div class="overflow-x-auto hide-scrollbar">
+            <table class="w-full text-left border-collapse whitespace-nowrap">
+                <thead>
+                    <tr class="bg-dark-main/50 text-xs uppercase tracking-wider text-text-sub border-b border-dark-border">
+                        <th class="p-4 font-medium">Tên thể loại</th>
+                        <th class="p-4 font-medium">Slug</th>
+                        <th class="p-4 font-medium">Mô tả</th>
+                        <th class="p-4 font-medium text-center">Số phim</th>
+                        <th class="p-4 font-medium text-center">Trạng thái</th>
+                        <th class="p-4 font-medium text-center">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-dark-border text-sm">
+                    
+                    @php
+                        $genres = [
+                            ['name' => 'Hành động', 'slug' => 'hanh-dong', 'desc' => 'Phim có nhiều cảnh chiến đấu, rượt đuổi...', 'count' => 120, 'status' => 'active'],
+                            ['name' => 'Kinh dị', 'slug' => 'kinh-di', 'desc' => 'Phim mang yếu tố giật gân, sợ hãi...', 'count' => 85, 'status' => 'active'],
+                            ['name' => 'Hài hước', 'slug' => 'hai-huoc', 'desc' => 'Phim mang tính giải trí, gây cười...', 'count' => 150, 'status' => 'active'],
+                            ['name' => 'Tình cảm', 'slug' => 'tinh-cam', 'desc' => 'Phim xoay quanh các mối quan hệ tình cảm...', 'count' => 95, 'status' => 'active'],
+                            ['name' => 'Hoạt hình', 'slug' => 'hoat-hinh', 'desc' => 'Phim sử dụng kỹ xảo hoạt họa...', 'count' => 200, 'status' => 'active'],
+                            ['name' => 'Tài liệu', 'slug' => 'tai-lieu', 'desc' => 'Phim phản ánh thực tế...', 'count' => 15, 'status' => 'inactive'],
+                        ];
+                    @endphp
 
-    <div class="mb-6 grid gap-4 md:grid-cols-4">
-        <input placeholder="TÃ¬m kiáº¿m..." class="rounded-2xl border border-white/10 bg-[#080A12] px-5 py-3 outline-none focus:border-[#FF7A18] md:col-span-2">
-        <select class="rounded-2xl border border-white/10 bg-[#080A12] px-5 py-3 outline-none focus:border-[#FF7A18]">
-            <option>Tráº¡ng thÃ¡i</option>
-            <option>Äang hoáº¡t Ä‘á»™ng</option>
-            <option>Táº¡m khÃ³a</option>
-        </select>
-        <button class="rounded-2xl border border-white/10 px-5 py-3 font-bold hover:border-[#FF7A18]">Lá»c</button>
-    </div>
-
-    <div class="overflow-x-auto">
-        <table class="w-full min-w-[900px] text-left text-sm">
-            <thead class="text-gray-400">
-                <tr class="border-b border-white/10">
-                    <th class="py-4">#</th>
-                    <th>TÃªn</th>
-                    <th>ThÃ´ng tin</th>
-                    <th>NgÃ y táº¡o</th>
-                    <th>Tráº¡ng thÃ¡i</th>
-                    <th class="text-right">HÃ nh Ä‘á»™ng</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (range(1,8) as $i)
-                    <tr class="border-b border-white/5">
-                        <td class="py-4 font-bold">{{ $i }}</td>
-                        <td class="font-bold">Dá»¯ liá»‡u máº«u {{ $i }}</td>
-                        <td class="text-gray-400">ThÃ´ng tin chi tiáº¿t cá»§a báº£n ghi {{ $i }}</td>
-                        <td>20/05/2026</td>
-                        <td><span class="rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400">Hoáº¡t Ä‘á»™ng</span></td>
-                        <td class="text-right">
-                            <a href="#" class="mr-3 text-[#FF7A18]">Sá»­a</a>
-                            <a href="#" class="text-red-400">XÃ³a</a>
+                    @foreach($genres as $key => $genre)
+                    <tr class="hover:bg-dark-main/30 transition-colors">
+                        <td class="p-4">
+                            <span class="font-bold text-white">{{ $genre['name'] }}</span>
+                        </td>
+                        <td class="p-4 text-text-sub">{{ $genre['slug'] }}</td>
+                        <td class="p-4 text-text-sub max-w-xs truncate">{{ $genre['desc'] }}</td>
+                        <td class="p-4 text-center text-white font-medium">{{ $genre['count'] }}</td>
+                        <td class="p-4 text-center">
+                            @if($genre['status'] == 'active')
+                                <span class="inline-flex px-2 py-1 bg-success/10 text-success border border-success/20 rounded text-[10px] font-bold uppercase tracking-wider">Hoạt động</span>
+                            @else
+                                <span class="inline-flex px-2 py-1 bg-dark-border text-text-sub border border-dark-border rounded text-[10px] font-bold uppercase tracking-wider">Tạm ẩn</span>
+                            @endif
+                        </td>
+                        <td class="p-4">
+                            <div class="flex items-center justify-center gap-2">
+                                <a href="{{ route('admin.genres.edit', $key+1) }}" class="w-8 h-8 rounded-lg border border-dark-border text-text-sub hover:text-white hover:border-brand-start flex items-center justify-center transition-colors" title="Chỉnh sửa">
+                                    <i class="ph-bold ph-pencil-simple"></i>
+                                </a>
+                                <button class="w-8 h-8 rounded-lg border border-dark-border text-text-sub hover:text-white hover:bg-error hover:border-error flex items-center justify-center transition-colors" title="Xóa">
+                                    <i class="ph-bold ph-trash"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
+                    @endforeach
 
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 @endsection
