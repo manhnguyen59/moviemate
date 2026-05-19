@@ -1,18 +1,20 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('user.home');
 })->name('home');
 
-Route::get('/login', function () {
-    return view('user.auth.login');
-})->name('login');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 
-Route::get('/register', function () {
-    return view('user.auth.register');
-})->name('register');
+Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
+
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/movies', function () {
     return view('user.movies.index');
@@ -22,25 +24,27 @@ Route::get('/movies/{id}', function ($id) {
     return view('user.movies.show');
 })->name('user.movies.show');
 
-Route::get('/booking/select-seat', function () {
-    return view('user.bookings.select-seat');
-})->name('user.bookings.selectSeat');
+Route::middleware('user')->group(function () {
+    Route::get('/booking/select-seat', function () {
+        return view('user.bookings.select-seat');
+    })->name('user.bookings.selectSeat');
 
-Route::get('/booking/checkout', function () {
-    return view('user.bookings.checkout');
-})->name('user.bookings.checkout');
+    Route::get('/booking/checkout', function () {
+        return view('user.bookings.checkout');
+    })->name('user.bookings.checkout');
 
-Route::get('/booking/success', function () {
-    return view('user.bookings.success');
-})->name('user.bookings.success');
+    Route::get('/booking/success', function () {
+        return view('user.bookings.success');
+    })->name('user.bookings.success');
 
-Route::get('/my-ticket', function () {
-    return view('user.bookings.ticket');
-})->name('user.bookings.ticket');
+    Route::get('/my-ticket', function () {
+        return view('user.bookings.ticket');
+    })->name('user.bookings.ticket');
 
-Route::get('/booking-history', function () {
-    return view('user.bookings.history');
-})->name('user.bookings.history');
+    Route::get('/booking-history', function () {
+        return view('user.bookings.history');
+    })->name('user.bookings.history');
+});
 
 Route::get('/ai/recommend', function () {
     return view('user.ai.recommend');
@@ -52,10 +56,10 @@ Route::get('/ai/chatbot', function () {
 
 Route::get('/profile', function () {
     return view('user.profile.index');
-})->name('user.profile');
+})->middleware('user')->name('user.profile');
 
 // Staff Routes
-Route::prefix('staff')->name('staff.')->group(function () {
+Route::prefix('staff')->name('staff.')->middleware('staff')->group(function () {
     Route::get('/login', function () {
         return view('staff.auth.login');
     })->name('login');
@@ -89,12 +93,7 @@ Route::prefix('staff')->name('staff.')->group(function () {
     })->name('sales.counter');
 });
 
-// Admin Routes
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/login', function () {
-        return view('admin.auth.login');
-    })->name('login');
-
+Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');

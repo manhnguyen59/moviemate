@@ -26,7 +26,7 @@
                     <p class="app-muted text-sm">Tạo tài khoản MovieMate chỉ trong vài bước</p>
                 </div>
 
-                <form action="#" method="POST" class="space-y-4">
+                <form action="{{ route('register.post') }}" method="POST" class="space-y-4">
                     @csrf
 
                     <div>
