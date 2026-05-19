@@ -93,7 +93,12 @@ Route::prefix('staff')->name('staff.')->middleware('staff')->group(function () {
     })->name('sales.counter');
 });
 
-Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+    // API endpoint for dynamic room loading (used by Showtime create/edit forms)
+    Route::get('/api/cinemas/{cinema}/rooms', function (App\Models\Cinema $cinema) {
+        return $cinema->rooms()->select('id', 'name')->get();
+    })->middleware('admin');
+    
+    Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     // Admin CRUD routes
     Route::resource('movies', \App\Http\Controllers\Admin\MovieController::class);
     Route::resource('genres', \App\Http\Controllers\Admin\GenreController::class);
@@ -161,17 +166,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         return view('admin.seats.manage');
     })->name('seats.manage');
 
-    Route::get('/showtimes', function () {
-        return view('admin.showtimes.index');
-    })->name('showtimes.index');
-
-    Route::get('/showtimes/create', function () {
-        return view('admin.showtimes.create');
-    })->name('showtimes.create');
-
-    Route::get('/showtimes/{id}/edit', function ($id) {
-        return view('admin.showtimes.edit');
-    })->name('showtimes.edit');
+    Route::resource('showtimes', \App\Http\Controllers\Admin\ShowtimeController::class);
 
     Route::get('/bookings', function () {
         return view('admin.bookings.index');

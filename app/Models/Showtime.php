@@ -19,6 +19,12 @@ class Showtime extends Model
         'status',
     ];
 
+    protected $casts = [
+        'show_date' => 'date',
+        'price'     => 'decimal:2',
+        'vip_price' => 'decimal:2',
+    ];
+
     public function movie(): BelongsTo
     {
         return $this->belongsTo(Movie::class);
