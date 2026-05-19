@@ -94,6 +94,9 @@ Route::prefix('staff')->name('staff.')->middleware('staff')->group(function () {
 });
 
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+    // Admin CRUD routes
+    Route::resource('movies', \App\Http\Controllers\Admin\MovieController::class);
+    Route::resource('genres', \App\Http\Controllers\Admin\GenreController::class);
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
