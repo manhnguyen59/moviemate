@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ai_recommendations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->json('input_data')->nullable();
             $table->json('result_data')->nullable();
             $table->timestamps();
