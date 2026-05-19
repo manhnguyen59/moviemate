@@ -52,9 +52,9 @@
                         <div class="flex flex-col sm:flex-row gap-5">
                             <!-- Poster -->
                             <div class="w-24 sm:w-28 flex-shrink-0">
-                                <div class="rounded-xl overflow-hidden" style="padding-top: 150%; position: relative;">
+                                <div class="poster-frame rounded-xl">
                                     <img src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg"
-                                         alt="Poster" class="absolute inset-0 w-full h-full object-cover">
+                                         alt="Poster">
                                 </div>
                             </div>
 
@@ -108,9 +108,9 @@
 
                         <div class="flex flex-col sm:flex-row gap-5">
                             <div class="w-24 sm:w-28 flex-shrink-0 grayscale-[50%]">
-                                <div class="rounded-xl overflow-hidden" style="padding-top: 150%; position: relative;">
+                                <div class="poster-frame rounded-xl">
                                     <img src="https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2JGjjcNsV.jpg"
-                                         alt="Poster" class="absolute inset-0 w-full h-full object-cover">
+                                         alt="Poster">
                                 </div>
                             </div>
 

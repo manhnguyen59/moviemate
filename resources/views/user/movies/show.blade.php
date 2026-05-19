@@ -15,8 +15,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full">
             <div class="flex flex-col md:flex-row gap-8 lg:gap-12 items-end md:items-start">
                 <!-- Poster -->
-                <div class="w-48 md:w-64 lg:w-72 flex-shrink-0 mx-auto md:mx-0 -mt-32 md:mt-0 shadow-2xl shadow-black rounded-2xl overflow-hidden border-2 border-dark-border">
-                    <img src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="Poster" class="w-full h-auto object-cover">
+                <div class="w-48 md:w-64 lg:w-72 flex-shrink-0 mx-auto md:mx-0 -mt-32 md:mt-0 shadow-2xl shadow-black rounded-2xl overflow-hidden border-2 border-dark-border poster-frame">
+                    <img src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="Poster">
                 </div>
 
                 <!-- Info -->
@@ -27,7 +27,7 @@
                         <span class="border border-dark-border text-white text-xs font-bold px-3 py-1 rounded-full">2D, IMAX 2D</span>
                     </div>
 
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2">Thanh Gươm Diệt Quỷ</h1>
+                    <h1 class="hero-title text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2">Thanh Gươm Diệt Quỷ</h1>
                     <p class="text-lg text-text-sub mb-6">Demon Slayer: Kimetsu no Yaiba - To the Hashira Training</p>
 
                     <div class="flex flex-wrap items-center justify-center md:justify-start gap-6 text-sm text-text-sub mb-8">
@@ -46,14 +46,14 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
-                        <a href="#showtimes" class="px-8 py-3.5 bg-gradient-to-r from-brand-start to-brand-end text-white rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-brand-start/30 transition-all transform hover:-translate-y-1">
+                    <div class="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-center md:justify-start gap-4">
+                        <a href="#showtimes" class="px-8 py-3.5 bg-gradient-to-r from-brand-start to-brand-end text-white rounded-xl font-bold text-base sm:text-lg text-center hover:shadow-lg hover:shadow-brand-start/30 transition-all transform hover:-translate-y-1">
                             Đặt vé ngay
                         </a>
-                        <button class="px-8 py-3.5 bg-dark-card border border-dark-border text-white rounded-xl font-bold text-lg hover:bg-dark-border transition-colors flex items-center gap-2">
+                        <button class="px-8 py-3.5 bg-dark-card border border-dark-border text-white rounded-xl font-bold text-base sm:text-lg hover:bg-dark-border transition-colors flex items-center justify-center gap-2">
                             <i class="ph-fill ph-play-circle text-2xl"></i> Xem trailer
                         </button>
-                        <a href="{{ route('user.ai.chatbot') }}" class="px-6 py-3.5 border border-ai-start/50 text-ai-start rounded-xl font-bold hover:bg-ai-start hover:text-white transition-colors flex items-center gap-2">
+                        <a href="{{ route('user.ai.chatbot') }}" class="px-6 py-3.5 border border-ai-start/50 text-ai-start rounded-xl font-bold hover:bg-ai-start hover:text-white transition-colors flex items-center justify-center gap-2">
                             <i class="ph-fill ph-robot"></i> Hỏi AI về phim này
                         </a>
                     </div>
@@ -113,7 +113,7 @@
                     <div class="space-y-6">
                         <!-- Cinema 1 -->
                         <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
-                            <h3 class="text-xl font-bold text-white mb-1 flex items-center gap-2">
+                            <h3 class="text-xl font-bold text-white mb-1 flex flex-col sm:flex-row sm:items-center gap-2 safe-break">
                                 MovieMate Cầu Giấy
                                 <span class="text-xs px-2 py-0.5 bg-dark-border rounded text-text-sub font-normal">Cách bạn 2.5km</span>
                             </h3>

@@ -60,32 +60,32 @@
                         </h2>
 
                         <div class="space-y-3">
-                            <label class="flex items-center justify-between p-4 app-input border border-brand-start rounded-xl cursor-pointer hover:border-brand-start transition-colors">
-                                <div class="flex items-center gap-4">
+                            <label class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 app-input border border-brand-start rounded-xl cursor-pointer hover:border-brand-start transition-colors">
+                                <div class="flex items-start sm:items-center gap-4 min-w-0">
                                     <input type="radio" name="payment_method" value="vnpay" checked class="text-brand-start focus:ring-brand-start w-4 h-4">
-                                    <div>
+                                    <div class="min-w-0">
                                         <p class="app-text font-medium text-sm mb-0.5">Thanh toán VNPay</p>
                                         <p class="text-xs app-muted">Ví điện tử VNPay, thẻ ATM, Visa/Mastercard</p>
                                     </div>
                                 </div>
-                                <span class="text-xs font-bold text-blue-400 bg-blue-400/10 border border-blue-400/30 px-2 py-1 rounded">VNPAY</span>
+                                <span class="payment-badge text-xs font-bold text-blue-400 bg-blue-400/10 border border-blue-400/30 px-2 py-1 rounded self-start sm:self-center">VNPAY</span>
                             </label>
 
-                            <label class="flex items-center justify-between p-4 app-input border app-border rounded-xl cursor-pointer hover:border-pink-400/50 transition-colors">
-                                <div class="flex items-center gap-4">
+                            <label class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 app-input border app-border rounded-xl cursor-pointer hover:border-pink-400/50 transition-colors">
+                                <div class="flex items-start sm:items-center gap-4 min-w-0">
                                     <input type="radio" name="payment_method" value="momo" class="text-brand-start focus:ring-brand-start w-4 h-4">
-                                    <div>
+                                    <div class="min-w-0">
                                         <p class="app-text font-medium text-sm mb-0.5">Ví MoMo</p>
                                         <p class="text-xs app-muted">Thanh toán qua ứng dụng MoMo</p>
                                     </div>
                                 </div>
-                                <span class="text-xs font-bold text-pink-400 bg-pink-400/10 border border-pink-400/30 px-2 py-1 rounded">MOMO</span>
+                                <span class="payment-badge text-xs font-bold text-pink-400 bg-pink-400/10 border border-pink-400/30 px-2 py-1 rounded self-start sm:self-center">MOMO</span>
                             </label>
 
-                            <label class="flex items-center justify-between p-4 app-input border app-border rounded-xl cursor-pointer hover:border-brand-start/50 transition-colors">
-                                <div class="flex items-center gap-4">
+                            <label class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 app-input border app-border rounded-xl cursor-pointer hover:border-brand-start/50 transition-colors">
+                                <div class="flex items-start sm:items-center gap-4 min-w-0">
                                     <input type="radio" name="payment_method" value="counter" class="text-brand-start focus:ring-brand-start w-4 h-4">
-                                    <div>
+                                    <div class="min-w-0">
                                         <p class="app-text font-medium text-sm mb-0.5">Thanh toán tại quầy</p>
                                         <p class="text-xs app-muted">Giữ chỗ trong 15 phút. Thanh toán tại rạp trước 30 phút.</p>
                                     </div>

@@ -50,8 +50,8 @@
                     <!-- Theme Toggle Button -->
                     <button data-theme-toggle type="button"
                         class="flex items-center gap-1.5 px-3 py-2 rounded-xl app-card border app-border hover:border-brand-start transition-all text-sm app-muted hover:app-text"
-                        title="Đổi giao diện sáng/tối">
-                        <span class="theme-icon">🌙</span>
+                        title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện sáng/tối" aria-pressed="false">
+                        <span class="theme-icon flex items-center text-base"><i class="ph-fill ph-moon"></i></span>
                         <span class="theme-text hidden lg:inline">Tối</span>
                     </button>
 
@@ -65,10 +65,11 @@
                 <div class="md:hidden flex items-center gap-2">
                     <!-- Mobile Theme Toggle -->
                     <button data-theme-toggle type="button"
-                        class="flex items-center gap-1 px-2 py-1.5 rounded-lg app-card border app-border text-sm app-muted">
-                        <span class="theme-icon">🌙</span>
+                        class="flex items-center gap-1 px-2 py-1.5 rounded-lg app-card border app-border text-sm app-muted"
+                        aria-label="Đổi giao diện sáng/tối" aria-pressed="false">
+                        <span class="theme-icon flex items-center text-base"><i class="ph-fill ph-moon"></i></span>
                     </button>
-                    <button id="mobile-menu-btn" class="app-muted hover:app-text focus:outline-none p-1">
+                    <button id="mobile-menu-btn" class="app-muted hover:app-text focus:outline-none p-1" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-menu">
                         <i class="ph ph-list text-2xl"></i>
                     </button>
                 </div>
@@ -94,7 +95,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow pt-16 md:pt-20">
+    <main class="flex-grow pt-16 md:pt-20 min-w-0">
         @yield('content')
     </main>
 
@@ -174,15 +175,15 @@
 
             <!-- Footer Bottom -->
             <div class="border-t app-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <p class="app-muted text-sm">
+                <p class="app-muted text-sm text-center sm:text-left safe-break">
                     &copy; {{ date('Y') }} MovieMate. Tất cả quyền được bảo lưu. Dự án Tốt nghiệp.
                 </p>
                 <!-- Payment badges (text) -->
-                <div class="flex items-center gap-2">
-                    <span class="px-3 py-1 app-card border app-border rounded text-xs font-bold app-muted tracking-widest">VISA</span>
-                    <span class="px-3 py-1 app-card border app-border rounded text-xs font-bold app-muted tracking-widest">MASTERCARD</span>
-                    <span class="px-3 py-1 app-card border app-border rounded text-xs font-bold text-blue-400 tracking-widest">VNPAY</span>
-                    <span class="px-3 py-1 app-card border app-border rounded text-xs font-bold text-pink-400 tracking-widest">MOMO</span>
+                <div class="payment-badges flex flex-wrap items-center justify-center sm:justify-end gap-2">
+                    <span class="payment-badge px-3 py-1 app-card border app-border rounded text-xs font-bold app-muted tracking-widest">VISA</span>
+                    <span class="payment-badge px-3 py-1 app-card border app-border rounded text-xs font-bold app-muted tracking-widest">MASTERCARD</span>
+                    <span class="payment-badge px-3 py-1 app-card border app-border rounded text-xs font-bold text-blue-400 tracking-widest">VNPAY</span>
+                    <span class="payment-badge px-3 py-1 app-card border app-border rounded text-xs font-bold text-pink-400 tracking-widest">MOMO</span>
                 </div>
             </div>
         </div>
@@ -195,9 +196,15 @@
 
     <script>
         // Mobile menu toggle
-        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        });
+        const mobileMenuButton = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', function() {
+                const isHidden = mobileMenu.classList.toggle('hidden');
+                mobileMenuButton.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
+            });
+        }
     </script>
 
     @stack('scripts')

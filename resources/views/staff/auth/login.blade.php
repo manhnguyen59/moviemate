@@ -6,8 +6,22 @@
     <title>Staff Login - MovieMate</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        (function() {
+            var t = localStorage.getItem('moviemate_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light');
+            else document.documentElement.classList.remove('light');
+        })();
+    </script>
 </head>
-<body class="bg-dark-main text-text-main font-sans antialiased min-h-screen flex items-center justify-center p-4">
+<body class="bg-dark-main text-text-main font-sans antialiased min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden">
+
+    <button data-theme-toggle type="button"
+        class="fixed top-4 right-4 z-30 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-dark-card/80 backdrop-blur border border-dark-border text-text-sub hover:text-text-main hover:border-ai-start transition-all text-sm"
+        aria-label="Đổi giao diện sáng/tối" aria-pressed="false">
+        <span class="theme-icon flex items-center text-base"><i class="ph-fill ph-moon"></i></span>
+        <span class="theme-text hidden sm:inline text-xs font-medium">Tối</span>
+    </button>
     
     <div class="absolute inset-0 z-0">
         <div class="absolute inset-0 bg-gradient-to-tr from-dark-main via-dark-main to-dark-sub z-10"></div>

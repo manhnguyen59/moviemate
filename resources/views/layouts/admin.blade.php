@@ -110,19 +110,19 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-grow flex flex-col min-w-0 app-bg relative h-full overflow-hidden">
+    <main class="admin-shell flex-grow flex flex-col min-w-0 app-bg relative h-full overflow-hidden">
 
         <!-- Topbar -->
         <header class="h-16 lg:h-20 flex items-center justify-between px-4 sm:px-8 border-b app-border app-card backdrop-blur-md sticky top-0 z-30 shrink-0">
 
             <div class="flex items-center gap-4">
-                <button id="mobile-menu-btn" class="lg:hidden app-muted hover:app-text">
+                <button id="mobile-menu-btn" class="lg:hidden app-muted hover:app-text" aria-label="Mở menu" aria-expanded="false" aria-controls="sidebar">
                     <i class="ph ph-list text-2xl"></i>
                 </button>
                 <h1 class="text-lg font-bold app-text hidden sm:block">@yield('page-title')</h1>
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                 <!-- Search -->
                 <div class="relative hidden md:block w-56">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -139,8 +139,9 @@
 
                 <!-- Theme Toggle -->
                 <button data-theme-toggle type="button"
-                    class="flex items-center gap-1.5 px-3 py-2 rounded-xl app-card border app-border app-muted hover:border-brand-start transition-all text-sm">
-                    <span class="theme-icon">🌙</span>
+                    class="flex items-center gap-1.5 px-3 py-2 rounded-xl app-card border app-border app-muted hover:border-brand-start transition-all text-sm"
+                    aria-label="Đổi giao diện sáng/tối" aria-pressed="false">
+                    <span class="theme-icon flex items-center text-base"><i class="ph-fill ph-moon"></i></span>
                     <span class="theme-text hidden lg:inline text-xs font-medium">Tối</span>
                 </button>
 
@@ -176,12 +177,15 @@
         const toggleBtn = document.getElementById('mobile-menu-btn');
 
         function toggleSidebar() {
-            sidebar.classList.toggle('-translate-x-full');
+            const isHidden = sidebar.classList.toggle('-translate-x-full');
             backdrop.classList.toggle('hidden');
+            toggleBtn.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
         }
 
-        toggleBtn.addEventListener('click', toggleSidebar);
-        backdrop.addEventListener('click', toggleSidebar);
+        if (toggleBtn && sidebar && backdrop) {
+            toggleBtn.addEventListener('click', toggleSidebar);
+            backdrop.addEventListener('click', toggleSidebar);
+        }
     </script>
 
     @stack('scripts')

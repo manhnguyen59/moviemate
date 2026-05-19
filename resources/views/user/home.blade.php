@@ -5,7 +5,7 @@
 
 @section('content')
     <!-- Hero Section -->
-    <section class="relative min-h-[85vh] flex items-center">
+    <section class="relative min-h-[calc(100svh-4rem)] md:min-h-[calc(100svh-5rem)] flex items-center overflow-hidden">
         <!-- Background Banner -->
         <div class="absolute inset-0 z-0 overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-r from-[var(--bg-main)] via-[var(--bg-main)]/85 to-transparent z-10"></div>
@@ -15,7 +15,7 @@
                  class="w-full h-full object-cover object-center opacity-40">
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full py-20 lg:py-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full py-14 sm:py-20 lg:py-24">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
                 <!-- Left: Text Content -->
@@ -25,7 +25,7 @@
                         <span class="text-sm font-medium app-muted">Trải nghiệm điện ảnh thế hệ mới</span>
                     </div>
 
-                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold app-text mb-5 leading-[1.1] tracking-tight">
+                    <h1 class="hero-title text-3xl sm:text-5xl md:text-6xl font-bold app-text mb-5 tracking-tight">
                         Đặt vé xem phim<br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-start to-brand-end">thông minh cùng AI</span>
                     </h1>
@@ -79,7 +79,7 @@
     </section>
 
     <!-- AI Search Bar Section -->
-    <section class="max-w-5xl mx-auto px-4 sm:px-6 -mt-6 mb-16 relative z-30">
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 mt-6 mb-16 relative z-30">
         <div class="app-card border border-ai-start/30 rounded-2xl p-3 md:p-4 shadow-2xl">
             <div class="flex flex-col sm:flex-row gap-3">
                 <div class="flex-grow flex items-center gap-3 app-input rounded-xl px-4 py-3 border app-border focus-within:border-ai-start transition-colors">
@@ -116,13 +116,13 @@
             @endphp
 
             @foreach($movies as $movie)
-                <div class="group app-card border app-border rounded-2xl overflow-hidden hover:border-brand-start/60 transition-all hover:shadow-xl hover:shadow-brand-start/10 hover:-translate-y-1">
+                <div class="movie-card group app-card border app-border rounded-2xl overflow-hidden hover:border-brand-start/60 transition-all hover:shadow-xl hover:shadow-brand-start/10 hover:-translate-y-1">
                     <!-- Poster Container – fixed aspect ratio -->
-                    <div class="relative overflow-hidden" style="padding-top: 150%">
+                    <div class="poster-frame">
                         <img src="{{ $movie['poster'] }}"
                              alt="{{ $movie['title'] }}"
                              loading="lazy"
-                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                             class="group-hover:scale-105 transition-transform duration-500">
 
                         <!-- Badges -->
                         <div class="absolute top-2 left-2 bg-brand-start text-white text-[10px] font-bold px-2 py-0.5 rounded">
@@ -181,12 +181,12 @@
                 @endphp
 
                 @foreach($coming_movies as $movie)
-                    <div class="group">
-                        <div class="relative rounded-2xl overflow-hidden mb-3" style="padding-top: 150%">
+                    <div class="movie-card group">
+                        <div class="poster-frame rounded-2xl mb-3">
                             <img src="{{ $movie['poster'] }}"
                                  alt="{{ $movie['title'] }}"
                                  loading="lazy"
-                                 class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                                 class="group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100">
                             <div class="absolute top-2 left-2 bg-ai-start text-white text-[10px] font-bold px-2 py-0.5 rounded">
                                 Sắp chiếu
                             </div>

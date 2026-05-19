@@ -3,7 +3,7 @@
 @section('title', 'Đăng ký - MovieMate')
 
 @section('content')
-    <div class="min-h-[calc(100vh-80px)] flex">
+    <div class="min-h-[calc(100svh-4rem)] md:min-h-[calc(100svh-5rem)] flex">
         <!-- Left Side -->
         <div class="hidden lg:flex w-1/2 relative app-secondary border-r app-border overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-main)] via-[var(--bg-main)]/40 to-transparent z-10"></div>

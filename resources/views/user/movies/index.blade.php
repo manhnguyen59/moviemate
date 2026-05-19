@@ -59,12 +59,12 @@
             @endphp
 
             @foreach($movies as $movie)
-                <div class="group app-card border app-border rounded-2xl overflow-hidden hover:border-brand-start/60 transition-all hover:shadow-xl hover:shadow-brand-start/10 hover:-translate-y-1">
+                <div class="movie-card group app-card border app-border rounded-2xl overflow-hidden hover:border-brand-start/60 transition-all hover:shadow-xl hover:shadow-brand-start/10 hover:-translate-y-1">
                     <!-- Poster – fixed aspect ratio using padding-top trick -->
-                    <div class="relative overflow-hidden" style="padding-top: 150%">
+                    <div class="poster-frame">
                         <img src="{{ $movie['poster'] }}" alt="{{ $movie['title'] }}"
                              loading="lazy"
-                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                             class="group-hover:scale-105 transition-transform duration-500">
 
                         @if($movie['status'] == 'now')
                             <div class="absolute top-2 left-2 bg-brand-start text-white text-[10px] uppercase font-bold px-1.5 py-0.5 rounded">Đang chiếu</div>

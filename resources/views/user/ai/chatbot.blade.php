@@ -3,7 +3,7 @@
 @section('title', 'AI Chatbot - MovieMate')
 
 @section('content')
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 h-[calc(100vh-80px)]">
+    <div class="chat-shell max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 h-[calc(100dvh-7rem)] md:h-[calc(100dvh-8rem)] min-h-[32rem]">
         <div class="app-card border app-border rounded-3xl h-full flex overflow-hidden shadow-2xl">
 
             <!-- Sidebar -->
@@ -70,7 +70,7 @@
                         <div class="w-8 h-8 rounded-full bg-gradient-to-br from-ai-start to-ai-end flex-shrink-0 flex items-center justify-center mt-1">
                             <i class="ph-fill ph-robot text-white text-sm"></i>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <div class="app-secondary border app-border rounded-2xl rounded-tl-sm p-4 text-sm app-text leading-relaxed">
                                 Xin chào! Tôi là trợ lý ảo AI của MovieMate. Tôi có thể giúp bạn tìm kiếm phim, gợi ý phim theo sở thích, kiểm tra lịch chiếu, hoặc hướng dẫn đặt vé. Bạn cần tôi giúp gì hôm nay?
                             </div>
@@ -80,7 +80,7 @@
 
                     <!-- User Message -->
                     <div class="flex gap-3 max-w-[88%] ml-auto justify-end">
-                        <div class="text-right">
+                        <div class="text-right min-w-0">
                             <div class="bg-gradient-to-br from-brand-start to-brand-end rounded-2xl rounded-tr-sm p-4 text-sm text-white leading-relaxed inline-block text-left">
                                 Có phim nào hành động hay đang chiếu không? Tôi muốn xem ở khu vực Cầu Giấy tối nay.
                             </div>
@@ -96,22 +96,22 @@
                         <div class="w-8 h-8 rounded-full bg-gradient-to-br from-ai-start to-ai-end flex-shrink-0 flex items-center justify-center mt-1">
                             <i class="ph-fill ph-robot text-white text-sm"></i>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <div class="app-secondary border app-border rounded-2xl rounded-tl-sm p-4 text-sm app-text leading-relaxed space-y-3">
                                 <p>Tuyệt vời! Dựa trên yêu cầu của bạn, tôi tìm thấy 2 bộ phim hành động đang chiếu tại <strong>MovieMate Cầu Giấy</strong> vào tối nay:</p>
 
-                                <div class="app-card border app-border rounded-xl p-3 flex gap-3">
+                                <div class="app-card border app-border rounded-xl p-3 flex gap-3 min-w-0">
                                     <img src="https://image.tmdb.org/t/p/w500/tMefBSflR6PGQLvLuPE31clYe3D.jpg" class="w-10 h-14 rounded object-cover flex-shrink-0">
-                                    <div>
+                                    <div class="min-w-0">
                                         <h4 class="font-bold text-brand-start text-sm mb-0.5">Godzilla x Kong: Đế Chế Mới</h4>
                                         <p class="text-xs app-muted mb-2">Suất chiếu: 19:30, 21:00, 22:15</p>
                                         <a href="{{ route('user.bookings.selectSeat') }}" class="text-xs text-white bg-brand-start px-2.5 py-1 rounded-lg hover:bg-brand-end transition-colors">Đặt vé</a>
                                     </div>
                                 </div>
 
-                                <div class="app-card border app-border rounded-xl p-3 flex gap-3">
+                                <div class="app-card border app-border rounded-xl p-3 flex gap-3 min-w-0">
                                     <img src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" class="w-10 h-14 rounded object-cover flex-shrink-0">
-                                    <div>
+                                    <div class="min-w-0">
                                         <h4 class="font-bold text-brand-start text-sm mb-0.5">Deadpool & Wolverine</h4>
                                         <p class="text-xs app-muted mb-2">Suất chiếu: 20:15, 23:00</p>
                                         <a href="{{ route('user.bookings.selectSeat') }}" class="text-xs text-white bg-brand-start px-2.5 py-1 rounded-lg hover:bg-brand-end transition-colors">Đặt vé</a>

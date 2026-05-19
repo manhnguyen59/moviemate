@@ -14,7 +14,7 @@
                 <i class="ph-fill ph-magic-wand text-ai-start"></i>
                 <span class="text-sm font-medium text-ai-start">Trí tuệ nhân tạo MovieMate</span>
             </div>
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 animate-[fade-in-up_0.6s_ease-out]">
+            <h1 class="hero-title text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 animate-[fade-in-up_0.6s_ease-out]">
                 AI gợi ý phim <span class="text-transparent bg-clip-text bg-gradient-to-r from-ai-start to-brand-start">dành riêng cho bạn</span>
             </h1>
             <p class="text-lg text-text-sub mb-10 max-w-2xl mx-auto animate-[fade-in-up_0.7s_ease-out]">
@@ -127,8 +127,10 @@
 
                         <div class="flex flex-col md:flex-row gap-8">
                             <!-- Poster -->
-                            <div class="w-full md:w-48 flex-shrink-0">
-                                <img src="https://image.tmdb.org/t/p/w500/tMefBSflR6PGQLvLuPE31clYe3D.jpg" alt="Poster" class="w-full rounded-2xl shadow-2xl shadow-black">
+                            <div class="w-full max-w-56 mx-auto md:mx-0 md:w-48 flex-shrink-0">
+                                <div class="poster-frame rounded-2xl shadow-2xl shadow-black">
+                                    <img src="https://image.tmdb.org/t/p/w500/tMefBSflR6PGQLvLuPE31clYe3D.jpg" alt="Poster">
+                                </div>
                             </div>
 
                             <!-- Info -->
@@ -136,7 +138,7 @@
                                 <div class="inline-block px-3 py-1 bg-ai-start/20 border border-ai-start/50 text-ai-start text-xs font-bold rounded-lg mb-4">
                                     Độ phù hợp: 98%
                                 </div>
-                                <h3 class="text-3xl font-bold text-white mb-2">Godzilla x Kong</h3>
+                                <h3 class="text-2xl sm:text-3xl font-bold text-white mb-2">Godzilla x Kong</h3>
                                 <p class="text-text-sub mb-4">Hành động, Viễn tưởng • 115 phút • T13</p>
 
                                 <!-- AI Reason -->
@@ -160,7 +162,7 @@
                     </div>
 
                     <!-- Alternate suggestions -->
-                    <div class="mt-8 grid grid-cols-2 gap-4">
+                    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="bg-dark-card border border-dark-border rounded-2xl p-4 flex gap-4 hover:border-ai-start/50 transition-colors cursor-pointer">
                             <img src="https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2JGjjcNsV.jpg" alt="Dune" class="w-16 h-24 object-cover rounded-lg">
                             <div>
