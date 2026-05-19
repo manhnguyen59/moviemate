@@ -29,6 +29,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'role_id' => 'integer',
+    ];
+
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
@@ -52,13 +57,5 @@ class User extends Authenticatable
     public function aiRecommendations(): HasMany
     {
         return $this->hasMany(AiRecommendation::class);
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
     }
 }

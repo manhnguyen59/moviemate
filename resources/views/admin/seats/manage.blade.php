@@ -1,1 +1,55 @@
-\n@extends('layouts.admin')\n\n@section('title', 'Qu\u1ea3n l\u00fd Gh\u1ebf - {{ $room->name }}')\n\n@section('content')\n<div class=\"container mx-auto py-6\">\n    <h1 class=\"text-2xl font-bold mb-4\">Qu\u1ea3n l\u00fd Gh\u1ebf cho Ph\u00f2ng: {{ $room->name }}</h1>\n\n    @if(session('success'))\n        <div class=\"bg-green-100 text-green-800 p-3 rounded mb-4\">\n            {{ session('success') }}\n        </div>\n    @endif\n    @if(session('error'))\n        <div class=\"bg-red-100 text-red-800 p-3 rounded mb-4\">\n            {{ session('error') }}\n        </div>\n    @endif\n\n    <h2 class=\"text-xl font-semibold mb-2\">Danh s\u00e1ch gh\u1ebf hi\u1ec7n c\u00f3</h2>\n    <div class=\"grid grid-cols-8 gap-2 mb-6\">\n        @foreach($seats as $seat)\n            <div class=\"p-2 border rounded text-center {{ $seat->type == 'vip' ? 'bg-yellow-100' : '' }}\">\n                {{ $seat->seat_code }}<br>\n                <small>{{ ucfirst($seat->type) }}</small>\n            </div>\n        @endforeach\n    </div>\n\n    <h2 class=\"text-xl font-semibold mb-2\">T\u1ea1o gh\u1ebf t\u1ef1 \u0111\u1ed9ng</h2>\n    <form action=\"{{ route('admin.seats.generate', $room) }}\" method=\"POST\" class=\"space-y-4\">\n        @csrf\n        <div>\n            <label class=\"block font-medium\">Kho\u1ea3ng h\u00e0ng (v\u00ed d\u1ee5 A-H)</label>\n            <input type=\"text\" name=\"rows\" placeholder=\"A-H\" required class=\"w-full border rounded px-3 py-2\">\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">S\u1ed1 gh\u1ebf m\u1ed7i h\u00e0ng</label>\n            <input type=\"number\" name=\"seats_per_row\" min=\"1\" required class=\"w-full border rounded px-3 py-2\">\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">H\u00e0ng VIP (c\u00f3 th\u1ec3 ch\u1ecdn nhi\u1ec1u, v\u00ed d\u1ee5 E,F,G)</label>\n            <input type=\"text\" name=\"vip_rows\" placeholder=\"E,F,G\" class=\"w-full border rounded px-3 py-2\">\n            <small class=\"text-gray-600\">Nh\u1eadp c\u00e1c k\u00fd t\u1ef1 c\u00e1ch nhau b\u1eb1ng d\u1ea5u ph\u1ea9y.</small>\n        </div>\n\n        <button type=\"submit\" class=\"bg-blue-600 text-white px-4 py-2 rounded\">T\u1ea1o gh\u1ebf</button>\n        <a href=\"{{ route('admin.rooms.index') }}\" class=\"bg-gray-600 text-white px-4 py-2 rounded\">Quay l\u1ea1i</a>\n    </form>\n</div>\n@endsection\n
+@extends('layouts.admin')
+
+@section('title', 'Quản lý Ghế - {{ $room->name }}')
+
+@section('content')
+<div class="container mx-auto py-6">
+    <h1 class="text-2xl font-bold mb-4">Quản lý Ghế cho Phòng: {{ $room->name }}</h1>
+
+    @if(session('success'))
+        <div class="bg-green-100 text-green-800 p-3 rounded mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="bg-red-100 text-red-800 p-3 rounded mb-4">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <h2 class="text-xl font-semibold mb-2">Danh sách ghế hiện có</h2>
+    <div class="grid grid-cols-8 gap-2 mb-6">
+        @foreach($seats as $seat)
+            <div class="p-2 border rounded text-center {{ $seat->type == 'vip' ? 'bg-yellow-100' : '' }}">
+                {{ $seat->seat_code }}<br>
+                <small>{{ ucfirst($seat->type) }}</small>
+            </div>
+        @endforeach
+    </div>
+
+    <h2 class="text-xl font-semibold mb-2">Tạo ghế tự động</h2>
+    <form action="{{ route('admin.seats.generate', $room) }}" method="POST" class="space-y-4">
+        @csrf
+        <div>
+            <label class="block font-medium">Khoảng hàng (ví dụ A-H)</label>
+            <input type="text" name="rows" placeholder="A-H" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-medium">Số ghế mỗi hàng</label>
+            <input type="number" name="seats_per_row" min="1" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-medium">Hàng VIP (có thể chọn nhiều, ví dụ E,F,G)</label>
+            <input type="text" name="vip_rows" placeholder="E,F,G" class="w-full border rounded px-3 py-2">
+            <small class="text-gray-600">Nhập các ký tự cách nhau bằng dấu phẩy.</small>
+        </div>
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Tạo ghế</button>
+        <a href="{{ route('admin.rooms.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded">Quay lại</a>
+    </form>
+</div>
+@endsection
+
+

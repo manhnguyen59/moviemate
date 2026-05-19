@@ -23,7 +23,7 @@
             <strong>Age Rating:</strong> {{ $movie->age_rating ?? 'N/A' }}
         </div>
         <div>
-            <strong>Release Date:</strong> {{ $movie->release_date ? $movie->release_date->format('Y-m-d') : 'N/A' }}
+            <strong>Release Date:</strong> {{ $movie->release_date ? \Carbon\Carbon::parse($movie->release_date)->format('Y-m-d') : 'N/A' }}
         </div>
         <div class="col-span-2">
             <strong>Mô tả:</strong>

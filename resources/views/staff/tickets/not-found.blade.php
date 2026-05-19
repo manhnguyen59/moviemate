@@ -18,7 +18,7 @@
             <div class="bg-dark-card border border-dark-border rounded-2xl p-6 text-left mb-8">
                 <p class="text-xs text-text-sub uppercase tracking-wider mb-2 text-center font-bold">Mã đã quét</p>
                 <div class="bg-dark-main border border-dark-border rounded-xl p-4 text-center">
-                    <p class="text-xl font-bold text-white font-mono tracking-widest opacity-50 line-through">MMT-9999-0000</p>
+                    <p class="text-xl font-bold text-white font-mono tracking-widest opacity-50 line-through">{{ $bookingCode ?? 'MMT-9999-0000' }}</p>
                 </div>
                 
                 <div class="mt-6 space-y-2 text-sm text-text-sub">

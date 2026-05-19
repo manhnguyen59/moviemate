@@ -33,6 +33,14 @@ class UserSeeder extends Seeder
             'status' => 'active',
         ]);
 
+        User::create([
+            'name' => 'Demo User',
+            'email' => 'user@example.com',
+            'password' => Hash::make('password'),
+            'role_id' => $userRole->id,
+            'status' => 'active',
+        ]);
+
         // Regular users
         for ($i = 1; $i <= 5; $i++) {
             User::create([

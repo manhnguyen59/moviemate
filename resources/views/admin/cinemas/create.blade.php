@@ -1,1 +1,68 @@
-\n@extends('layouts.admin')\n\n@section('title', 'Th\u00eam R\u1ea1p')\n\n@section('content')\n<div class=\"container mx-auto py-6\">\n    <h1 class=\"text-2xl font-bold mb-4\">Th\u00eam R\u1ea1p</h1>\n\n    @if ($errors->any())\n        <div class=\"bg-red-100 text-red-800 p-3 rounded mb-4\">\n            <ul class=\"list-disc list-inside\">\n                @foreach ($errors->all() as $error)\n                    <li>{{ $error }}</li>\n                @endforeach\n            </ul>\n        </div>\n    @endif\n\n    <form action=\"{{ route('admin.cinemas.store') }}\" method=\"POST\" enctype=\"multipart/form-data\" class=\"space-y-4\">\n        @csrf\n\n        <div>\n            <label class=\"block font-medium\">T\u00ean *</label>\n            <input type=\"text\" name=\"name\" value=\"{{ old('name') }}\" required class=\"w-full border rounded px-3 py-2\">\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">\u0110\u1ecba ch\u1ec9 *</label>\n            <input type=\"text\" name=\"address\" value=\"{{ old('address') }}\" required class=\"w-full border rounded px-3 py-2\">\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">Th\u00e0nh ph\u1ed1 *</label>\n            <input type=\"text\" name=\"city\" value=\"{{ old('city') }}\" required class=\"w-full border rounded px-3 py-2\">\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">S\u1ed1 \u0111i\u1ec7n tho\u1ea1i</label>\n            <input type=\"text\" name=\"phone\" value=\"{{ old('phone') }}\" class=\"w-full border rounded px-3 py-2\">\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">H\u00ecnh \u1ea3nh</label>\n            <input type=\"file\" name=\"image\" accept=\"image/*\" class=\"w-full\">\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">M\u00f4 t\u1ea3</label>\n            <textarea name=\"description\" rows=\"4\" class=\"w-full border rounded px-3 py-2\">{{ old('description') }}</textarea>\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">Tr\u1ea1ng th\u00e1i *</label>\n            <select name=\"status\" required class=\"w-full border rounded px-3 py-2\">\n                <option value=\"active\" {{ old('status') == 'active' ? 'selected' : '' }}>Ho\u1ea1t \u0111\u1ed9ng</option>\n                <option value=\"inactive\" {{ old('status') == 'inactive' ? 'selected' : '' }}>Kh\u00f4ng ho\u1ea1t \u0111\u1ed9ng</option>\n            </select>\n        </div>\n\n        <div class=\"flex space-x-4\">\n            <button type=\"submit\" class=\"bg-green-600 text-white px-4 py-2 rounded\">L\u01b0u</button>\n            <a href=\"{{ route('admin.cinemas.index') }}\" class=\"bg-gray-600 text-white px-4 py-2 rounded\">H\u1ee7y</a>\n        </div>\n    </form>\n</div>\n@endsection\n
+@extends('layouts.admin')
+
+@section('title', 'Thêm Rạp')
+
+@section('content')
+<div class="container mx-auto py-6">
+    <h1 class="text-2xl font-bold mb-4">Thêm Rạp</h1>
+
+    @if ($errors->any())
+        <div class="bg-red-100 text-red-800 p-3 rounded mb-4">
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('admin.cinemas.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+        @csrf
+
+        <div>
+            <label class="block font-medium">Tên *</label>
+            <input type="text" name="name" value="{{ old('name') }}" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-medium">Địa chỉ *</label>
+            <input type="text" name="address" value="{{ old('address') }}" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-medium">Thành phố *</label>
+            <input type="text" name="city" value="{{ old('city') }}" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-medium">Số điện thoại</label>
+            <input type="text" name="phone" value="{{ old('phone') }}" class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-medium">Hình ảnh</label>
+            <input type="file" name="image" accept="image/*" class="w-full">
+        </div>
+
+        <div>
+            <label class="block font-medium">Mô tả</label>
+            <textarea name="description" rows="4" class="w-full border rounded px-3 py-2">{{ old('description') }}</textarea>
+        </div>
+
+        <div>
+            <label class="block font-medium">Trạng thái *</label>
+            <select name="status" required class="w-full border rounded px-3 py-2">
+                <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Hoạt động</option>
+                <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Không hoạt động</option>
+            </select>
+        </div>
+
+        <div class="flex space-x-4">
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Lưu</button>
+            <a href="{{ route('admin.cinemas.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded">Hủy</a>
+        </div>
+    </form>
+</div>
+@endsection
+
+

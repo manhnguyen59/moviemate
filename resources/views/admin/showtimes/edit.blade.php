@@ -54,7 +54,7 @@
 
                 <div>
                     <label class="block font-medium mb-1">Ngày chiếu <span class="text-red-600">*</span></label>
-                    <input type="date" name="show_date" value="{{ old('show_date', $showtime->show_date->format('Y-m-d')) }}" class="app-input w-full">
+                    <input type="date" name="show_date" value="{{ old('show_date', $showtime->show_date ? \Carbon\Carbon::parse($showtime->show_date)->format('Y-m-d') : '') }}" class="app-input w-full">
                     @error('show_date')
                         <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                     @enderror

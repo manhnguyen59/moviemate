@@ -45,7 +45,8 @@
             <!-- Top line highlight -->
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-start to-brand-end"></div>
 
-            <form action="{{ route('admin.dashboard') }}" method="GET" class="space-y-6">
+            <form action="{{ route('login.post') }}" method="POST" class="space-y-6">
+                @csrf
                 
                 <div>
                     <label for="email" class="block text-sm font-medium text-text-sub mb-2">Email quản trị</label>
@@ -53,7 +54,7 @@
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <i class="ph ph-envelope-simple text-text-sub text-lg"></i>
                         </div>
-                        <input type="email" id="email" name="email" class="w-full pl-11 pr-4 py-3.5 bg-dark-main border border-dark-border rounded-xl text-white focus:outline-none focus:border-brand-start focus:ring-1 focus:ring-brand-start transition-colors placeholder-text-sub/50" placeholder="admin@moviemate.vn" required>
+                        <input type="email" id="email" name="email" value="{{ old('email', 'admin@example.com') }}" class="w-full pl-11 pr-4 py-3.5 bg-dark-main border border-dark-border rounded-xl text-white focus:outline-none focus:border-brand-start focus:ring-1 focus:ring-brand-start transition-colors placeholder-text-sub/50" placeholder="admin@example.com" required>
                     </div>
                 </div>
 
@@ -75,7 +76,7 @@
                 <div class="flex items-center justify-between">
                     <label class="flex items-center gap-2 cursor-pointer group">
                         <div class="relative flex items-center justify-center w-5 h-5 rounded bg-dark-main border border-dark-border group-hover:border-brand-start transition-colors">
-                            <input type="checkbox" class="peer sr-only">
+                            <input type="checkbox" name="remember" value="1" class="peer sr-only">
                             <i class="ph-bold ph-check text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity"></i>
                             <div class="absolute inset-0 rounded bg-brand-start opacity-0 peer-checked:opacity-100 -z-10 transition-opacity"></div>
                         </div>

@@ -4,6 +4,17 @@
 @section('page-title', 'Kết quả kiểm tra vé')
 
 @section('content')
+    @php
+        $bookingCode = $booking?->booking_code ?? 'MMT-2026-0001';
+        $customerName = $booking?->user?->name ?? 'Nguyen Manh';
+        $movieTitle = $booking?->showtime?->movie?->title ?? 'Phim demo';
+        $cinemaRoom = trim(($booking?->showtime?->cinema?->name ?? 'MovieMate') . ' / ' . ($booking?->showtime?->room?->name ?? 'Phong 3'), ' /');
+        $showtimeText = $booking?->showtime?->show_date
+            ? (($booking->showtime->show_time ? \Carbon\Carbon::parse($booking->showtime->show_time)->format('H:i') . ' - ' : '') . \Carbon\Carbon::parse($booking->showtime->show_date)->format('d/m/Y'))
+            : '09:30 - 19/05/2026';
+        $seatCodes = $booking?->bookingSeats?->pluck('seat.seat_code')->filter()->join(', ') ?: 'F7, F8';
+        $ticketType = $booking ? ($booking->bookingSeats->count() . ' ghe') : '2x Ghe VIP';
+    @endphp
     <div class="max-w-xl mx-auto">
         
         <div class="bg-success/10 border-2 border-success rounded-3xl p-8 text-center shadow-lg shadow-success/20 mb-6">
@@ -55,9 +66,16 @@
             </div>
 
             <div class="flex flex-col gap-3">
-                <button class="w-full py-4 bg-success text-white rounded-xl font-bold text-lg hover:bg-success/90 hover:shadow-lg hover:shadow-success/30 transition-all">
+                @if($booking)
+                    <form method="POST" action="{{ route('staff.tickets.use', $booking) }}">
+                        @csrf
+                @endif
+                <button type="{{ $booking ? 'submit' : 'button' }}" class="w-full py-4 bg-success text-white rounded-xl font-bold text-lg hover:bg-success/90 hover:shadow-lg hover:shadow-success/30 transition-all">
                     Xác nhận cho khách vào rạp
                 </button>
+                @if($booking)
+                    </form>
+                @endif
                 <a href="{{ route('staff.tickets.check') }}" class="w-full py-3 bg-dark-main border border-dark-border text-white rounded-xl font-medium hover:bg-dark-border transition-colors">
                     Quay lại quét vé
                 </a>

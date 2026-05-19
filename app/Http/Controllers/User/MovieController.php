@@ -51,7 +51,11 @@ class MovieController extends Controller
         // Filter out showtimes that have already passed (same day, earlier time)
         $now = now()->timezone('Asia/Ho_Chi_Minh');
         $showtimes = $movie->showtimes->filter(function ($show) use ($now) {
-            $showDate = $show->show_date;
+            if (! $show->show_date || ! $show->show_time) {
+                return false;
+            }
+
+            $showDate = Carbon::parse($show->show_date);
             if ($showDate->isAfter($now->toDateString())) {
                 return true;
             }

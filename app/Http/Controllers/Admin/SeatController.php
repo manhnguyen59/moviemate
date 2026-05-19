@@ -35,8 +35,7 @@ class SeatController extends Controller
         $seats = $room->seats()
             ->orderBy('row')
             ->orderBy('number')
-            ->get()
-            ->groupBy('row');
+            ->get();
 
         return view('admin.seats.manage', compact('room', 'seats'));
     }

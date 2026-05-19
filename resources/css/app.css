@@ -6,11 +6,9 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-/* ─── Tailwind Theme Tokens ─────────────────────────────── */
 @theme {
     --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
 
-    /* Dark palette (Tailwind utility classes - always fixed) */
     --color-dark-main:   #080A12;
     --color-dark-sub:    #0B0F1A;
     --color-dark-card:   #151A27;
@@ -30,8 +28,6 @@
     --color-error:   #EF4444;
 }
 
-/* ─── CSS Variables for Theming ─────────────────────────── */
-/* Default = Dark Mode */
 :root {
     --bg-main:       #080A12;
     --bg-secondary:  #0B0F1A;
@@ -41,14 +37,13 @@
     --text-muted:    #9CA3AF;
     --input-bg:      #0B0F1A;
     --sidebar-bg:    #151A27;
-    --header-bg:     rgba(8, 10, 18, 0.85);
+    --header-bg:     rgba(8, 10, 18, 0.86);
     --scrollbar-thumb: #2D3343;
     color-scheme: dark;
 }
 
-/* Light Mode */
 html.light {
-    --bg-main:       #F1F5F9;
+    --bg-main:       #F8FAFC;
     --bg-secondary:  #FFFFFF;
     --card-bg:       #FFFFFF;
     --border-color:  rgba(15, 23, 42, 0.12);
@@ -61,18 +56,16 @@ html.light {
     color-scheme: light;
 }
 
-/* ─── Semantic Utility Classes ───────────────────────────── */
-.app-bg        { background-color: var(--bg-main);      color: var(--text-primary); }
+.app-bg        { background-color: var(--bg-main); color: var(--text-primary); }
 .app-secondary { background-color: var(--bg-secondary); }
-.app-card      { background-color: var(--card-bg);      border-color: var(--border-color); }
+.app-card      { background-color: var(--card-bg); border-color: var(--border-color); }
 .app-border    { border-color: var(--border-color); }
 .app-text      { color: var(--text-primary); }
 .app-muted     { color: var(--text-muted); }
 .app-input     { background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-primary); }
-.app-sidebar   { background-color: var(--sidebar-bg);   border-color: var(--border-color); }
+.app-sidebar   { background-color: var(--sidebar-bg); border-color: var(--border-color); }
 .app-header    { background-color: var(--header-bg); border-color: var(--border-color); }
 
-/* ─── Base Styles ────────────────────────────────────────── */
 @layer base {
     html {
         scroll-behavior: smooth;
@@ -80,8 +73,12 @@ html.light {
         width: 100%;
         max-width: 100%;
     }
+
     body {
-        background-color: var(--bg-main);
+        background:
+            radial-gradient(circle at top left, rgba(255, 61, 87, 0.06), transparent 28rem),
+            radial-gradient(circle at top right, rgba(124, 58, 237, 0.06), transparent 28rem),
+            var(--bg-main);
         color: var(--text-primary);
         font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
@@ -91,33 +88,31 @@ html.light {
         width: 100%;
         max-width: 100%;
     }
+
     img,
     video,
     canvas,
     svg {
         max-width: 100%;
     }
+
     ::selection {
         background-color: #FF3D57;
         color: #ffffff;
     }
-    /* Custom scrollbar */
+
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
 }
 
-/* ─── Component Helpers ──────────────────────────────────── */
-/* Hide scrollbar but keep scroll functionality */
 .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 
-/* Primary gradient */
 .primary-gradient {
     background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
 }
 
-/* AI gradient */
 .ai-gradient {
     background: linear-gradient(135deg, var(--color-ai-start), var(--color-ai-end));
 }
@@ -128,7 +123,6 @@ html.light {
     overflow-wrap: anywhere;
 }
 
-/* Movie card uniform height */
 .movie-card {
     min-width: 0;
 }
@@ -136,13 +130,28 @@ html.light {
 .movie-poster,
 .poster-frame {
     aspect-ratio: 2 / 3;
-    background: linear-gradient(145deg, #151A27, #2D3343);
+    background:
+        radial-gradient(circle at 50% 36%, rgba(255, 61, 87, 0.20), transparent 26%),
+        linear-gradient(145deg, #151A27, #2D3343 55%, #080A12);
     position: relative;
     overflow: hidden;
 }
 
 .movie-poster {
     width: 100%;
+}
+
+.poster-frame::before,
+.movie-poster::before {
+    content: "MovieMate";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: rgba(255, 255, 255, 0.52);
+    font-weight: 800;
+    letter-spacing: 0;
+    z-index: 0;
 }
 
 .movie-poster img,
@@ -153,6 +162,7 @@ html.light {
     height: 100%;
     object-fit: cover;
     display: block;
+    z-index: 1;
 }
 
 .payment-badges {
@@ -190,11 +200,10 @@ html.light {
     }
 }
 
-/* ─── Light mode overrides for key components ───────────── */
 html.light .app-header {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 1px 24px rgba(15,23,42,0.08);
+    box-shadow: 0 1px 24px rgba(15, 23, 42, 0.08);
 }
 
 html.light input::placeholder,
@@ -207,7 +216,7 @@ html.light input[type="date"] {
 }
 
 html.light .app-card {
-    box-shadow: 0 1px 3px rgba(15,23,42,0.07), 0 4px 16px rgba(15,23,42,0.04);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.07), 0 4px 16px rgba(15, 23, 42, 0.04);
 }
 
 html.light .bg-dark-card,
@@ -223,10 +232,7 @@ html.light .bg-dark-main\/50 {
     background-color: var(--input-bg);
 }
 
-html.light .bg-dark-sub {
-    background-color: #E2E8F0;
-}
-
+html.light .bg-dark-sub,
 html.light .bg-dark-border {
     background-color: #E2E8F0;
 }
@@ -235,7 +241,8 @@ html.light .border-dark-border {
     border-color: var(--border-color);
 }
 
-html.light .text-text-main {
+html.light .text-text-main,
+html.light .text-white {
     color: var(--text-primary);
 }
 
@@ -244,14 +251,13 @@ html.light .placeholder-text-sub\/50::placeholder {
     color: var(--text-muted);
 }
 
-html.light input.text-white,
-html.light textarea.text-white,
-html.light select.text-white,
-html.light .bg-dark-card.text-white,
-html.light .bg-dark-main.text-white,
-html.light .bg-dark-card .text-white:not(i):not([class*="bg-"]):not([class*="from-"]):not([class*="to-"]),
-html.light .bg-dark-main .text-white:not(i):not([class*="bg-"]):not([class*="from-"]):not([class*="to-"]) {
-    color: var(--text-primary);
+html.light [class*="from-brand-start"][class*="to-brand-end"],
+html.light [class*="from-ai-start"][class*="to-ai-end"],
+html.light .bg-brand-start,
+html.light .bg-ai-start,
+html.light .bg-success,
+html.light .bg-error {
+    color: #ffffff;
 }
 
 html.light .bg-gradient-to-br.from-dark-card.to-dark-main,

@@ -16,6 +16,10 @@ class Room extends Model
         'status',
     ];
 
+    protected $casts = [
+        'total_seats' => 'integer',
+    ];
+
     public function cinema(): BelongsTo
     {
         return $this->belongsTo(Cinema::class);

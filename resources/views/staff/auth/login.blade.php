@@ -40,8 +40,8 @@
         </div>
 
         <div class="bg-dark-card border border-dark-border rounded-3xl p-8 shadow-2xl">
-            <form action="{{ route('staff.dashboard') }}" method="GET" class="space-y-6">
-                <!-- Using GET and routing to dashboard for static demo purposes -->
+            <form action="{{ route('login.post') }}" method="POST" class="space-y-6">
+                @csrf
                 
                 <div>
                     <label for="email" class="block text-sm font-medium text-text-sub mb-2">Email nội bộ</label>
@@ -49,7 +49,7 @@
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <i class="ph ph-envelope-simple text-text-sub text-lg"></i>
                         </div>
-                        <input type="email" id="email" name="email" class="w-full pl-11 pr-4 py-3.5 bg-dark-main border border-dark-border rounded-xl text-white focus:outline-none focus:border-ai-start focus:ring-1 focus:ring-ai-start transition-colors placeholder-text-sub/50" placeholder="staff@moviemate.vn" required>
+                        <input type="email" id="email" name="email" value="{{ old('email', 'staff@example.com') }}" class="w-full pl-11 pr-4 py-3.5 bg-dark-main border border-dark-border rounded-xl text-white focus:outline-none focus:border-ai-start focus:ring-1 focus:ring-ai-start transition-colors placeholder-text-sub/50" placeholder="staff@example.com" required>
                     </div>
                 </div>
 

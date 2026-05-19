@@ -1,1 +1,71 @@
-\n@extends('layouts.admin')\n\n@section('title', 'Qu\u1ea3n l\u00fd R\u1ea1p')\n\n@section('content')\n<div class=\"container mx-auto py-6\">\n    <h1 class=\"text-2xl font-bold mb-4\">Qu\u1ea3n l\u00fd R\u1ea1p</h1>\n\n    @if(session('success'))\n        <div class=\"bg-green-100 text-green-800 p-3 rounded mb-4\">\n            {{ session('success') }}\n        </div>\n    @endif\n\n    <div class=\"flex justify-between mb-4\">\n        <form method=\"GET\" action=\"{{ route('admin.cinemas.index') }}\" class=\"flex space-x-2\">\n            <input type=\"text\" name=\"search\" value=\"{{ $search ?? '' }}\" placeholder=\"T\u00ecm t\u00ean r\u1ea1p...\"\n                   class=\"border rounded px-3 py-1\">\n            <button type=\"submit\" class=\"bg-blue-600 text-white px-3 py-1 rounded\">T\u00ecm</button>\n        </form>\n        <a href=\"{{ route('admin.cinemas.create') }}\" class=\"bg-green-600 text-white px-4 py-2 rounded\">\n            Th\u00eam m\u1edbi\n        </a>\n    </div>\n\n    <table class=\"w-full table-auto border-collapse\">\n        <thead class=\"bg-gray-200\">\n            <tr>\n                <th class=\"border px-4 py-2\">#</th>\n                <th class=\"border px-4 py-2\">T\u00ean</th>\n                <th class=\"border px-4 py-2\">\u0110\u1ecba ch\u1ec9</th>\n                <th class=\"border px-4 py-2\">Th\u00e0nh ph\u1ed1</th>\n                <th class=\"border px-4 py-2\">S\u1ed1 \u0111i\u1ec7n tho\u1ea1i</th>\n                <th class=\"border px-4 py-2\">Tr\u1ea1ng th\u00e1i</th>\n                <th class=\"border px-4 py-2\">H\u00e0nh \u0111\u1ed9ng</th>\n            </tr>\n        </thead>\n        <tbody>\n            @forelse($cinemas as $cinema)\n                <tr>\n                    <td class=\"border px-4 py-2\">{{ $cinema->id }}</td>\n                    <td class=\"border px-4 py-2\">{{ $cinema->name }}</td>\n                    <td class=\"border px-4 py-2\">{{ $cinema->address }}</td>\n                    <td class=\"border px-4 py-2\">{{ $cinema->city }}</td>\n                    <td class=\"border px-4 py-2\">{{ $cinema->phone ?? '-' }}</td>\n                    <td class=\"border px-4 py-2\">{{ $cinema->status }}</td>\n                    <td class=\"border px-4 py-2 space-x-2\">\n                        <a href=\"{{ route('admin.cinemas.edit', $cinema) }}\" class=\"text-yellow-600\">S\u1eeda</a>\n                        <form action=\"{{ route('admin.cinemas.destroy', $cinema) }}\" method=\"POST\" class=\"inline\"\n                              onsubmit=\"return confirm('B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n x\u00f3a r\u1ea1p n\u00e0y?');\">\n                            @csrf\n                            @method('DELETE')\n                            <button type=\"submit\" class=\"text-red-600\">X\u00f3a</button>\n                        </form>\n                    </td>\n                </tr>\n            @empty\n                <tr>\n                    <td colspan=\"7\" class=\"border px-4 py-2 text-center\">Kh\u00f4ng c\u00f3 r\u1ea1p n\u00e0o.</td>\n                </tr>\n            @endforelse\n        </tbody>\n    </table>\n\n    <div class=\"mt-4\">\n        {{ $cinemas->links() }}\n    </div>\n</div>\n@endsection\n
+@extends('layouts.admin')
+
+@section('title', 'Quản lý Rạp')
+
+@section('content')
+<div class="container mx-auto py-6">
+    <h1 class="text-2xl font-bold mb-4">Quản lý Rạp</h1>
+
+    @if(session('success'))
+        <div class="bg-green-100 text-green-800 p-3 rounded mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div class="flex justify-between mb-4">
+        <form method="GET" action="{{ route('admin.cinemas.index') }}" class="flex space-x-2">
+            <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Tìm tên rạp..."
+                   class="border rounded px-3 py-1">
+            <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded">Tìm</button>
+        </form>
+        <a href="{{ route('admin.cinemas.create') }}" class="bg-green-600 text-white px-4 py-2 rounded">
+            Thêm mới
+        </a>
+    </div>
+
+    <table class="w-full table-auto border-collapse">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="border px-4 py-2">#</th>
+                <th class="border px-4 py-2">Tên</th>
+                <th class="border px-4 py-2">Địa chỉ</th>
+                <th class="border px-4 py-2">Thành phố</th>
+                <th class="border px-4 py-2">Số điện thoại</th>
+                <th class="border px-4 py-2">Trạng thái</th>
+                <th class="border px-4 py-2">Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($cinemas as $cinema)
+                <tr>
+                    <td class="border px-4 py-2">{{ $cinema->id }}</td>
+                    <td class="border px-4 py-2">{{ $cinema->name }}</td>
+                    <td class="border px-4 py-2">{{ $cinema->address }}</td>
+                    <td class="border px-4 py-2">{{ $cinema->city }}</td>
+                    <td class="border px-4 py-2">{{ $cinema->phone ?? '-' }}</td>
+                    <td class="border px-4 py-2">{{ $cinema->status }}</td>
+                    <td class="border px-4 py-2 space-x-2">
+                        <a href="{{ route('admin.cinemas.edit', $cinema) }}" class="text-yellow-600">Sửa</a>
+                        <form action="{{ route('admin.cinemas.destroy', $cinema) }}" method="POST" class="inline"
+                              onsubmit="return confirm('Bạn có chắc muốn xóa rạp này?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="7" class="border px-4 py-2 text-center">Không có rạp nào.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        {{ $cinemas->links() }}
+    </div>
+</div>
+@endsection
+
+

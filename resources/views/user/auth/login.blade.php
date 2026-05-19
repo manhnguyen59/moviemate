@@ -55,7 +55,7 @@
 
                     <div class="flex items-center justify-between">
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input id="remember-me" name="remember" type="checkbox" class="h-4 w-4 rounded border-dark-border bg-dark-main text-brand-start focus:ring-brand-start">
+                            <input id="remember-me" name="remember" type="checkbox" value="1" class="h-4 w-4 rounded border-dark-border bg-dark-main text-brand-start focus:ring-brand-start">
                             <span class="text-sm app-muted">Ghi nhớ đăng nhập</span>
                         </label>
                         <a href="#" class="text-sm font-medium text-brand-start hover:text-brand-end">Quên mật khẩu?</a>

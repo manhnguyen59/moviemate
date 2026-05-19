@@ -87,7 +87,7 @@
 
         <div>
             <label class="block font-medium">Release Date</label>
-            <input type="date" name="release_date" value="{{ old('release_date', $movie->release_date ? $movie->release_date->format('Y-m-d') : '') }}"
+            <input type="date" name="release_date" value="{{ old('release_date', $movie->release_date ? \Carbon\Carbon::parse($movie->release_date)->format('Y-m-d') : '') }}"
                    class="w-full border rounded px-3 py-2">
         </div>
 

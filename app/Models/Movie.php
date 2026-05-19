@@ -22,6 +22,11 @@ class Movie extends Model
         'status',
     ];
 
+    protected $casts = [
+        'duration' => 'integer',
+        'release_date' => 'date',
+    ];
+
     public function genres(): BelongsToMany
     {
         return $this->belongsToMany(Genre::class, 'movie_genre');

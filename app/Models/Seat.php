@@ -17,6 +17,10 @@ class Seat extends Model
         'status',
     ];
 
+    protected $casts = [
+        'number' => 'integer',
+    ];
+
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);

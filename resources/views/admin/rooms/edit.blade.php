@@ -1,1 +1,65 @@
-\n@extends('layouts.admin')\n\n@section('title', 'S\u1eeda Ph\u00f2ng Chi\u1ebfu')\n\n@section('content')\n<div class=\"container mx-auto py-6\">\n    <h1 class=\"text-2xl font-bold mb-4\">S\u1eeda Ph\u00f2ng Chi\u1ebfu: {{ $room->name }}</h1>\n\n    @if ($errors->any())\n        <div class=\"bg-red-100 text-red-800 p-3 rounded mb-4\">\n            <ul class=\"list-disc list-inside\">\n                @foreach ($errors->all() as $error)\n                    <li>{{ $error }}</li>\n                @endforeach\n            </ul>\n        </div>\n    @endif\n\n    <form action=\"{{ route('admin.rooms.update', $room) }}\" method=\"POST\" class=\"space-y-4\">\n        @csrf\n        @method('PUT')\n\n        <div>\n            <label class=\"block font-medium\">R\u1ea1p *</label>\n            <select name=\"cinema_id\" required class=\"w-full border rounded px-3 py-2\">\n                @foreach($cinemas as $cinema)\n                    <option value=\"{{ $cinema->id }}\" {{ old('cinema_id', $room->cinema_id) == $cinema->id ? 'selected' : '' }}>\n                        {{ $cinema->name }}\n                    </option>\n                @endforeach\n            </select>\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">T\u00ean ph\u00f2ng *</label>\n            <input type=\"text\" name=\"name\" value=\"{{ old('name', $room->name) }}\" required class=\"w-full border rounded px-3 py-2\">\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">Lo\u1ea1i ph\u00f2ng *</label>\n            <input type=\"text\" name=\"room_type\" value=\"{{ old('room_type', $room->room_type) }}\" required class=\"w-full border rounded px-3 py-2\">\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">S\u1ed1 gh\u1ebf *</label>\n            <input type=\"number\" name=\"total_seats\" value=\"{{ old('total_seats', $room->total_seats) }}\" required class=\"w-full border rounded px-3 py-2\">\n        </div>\n\n        <div>\n            <label class=\"block font-medium\">Tr\u1ea1ng th\u00e1i *</label>\n            <select name=\"status\" required class=\"w-full border rounded px-3 py-2\">\n                <option value=\"active\" {{ old('status', $room->status) == 'active' ? 'selected' : '' }}>Ho\u1ea1t \u0111\u1ed9ng</option>\n                <option value=\"inactive\" {{ old('status', $room->status) == 'inactive' ? 'selected' : '' }}>Kh\u00f4ng ho\u1ea1t \u0111\u1ed9ng</option>\n            </select>\n        </div>\n\n        <div class=\"flex space-x-4\">\n            <button type=\"submit\" class=\"bg-blue-600 text-white px-4 py-2 rounded\">C\u1eadp nh\u1eadt</button>\n            <a href=\"{{ route('admin.rooms.index') }}\" class=\"bg-gray-600 text-white px-4 py-2 rounded\">H\u1ee7y</a>\n        </div>\n    </form>\n</div>\n@endsection\n
+@extends('layouts.admin')
+
+@section('title', 'Sửa Phòng Chiếu')
+
+@section('content')
+<div class="container mx-auto py-6">
+    <h1 class="text-2xl font-bold mb-4">Sửa Phòng Chiếu: {{ $room->name }}</h1>
+
+    @if ($errors->any())
+        <div class="bg-red-100 text-red-800 p-3 rounded mb-4">
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('admin.rooms.update', $room) }}" method="POST" class="space-y-4">
+        @csrf
+        @method('PUT')
+
+        <div>
+            <label class="block font-medium">Rạp *</label>
+            <select name="cinema_id" required class="w-full border rounded px-3 py-2">
+                @foreach($cinemas as $cinema)
+                    <option value="{{ $cinema->id }}" {{ old('cinema_id', $room->cinema_id) == $cinema->id ? 'selected' : '' }}>
+                        {{ $cinema->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div>
+            <label class="block font-medium">Tên phòng *</label>
+            <input type="text" name="name" value="{{ old('name', $room->name) }}" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-medium">Loại phòng *</label>
+            <input type="text" name="room_type" value="{{ old('room_type', $room->room_type) }}" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-medium">Số ghế *</label>
+            <input type="number" name="total_seats" value="{{ old('total_seats', $room->total_seats) }}" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-medium">Trạng thái *</label>
+            <select name="status" required class="w-full border rounded px-3 py-2">
+                <option value="active" {{ old('status', $room->status) == 'active' ? 'selected' : '' }}>Hoạt động</option>
+                <option value="inactive" {{ old('status', $room->status) == 'inactive' ? 'selected' : '' }}>Không hoạt động</option>
+            </select>
+        </div>
+
+        <div class="flex space-x-4">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Cập nhật</button>
+            <a href="{{ route('admin.rooms.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded">Hủy</a>
+        </div>
+    </form>
+</div>
+@endsection
+
+

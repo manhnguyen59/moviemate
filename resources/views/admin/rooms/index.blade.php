@@ -1,1 +1,72 @@
-\n@extends('layouts.admin')\n\n@section('title', 'Qu\u1ea3n l\u00fd Ph\u00f2ng Chi\u1ebfu')\n\n@section('content')\n<div class=\"container mx-auto py-6\">\n    <h1 class=\"text-2xl font-bold mb-4\">Qu\u1ea3n l\u00fd Ph\u00f2ng Chi\u1ebfu</h1>\n\n    @if(session('success'))\n        <div class=\"bg-green-100 text-green-800 p-3 rounded mb-4\">\n            {{ session('success') }}\n        </div>\n    @endif\n\n    <div class=\"flex justify-between mb-4\">\n        <form method=\"GET\" action=\"{{ route('admin.rooms.index') }}\" class=\"flex space-x-2\">\n            <input type=\"text\" name=\"search\" value=\"{{ $search ?? '' }}\" placeholder=\"T\u00ecm t\u00ean ph\u00f2ng...\"\n                   class=\"border rounded px-3 py-1\">\n            <button type=\"submit\" class=\"bg-blue-600 text-white px-3 py-1 rounded\">T\u00ecm</button>\n        </form>\n        <a href=\"{{ route('admin.rooms.create') }}\" class=\"bg-green-600 text-white px-4 py-2 rounded\">\n            Th\u00eam m\u1edbi\n        </a>\n    </div>\n\n    <table class=\"w-full table-auto border-collapse\">\n        <thead class=\"bg-gray-200\">\n            <tr>\n                <th class=\"border px-4 py-2\">#</th>\n                <th class=\"border px-4 py-2\">R\u1ea1p</th>\n                <th class=\"border px-4 py-2\">T\u00ean ph\u00f2ng</th>\n                <th class=\"border px-4 py-2\">Lo\u1ea1i</th>\n                <th class=\"border px-4 py-2\">S\u1ed1 gh\u1ebf</th>\n                <th class=\"border px-4 py-2\">Tr\u1ea1ng th\u00e1i</th>\n                <th class=\"border px-4 py-2\">H\u00e0nh \u0111\u1ed9ng</th>\n            </tr>\n        </thead>\n        <tbody>\n            @forelse($rooms as $room)\n                <tr>\n                    <td class=\"border px-4 py-2\">{{ $room->id }}</td>\n                    <td class=\"border px-4 py-2\">{{ $room->cinema->name ?? '-' }}</td>\n                    <td class=\"border px-4 py-2\">{{ $room->name }}</td>\n                    <td class=\"border px-4 py-2\">{{ $room->room_type }}</td>\n                    <td class=\"border px-4 py-2\">{{ $room->total_seats }}</td>\n                    <td class=\"border px-4 py-2\">{{ $room->status }}</td>\n                    <td class=\"border px-4 py-2 space-x-2\">\n                        <a href=\"{{ route('admin.rooms.edit', $room) }}\" class=\"text-yellow-600\">S\u1eeda</a>\n                        <form action=\"{{ route('admin.rooms.destroy', $room) }}\" method=\"POST\" class=\"inline\"\n                              onsubmit=\"return confirm('B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n x\u00f3a ph\u00f2ng n\u00e0y?');\">\n                            @csrf\n                            @method('DELETE')\n                            <button type=\"submit\" class=\"text-red-600\">X\u00f3a</button>\n                        </form>\n                        <a href=\"{{ route('admin.seats.manage', $room) }}\" class=\"text-green-600\">Qu\u1ea3n l\u00fd gh\u1ebf</a>\n                    </td>\n                </tr>\n            @empty\n                <tr>\n                    <td colspan=\"7\" class=\"border px-4 py-2 text-center\">Kh\u00f4ng c\u00f3 ph\u00f2ng n\u00e0o.</td>\n                </tr>\n            @endforelse\n        </tbody>\n    </table>\n\n    <div class=\"mt-4\">\n        {{ $rooms->links() }}\n    </div>\n</div>\n@endsection\n
+@extends('layouts.admin')
+
+@section('title', 'Quản lý Phòng Chiếu')
+
+@section('content')
+<div class="container mx-auto py-6">
+    <h1 class="text-2xl font-bold mb-4">Quản lý Phòng Chiếu</h1>
+
+    @if(session('success'))
+        <div class="bg-green-100 text-green-800 p-3 rounded mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div class="flex justify-between mb-4">
+        <form method="GET" action="{{ route('admin.rooms.index') }}" class="flex space-x-2">
+            <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Tìm tên phòng..."
+                   class="border rounded px-3 py-1">
+            <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded">Tìm</button>
+        </form>
+        <a href="{{ route('admin.rooms.create') }}" class="bg-green-600 text-white px-4 py-2 rounded">
+            Thêm mới
+        </a>
+    </div>
+
+    <table class="w-full table-auto border-collapse">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="border px-4 py-2">#</th>
+                <th class="border px-4 py-2">Rạp</th>
+                <th class="border px-4 py-2">Tên phòng</th>
+                <th class="border px-4 py-2">Loại</th>
+                <th class="border px-4 py-2">Số ghế</th>
+                <th class="border px-4 py-2">Trạng thái</th>
+                <th class="border px-4 py-2">Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($rooms as $room)
+                <tr>
+                    <td class="border px-4 py-2">{{ $room->id }}</td>
+                    <td class="border px-4 py-2">{{ $room->cinema->name ?? '-' }}</td>
+                    <td class="border px-4 py-2">{{ $room->name }}</td>
+                    <td class="border px-4 py-2">{{ $room->room_type }}</td>
+                    <td class="border px-4 py-2">{{ $room->total_seats }}</td>
+                    <td class="border px-4 py-2">{{ $room->status }}</td>
+                    <td class="border px-4 py-2 space-x-2">
+                        <a href="{{ route('admin.rooms.edit', $room) }}" class="text-yellow-600">Sửa</a>
+                        <form action="{{ route('admin.rooms.destroy', $room) }}" method="POST" class="inline"
+                              onsubmit="return confirm('Bạn có chắc muốn xóa phòng này?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600">Xóa</button>
+                        </form>
+                        <a href="{{ route('admin.seats.manage', $room) }}" class="text-green-600">Quản lý ghế</a>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="7" class="border px-4 py-2 text-center">Không có phòng nào.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        {{ $rooms->links() }}
+    </div>
+</div>
+@endsection
+
+

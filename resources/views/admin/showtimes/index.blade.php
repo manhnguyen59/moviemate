@@ -72,8 +72,8 @@
                     @forelse($showtimes as $showtime)
                         <tr class="hover:bg-brand-start/3 transition-colors">
                             <td class="px-5 py-3.5">
-                                <span class="font-bold app-text text-base block">{{ \Carbon\Carbon::parse($showtime->show_time)->format('H:i') }}</span>
-                                <span class="text-xs app-muted">{{ $showtime->show_date->format('d/m/Y') }}</span>
+                                <span class="font-bold app-text text-base block">{{ $showtime->show_time ? \Carbon\Carbon::parse($showtime->show_time)->format('H:i') : '--:--' }}</span>
+                                <span class="text-xs app-muted">{{ $showtime->show_date ? \Carbon\Carbon::parse($showtime->show_date)->format('d/m/Y') : 'Đang cập nhật' }}</span>
                             </td>
                             <td class="px-5 py-3.5">
                                 <span class="font-bold app-text text-sm block truncate max-w-[180px] hover:text-brand-start cursor-pointer">
@@ -128,3 +128,4 @@
         </div>
     </div>
 @endsection
+

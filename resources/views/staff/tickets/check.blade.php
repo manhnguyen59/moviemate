@@ -39,9 +39,10 @@
                     <div class="h-px bg-dark-border flex-grow"></div>
                 </div>
 
-                <form action="#" class="flex gap-2">
-                    <input type="text" class="flex-grow px-4 py-3 bg-dark-main border border-dark-border rounded-xl text-white font-mono text-center focus:outline-none focus:border-ai-start uppercase tracking-widest placeholder-text-sub/30" placeholder="MMT-XXXX-XXXX">
-                    <button type="button" class="px-6 py-3 bg-ai-start text-white font-bold rounded-xl hover:bg-ai-end transition-colors whitespace-nowrap">
+                <form action="{{ route('staff.tickets.check.submit') }}" method="POST" class="flex gap-2">
+                    @csrf
+                    <input type="text" name="booking_code" value="{{ old('booking_code') }}" class="flex-grow px-4 py-3 bg-dark-main border border-dark-border rounded-xl text-white font-mono text-center focus:outline-none focus:border-ai-start uppercase tracking-widest placeholder-text-sub/30" placeholder="MMT-YYYY-XXXX">
+                    <button type="submit" class="px-6 py-3 bg-ai-start text-white font-bold rounded-xl hover:bg-ai-end transition-colors whitespace-nowrap">
                         Kiểm tra
                     </button>
                 </form>

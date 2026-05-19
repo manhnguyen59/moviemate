@@ -19,6 +19,10 @@ class ShowtimeSeeder extends Seeder
         foreach ($movies as $movie) {
             // Use first cinema and its first room for simplicity
             $cinema = $cinemas->first();
+            if (! $cinema) {
+                continue;
+            }
+
             $room = $cinema->rooms()->first();
 
             if (!$room) {

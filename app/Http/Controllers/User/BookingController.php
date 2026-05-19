@@ -23,8 +23,9 @@ class BookingController extends Controller
         $showtime->load(['movie', 'cinema', 'room']);
 
         if (! $this->isShowtimeAvailable($showtime)) {
-            return redirect()
-                ->route('user.movies.show', $showtime->movie->slug)
+            return ($showtime->movie?->slug
+                ? redirect()->route('user.movies.show', $showtime->movie->slug)
+                : redirect()->route('user.movies.index'))
                 ->with('error', 'Suất chiếu này đã qua giờ hoặc không còn khả dụng.');
         }
 
@@ -56,8 +57,9 @@ class BookingController extends Controller
         $showtime->load(['movie', 'cinema', 'room']);
 
         if (! $this->isShowtimeAvailable($showtime)) {
-            return redirect()
-                ->route('user.movies.show', $showtime->movie->slug)
+            return ($showtime->movie?->slug
+                ? redirect()->route('user.movies.show', $showtime->movie->slug)
+                : redirect()->route('user.movies.index'))
                 ->with('error', 'Suất chiếu này đã qua giờ hoặc không còn khả dụng.');
         }
 
@@ -257,6 +259,70 @@ class BookingController extends Controller
     /**
      * Parse seat ids from comma-separated query string.
      */
+    /**
+     * Show ticket (QR) for a booking owned by the user.
+     */
+    public function ticket(Booking $booking)
+    {
+        abort_unless($booking->user_id === Auth::id(), 403);
+
+        $booking->load([
+            'user',
+            'payment',
+            'showtime.movie',
+            'showtime.cinema',
+            'showtime.room',
+            'bookingSeats.seat',
+        ]);
+
+        return view('user.bookings.ticket', compact('booking'));
+    }
+
+    /**
+     * Show booking history for the authenticated user with optional status filter.
+     */
+    public function history(Request $request)
+    {
+        $query = Booking::where('user_id', Auth::id());
+
+        if ($request->filled('status')) {
+            $query->where('booking_status', $request->status);
+        }
+
+        $bookings = $query->with([
+            'showtime.movie',
+            'showtime.cinema',
+            'showtime.room',
+            'bookingSeats.seat',
+            'payment',
+        ])->orderBy('created_at', 'desc')->paginate(10);
+
+        return view('user.bookings.history', compact('bookings', 'request'));
+    }
+
+    /**
+     * Cancel a booking owned by the authenticated user.
+     */
+    public function cancel(Booking $booking)
+    {
+        abort_unless($booking->user_id === Auth::id(), 403);
+
+        if ($booking->booking_status === 'used') {
+            return back()->with('error', 'Ve da su dung nen khong the huy.');
+        }
+
+        if (! in_array($booking->booking_status, ['pending', 'paid'], true)) {
+            return back()->with('error', 'Ve nay khong the huy.');
+        }
+
+        $booking->update([
+            'booking_status' => 'cancelled',
+            'payment_status' => $booking->payment_status === 'paid' ? 'refunded' : $booking->payment_status,
+        ]);
+
+        return back()->with('success', 'Da huy ve thanh cong.');
+    }
+
     protected function parseSeatIds(string $selectedSeats): array
     {
         return collect(explode(',', $selectedSeats))
@@ -277,8 +343,13 @@ class BookingController extends Controller
             return false;
         }
 
+        if (! $showtime->show_date || ! $showtime->show_time) {
+            return false;
+        }
+
         $showDateTime = Carbon::parse(
-            $showtime->show_date->format('Y-m-d') . ' ' . $showtime->show_time
+            Carbon::parse($showtime->show_date)->format('Y-m-d') . ' ' . $showtime->show_time,
+            'Asia/Ho_Chi_Minh'
         );
 
         return $showDateTime->isFuture();
