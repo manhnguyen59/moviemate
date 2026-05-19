@@ -21,6 +21,16 @@ class MovieController extends Controller
             $query->where('title', 'like', "%{$search}%");
         }
 
+        if ($status = $request->query('status')) {
+            if (in_array($status, ['now_showing', 'coming_soon'], true)) {
+                $query->where('status', $status);
+            }
+        }
+
+        if ($country = $request->query('country')) {
+            $query->where('country', $country);
+        }
+
         if ($genreId = $request->query('genre_id')) {
             $query->whereHas('genres', function ($q) use ($genreId) {
                 $q->where('genres.id', $genreId);
@@ -31,7 +41,13 @@ class MovieController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        return view('user.movies.index', compact('movies'));
+        $countries = Movie::whereNotNull('country')
+            ->where('country', '!=', '')
+            ->distinct()
+            ->orderBy('country')
+            ->pluck('country');
+
+        return view('user.movies.index', compact('movies', 'countries'));
     }
 
     /**

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Support\Facades\Route;
 
@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | MovieMate UI Demo Routes
 |--------------------------------------------------------------------------
-| ÄÃ¢y lÃ  route test giao diá»‡n tÄ©nh.
-| Sau nÃ y khi lÃ m Controller tháº­t, báº¡n cÃ³ thá»ƒ thay cÃ¡c route nÃ y.
+| Đây là route test giao diện tĩnh.
+| Sau này khi làm Controller thật, bạn có thể thay các route này.
 */
 
 Route::get('/', function () {

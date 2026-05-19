@@ -75,7 +75,7 @@ const posterFallbackSvg = encodeURIComponent(`
   <circle cx="250" cy="300" r="78" fill="#FF3D57" opacity="0.18"/>
   <path d="M206 260h88a18 18 0 0 1 18 18v78a18 18 0 0 1-18 18h-88a18 18 0 0 1-18-18v-78a18 18 0 0 1 18-18zm16 30v54l54-27-54-27z" fill="#ffffff" opacity="0.82"/>
   <text x="250" y="455" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="34" font-weight="700">MovieMate</text>
-  <text x="250" y="496" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="22">Poster unavailable</text>
+  <text x="250" y="496" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="22">Poster MovieMate</text>
 </svg>`);
 
 const posterFallbackSrc = `data:image/svg+xml;charset=UTF-8,${posterFallbackSvg}`;

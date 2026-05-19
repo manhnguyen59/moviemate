@@ -1,64 +1,64 @@
 @extends('layouts.admin')
 
-@section('title', 'Thêm Phòng Chiếu')
+@section('title', 'Thêm phòng chiếu - MovieMate Admin')
+@section('page-title', 'Thêm phòng chiếu')
 
 @section('content')
-<div class="container mx-auto py-6">
-    <h1 class="text-2xl font-bold mb-4">Thêm Phòng Chiếu</h1>
+<div class="max-w-3xl">
+    <div class="cinema-card p-6 sm:p-8">
+        <h1 class="text-2xl font-extrabold app-text mb-2">Thông tin phòng chiếu</h1>
+        <p class="app-muted mb-6">Tạo phòng mới và sau đó cấu hình sơ đồ ghế trong màn quản lý ghế.</p>
 
-    @if ($errors->any())
-        <div class="bg-red-100 text-red-800 p-3 rounded mb-4">
-            <ul class="list-disc list-inside">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+        @if ($errors->any())
+            <div class="mb-6 rounded-2xl border border-error/30 bg-error/10 text-error px-4 py-3 text-sm font-bold">
+                {{ $errors->first() }}
+            </div>
+        @endif
 
-    <form action="{{ route('admin.rooms.store') }}" method="POST" class="space-y-4">
-        @csrf
+        <form action="{{ route('admin.rooms.store') }}" method="POST" class="space-y-5">
+            @csrf
 
-        <div>
-            <label class="block font-medium">Rạp *</label>
-            <select name="cinema_id" required class="w-full border rounded px-3 py-2">
-                @foreach($cinemas as $cinema)
-                    <option value="{{ $cinema->id }}" {{ old('cinema_id') == $cinema->id ? 'selected' : '' }}>
-                        {{ $cinema->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+            <div>
+                <label class="cinema-label">Rạp *</label>
+                <select name="cinema_id" required class="cinema-input">
+                    @foreach($cinemas as $cinema)
+                        <option value="{{ $cinema->id }}" {{ old('cinema_id') == $cinema->id ? 'selected' : '' }}>
+                            {{ $cinema->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
-        <div>
-            <label class="block font-medium">Tên phòng *</label>
-            <input type="text" name="name" value="{{ old('name') }}" required class="w-full border rounded px-3 py-2">
-        </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label class="cinema-label">Tên phòng *</label>
+                    <input type="text" name="name" value="{{ old('name') }}" required class="cinema-input" placeholder="Ví dụ: Phòng 1">
+                </div>
+                <div>
+                    <label class="cinema-label">Loại phòng *</label>
+                    <input type="text" name="room_type" value="{{ old('room_type', '2D') }}" required class="cinema-input" placeholder="2D, 3D, IMAX">
+                </div>
+            </div>
 
-        <div>
-            <label class="block font-medium">Loại phòng *</label>
-            <input type="text" name="room_type" value="{{ old('room_type') }}" required class="w-full border rounded px-3 py-2">
-        </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label class="cinema-label">Số ghế *</label>
+                    <input type="number" name="total_seats" value="{{ old('total_seats', 0) }}" required class="cinema-input" min="0">
+                </div>
+                <div>
+                    <label class="cinema-label">Trạng thái *</label>
+                    <select name="status" required class="cinema-input">
+                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Hoạt động</option>
+                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Không hoạt động</option>
+                    </select>
+                </div>
+            </div>
 
-        <div>
-            <label class="block font-medium">Số ghế *</label>
-            <input type="number" name="total_seats" value="{{ old('total_seats') }}" required class="w-full border rounded px-3 py-2">
-        </div>
-
-        <div>
-            <label class="block font-medium">Trạng thái *</label>
-            <select name="status" required class="w-full border rounded px-3 py-2">
-                <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Hoạt động</option>
-                <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Không hoạt động</option>
-            </select>
-        </div>
-
-        <div class="flex space-x-4">
-            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Lưu</button>
-            <a href="{{ route('admin.rooms.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded">Hủy</a>
-        </div>
-    </form>
+            <div class="flex flex-col sm:flex-row gap-3 pt-3">
+                <button type="submit" class="btn-primary">Lưu phòng</button>
+                <a href="{{ route('admin.rooms.index') }}" class="btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection
-
-

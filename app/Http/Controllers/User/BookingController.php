@@ -8,6 +8,7 @@ use App\Models\BookingSeat;
 use App\Models\Seat;
 use App\Models\Showtime;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -34,10 +35,7 @@ class BookingController extends Controller
             ->orderBy('number')
             ->get();
 
-        $bookedSeatIds = BookingSeat::whereHas('booking', function ($query) use ($showtime) {
-            $query->where('showtime_id', $showtime->id)
-                ->whereNotIn('booking_status', ['cancelled', 'expired']);
-        })->pluck('seat_id')->toArray();
+        $bookedSeatIds = $this->bookedSeatQuery($showtime)->pluck('seat_id')->toArray();
 
         $seatsByRow = $seats->groupBy('row');
 
@@ -89,10 +87,10 @@ class BookingController extends Controller
                 ->with('error', 'Có ghế đang bảo trì hoặc không khả dụng.');
         }
 
-        $bookedSeatIds = BookingSeat::whereHas('booking', function ($query) use ($showtime) {
-            $query->where('showtime_id', $showtime->id)
-                ->whereNotIn('booking_status', ['cancelled', 'expired']);
-        })->whereIn('seat_id', $seatIds)->pluck('seat_id')->toArray();
+        $bookedSeatIds = $this->bookedSeatQuery($showtime)
+            ->whereIn('seat_id', $seatIds)
+            ->pluck('seat_id')
+            ->toArray();
 
         if (! empty($bookedSeatIds)) {
             return redirect()
@@ -142,97 +140,105 @@ class BookingController extends Controller
             'seat_ids.*.distinct' => 'Danh sách ghế bị trùng.',
         ]);
 
-        $booking = DB::transaction(function () use ($validated) {
-            $showtime = Showtime::with(['movie', 'cinema', 'room'])
-                ->lockForUpdate()
-                ->findOrFail($validated['showtime_id']);
+        try {
+            $booking = DB::transaction(function () use ($validated) {
+                $showtime = Showtime::with(['movie', 'cinema', 'room'])
+                    ->lockForUpdate()
+                    ->findOrFail($validated['showtime_id']);
 
-            if (! $this->isShowtimeAvailable($showtime)) {
-                throw ValidationException::withMessages([
-                    'showtime' => 'Suất chiếu này đã qua giờ hoặc không còn khả dụng.',
+                if (! $this->isShowtimeAvailable($showtime)) {
+                    throw ValidationException::withMessages([
+                        'showtime' => 'Suất chiếu này đã qua giờ hoặc không còn khả dụng.',
+                    ]);
+                }
+
+                $seatIds = collect($validated['seat_ids'])
+                    ->map(fn ($id) => (int) $id)
+                    ->unique()
+                    ->values()
+                    ->all();
+
+                $seats = Seat::where('room_id', $showtime->room_id)
+                    ->whereIn('id', $seatIds)
+                    ->lockForUpdate()
+                    ->orderBy('row')
+                    ->orderBy('number')
+                    ->get();
+
+                if ($seats->count() !== count($seatIds)) {
+                    throw ValidationException::withMessages([
+                        'seat_ids' => 'Ghế đã chọn không hợp lệ hoặc không thuộc phòng chiếu này.',
+                    ]);
+                }
+
+                $maintenanceSeat = $seats->first(fn ($seat) => $seat->status !== 'active');
+                if ($maintenanceSeat) {
+                    throw ValidationException::withMessages([
+                        'seat_ids' => 'Có ghế đang bảo trì, vui lòng chọn ghế khác.',
+                    ]);
+                }
+
+                $alreadyBookedSeatIds = $this->bookedSeatQuery($showtime)
+                    ->whereIn('seat_id', $seatIds)
+                    ->lockForUpdate()
+                    ->pluck('seat_id')
+                    ->all();
+
+                if (! empty($alreadyBookedSeatIds)) {
+                    throw ValidationException::withMessages([
+                        'seat_ids' => 'Một hoặc nhiều ghế đã bị người khác đặt trước. Vui lòng chọn lại.',
+                    ]);
+                }
+
+                $seatPrices = [];
+                $totalAmount = 0;
+
+                foreach ($seats as $seat) {
+                    $price = $seat->type === 'vip'
+                        ? (float) ($showtime->vip_price ?? $showtime->price)
+                        : (float) $showtime->price;
+
+                    $seatPrices[$seat->id] = $price;
+                    $totalAmount += $price;
+                }
+
+                $booking = Booking::create([
+                    'user_id' => Auth::id(),
+                    'showtime_id' => $showtime->id,
+                    'booking_code' => $this->generateBookingCode(),
+                    'total_amount' => $totalAmount,
+                    'payment_status' => 'paid',
+                    'booking_status' => 'paid',
                 ]);
-            }
 
-            $seatIds = collect($validated['seat_ids'])
-                ->map(fn ($id) => (int) $id)
-                ->unique()
-                ->values()
-                ->all();
+                foreach ($seats as $seat) {
+                    BookingSeat::create([
+                        'booking_id' => $booking->id,
+                        'showtime_id' => $showtime->id,
+                        'seat_id' => $seat->id,
+                        'price' => $seatPrices[$seat->id],
+                    ]);
+                }
 
-            $seats = Seat::where('room_id', $showtime->room_id)
-                ->whereIn('id', $seatIds)
-                ->lockForUpdate()
-                ->orderBy('row')
-                ->orderBy('number')
-                ->get();
-
-            if ($seats->count() !== count($seatIds)) {
-                throw ValidationException::withMessages([
-                    'seat_ids' => 'Ghế đã chọn không hợp lệ hoặc không thuộc phòng chiếu này.',
+                $booking->payment()->create([
+                    'payment_method' => $validated['payment_method'],
+                    'amount' => $totalAmount,
+                    'status' => 'success',
+                    'transaction_code' => 'FAKE-'.now()->format('YmdHis').'-'.$booking->id,
+                    'paid_at' => now(),
                 ]);
+
+                return $booking;
+            });
+        } catch (QueryException $exception) {
+            if ($this->isDuplicateSeatConstraint($exception)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Một hoặc nhiều ghế đã bị người khác đặt trước. Vui lòng chọn lại ghế.');
             }
 
-            $maintenanceSeat = $seats->first(fn ($seat) => $seat->status !== 'active');
-            if ($maintenanceSeat) {
-                throw ValidationException::withMessages([
-                    'seat_ids' => 'Có ghế đang bảo trì, vui lòng chọn ghế khác.',
-                ]);
-            }
-
-            $alreadyBookedSeatIds = BookingSeat::whereHas('booking', function ($query) use ($showtime) {
-                $query->where('showtime_id', $showtime->id)
-                    ->whereNotIn('booking_status', ['cancelled', 'expired']);
-            })
-                ->whereIn('seat_id', $seatIds)
-                ->lockForUpdate()
-                ->pluck('seat_id')
-                ->all();
-
-            if (! empty($alreadyBookedSeatIds)) {
-                throw ValidationException::withMessages([
-                    'seat_ids' => 'Một hoặc nhiều ghế đã bị người khác đặt trước. Vui lòng chọn lại.',
-                ]);
-            }
-
-            $seatPrices = [];
-            $totalAmount = 0;
-
-            foreach ($seats as $seat) {
-                $price = $seat->type === 'vip'
-                    ? (float) ($showtime->vip_price ?? $showtime->price)
-                    : (float) $showtime->price;
-
-                $seatPrices[$seat->id] = $price;
-                $totalAmount += $price;
-            }
-
-            $booking = Booking::create([
-                'user_id' => Auth::id(),
-                'showtime_id' => $showtime->id,
-                'booking_code' => $this->generateBookingCode(),
-                'total_amount' => $totalAmount,
-                'payment_status' => 'paid',
-                'booking_status' => 'paid',
-            ]);
-
-            foreach ($seats as $seat) {
-                BookingSeat::create([
-                    'booking_id' => $booking->id,
-                    'seat_id' => $seat->id,
-                    'price' => $seatPrices[$seat->id],
-                ]);
-            }
-
-            $booking->payment()->create([
-                'payment_method' => $validated['payment_method'],
-                'amount' => $totalAmount,
-                'status' => 'success',
-                'transaction_code' => 'FAKE-' . now()->format('YmdHis') . '-' . $booking->id,
-                'paid_at' => now(),
-            ]);
-
-            return $booking;
-        });
+            throw $exception;
+        }
 
         return redirect()->route('user.bookings.success', $booking);
     }
@@ -320,6 +326,8 @@ class BookingController extends Controller
             'payment_status' => $booking->payment_status === 'paid' ? 'refunded' : $booking->payment_status,
         ]);
 
+        $booking->bookingSeats()->delete();
+
         return back()->with('success', 'Da huy ve thanh cong.');
     }
 
@@ -332,6 +340,24 @@ class BookingController extends Controller
             ->unique()
             ->values()
             ->all();
+    }
+
+    protected function bookedSeatQuery(Showtime $showtime)
+    {
+        return BookingSeat::whereHas('booking', function ($query) {
+            $query->whereNotIn('booking_status', ['cancelled', 'expired']);
+        })->where(function ($query) use ($showtime) {
+            $query->where('showtime_id', $showtime->id)
+                ->orWhereHas('booking', function ($bookingQuery) use ($showtime) {
+                    $bookingQuery->where('showtime_id', $showtime->id);
+                });
+        });
+    }
+
+    protected function isDuplicateSeatConstraint(QueryException $exception): bool
+    {
+        return str_contains($exception->getMessage(), 'booking_seats_showtime_id_seat_id_unique')
+            || str_contains($exception->getMessage(), 'booking_seats.showtime_id, booking_seats.seat_id');
     }
 
     /**
@@ -348,7 +374,7 @@ class BookingController extends Controller
         }
 
         $showDateTime = Carbon::parse(
-            Carbon::parse($showtime->show_date)->format('Y-m-d') . ' ' . $showtime->show_time,
+            Carbon::parse($showtime->show_date)->format('Y-m-d').' '.$showtime->show_time,
             'Asia/Ho_Chi_Minh'
         );
 
@@ -372,7 +398,7 @@ class BookingController extends Controller
                 ? ((int) substr($latestBooking->booking_code, -4)) + 1
                 : 1;
 
-            $bookingCode = 'MMT-' . $year . '-' . str_pad((string) $nextNumber, 4, '0', STR_PAD_LEFT);
+            $bookingCode = 'MMT-'.$year.'-'.str_pad((string) $nextNumber, 4, '0', STR_PAD_LEFT);
         } while (Booking::where('booking_code', $bookingCode)->exists());
 
         return $bookingCode;

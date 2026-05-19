@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Movie;
+use App\Models\Showtime;
 
 class HomeController extends Controller
 {
@@ -20,6 +21,14 @@ class HomeController extends Controller
             ->orderBy('release_date')
             ->get();
 
-        return view('user.home', compact('nowShowing', 'comingSoon'));
+        $quickShowtimes = Showtime::with(['movie.genres', 'cinema', 'room'])
+            ->where('status', 'active')
+            ->whereDate('show_date', '>=', now('Asia/Ho_Chi_Minh')->toDateString())
+            ->orderBy('show_date')
+            ->orderBy('show_time')
+            ->limit(10)
+            ->get();
+
+        return view('user.home', compact('nowShowing', 'comingSoon', 'quickShowtimes'));
     }
 }
