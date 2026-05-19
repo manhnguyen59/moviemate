@@ -43,7 +43,7 @@
             </div>
 
             <!-- Seats -->
-            <form id="seatForm" action="{{ route('user.bookings.checkout') }}" method="GET">
+                <form id="seatForm" action="{{ route('user.bookings.checkout', $showtime) }}" method="GET">
                 @csrf
                 <input type="hidden" name="showtime_id" value="{{ $showtime->id }}">
                 <input type="hidden" name="selected_seats" id="selectedSeatsInput" value="">
