@@ -4,9 +4,10 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('user.home');
-})->name('home');
+use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\MovieController;
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
@@ -16,13 +17,9 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('/movies', function () {
-    return view('user.movies.index');
-})->name('user.movies.index');
+Route::get('/movies', [MovieController::class, 'index'])->name('user.movies.index');
 
-Route::get('/movies/{id}', function ($id) {
-    return view('user.movies.show');
-})->name('user.movies.show');
+Route::get('/movies/{slug}', [MovieController::class, 'show'])->name('user.movies.show');
 
 Route::middleware('user')->group(function () {
     Route::get('/booking/select-seat', function () {
