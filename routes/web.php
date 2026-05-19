@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CinemaController as AdminCinemaController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\GenreController as AdminGenreController;
 use App\Http\Controllers\Admin\AnalyticsController as AdminAnalyticsController;
+use App\Http\Controllers\Admin\AiContentController as AdminAiContentController;
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
 use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\SeatController as AdminSeatController;
@@ -59,9 +60,8 @@ Route::middleware('user')->group(function () {
 Route::get('/ai/recommend', [AiController::class, 'recommend'])->name('user.ai.recommend');
 Route::post('/ai/recommend', [AiController::class, 'recommendStore'])->name('user.ai.recommend.submit');
 
-Route::get('/ai/chatbot', function () {
-    return view('user.ai.chatbot');
-})->name('user.ai.chatbot');
+Route::get('/ai/chatbot', [AiController::class, 'chatbot'])->name('user.ai.chatbot');
+Route::post('/ai/chatbot', [AiController::class, 'chatbotStore'])->name('user.ai.chatbot.submit');
 
 Route::get('/profile', function () {
     return view('user.profile.index');
@@ -155,7 +155,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/analytics/top-movies', [AdminAnalyticsController::class, 'topMovies'])
         ->name('analytics.topMovies');
 
-    Route::get('/ai/movie-content', function () {
-        return view('admin.ai.movie-content');
-    })->name('ai.movieContent');
+    Route::get('/ai/movie-content', [AdminAiContentController::class, 'movieContent'])
+        ->name('ai.movieContent');
+    Route::post('/ai/movie-content', [AdminAiContentController::class, 'movieContentStore'])
+        ->name('ai.movieContent.store');
 });
