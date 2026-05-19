@@ -4,220 +4,123 @@
 @section('page-title', 'Báo cáo doanh thu')
 
 @section('content')
-    
-    <!-- Filters -->
-    <div class="bg-dark-card border border-dark-border rounded-2xl p-6 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center relative z-20">
-        <div class="flex gap-2 w-full md:w-auto">
-            <button class="px-4 py-2 bg-brand-start text-white text-sm font-medium rounded-lg">Tuần này</button>
-            <button class="px-4 py-2 bg-dark-main border border-dark-border text-text-sub hover:text-white transition-colors text-sm font-medium rounded-lg">Tháng này</button>
-            <button class="px-4 py-2 bg-dark-main border border-dark-border text-text-sub hover:text-white transition-colors text-sm font-medium rounded-lg">Năm nay</button>
-        </div>
-        <div class="flex gap-4 w-full md:w-auto">
-            <input type="date" value="2026-05-01" class="px-4 py-2 bg-dark-main border border-dark-border rounded-lg text-white text-sm focus:outline-none focus:border-brand-start [color-scheme:dark]">
-            <span class="text-text-sub self-center">-</span>
-            <input type="date" value="2026-05-19" class="px-4 py-2 bg-dark-main border border-dark-border rounded-lg text-white text-sm focus:outline-none focus:border-brand-start [color-scheme:dark]">
-            <button class="px-4 py-2 bg-dark-main border border-dark-border text-white text-sm font-medium rounded-lg hover:border-brand-start transition-colors flex items-center gap-2">
-                <i class="ph ph-export"></i> Xuất PDF
-            </button>
-        </div>
+<form method="GET" action="{{ route('admin.analytics.revenue') }}" class="app-card border app-border rounded-2xl p-6 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+    <div>
+        <h2 class="font-bold app-text text-lg">Khoảng thời gian</h2>
+        <p class="text-xs app-muted">Dữ liệu dựa trên bookings có payment_status paid.</p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+        <input type="date" name="start_date" value="{{ $startDate->format('Y-m-d') }}" class="px-4 py-2 app-input border app-border rounded-lg app-text text-sm focus:outline-none focus:border-brand-start">
+        <input type="date" name="end_date" value="{{ $endDate->format('Y-m-d') }}" class="px-4 py-2 app-input border app-border rounded-lg app-text text-sm focus:outline-none focus:border-brand-start">
+        <button class="px-5 py-2 bg-brand-start text-white text-sm font-bold rounded-lg hover:bg-brand-end transition-colors">
+            Lọc
+        </button>
+    </div>
+</form>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div class="app-card border app-border rounded-2xl p-6">
+        <p class="app-muted text-sm font-medium mb-1">Tổng doanh thu</p>
+        <h3 class="text-3xl font-bold app-text mb-2">{{ number_format($summary['totalRevenue'], 0, ',', '.') }}đ</h3>
     </div>
 
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        
-        <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
-            <p class="text-text-sub text-sm font-medium mb-1">Tổng doanh thu</p>
-            <h3 class="text-3xl font-bold text-white mb-2">450.5M</h3>
-            <div class="flex items-center text-xs font-bold text-success">
-                <i class="ph-bold ph-trend-up mr-1"></i> +15.3% so với kỳ trước
-            </div>
-        </div>
-
-        <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
-            <p class="text-text-sub text-sm font-medium mb-1">Tổng vé bán ra</p>
-            <h3 class="text-3xl font-bold text-white mb-2">4,250</h3>
-            <div class="flex items-center text-xs font-bold text-success">
-                <i class="ph-bold ph-trend-up mr-1"></i> +8.2% so với kỳ trước
-            </div>
-        </div>
-
-        <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
-            <p class="text-text-sub text-sm font-medium mb-1">Giá vé trung bình</p>
-            <h3 class="text-3xl font-bold text-white mb-2">106K</h3>
-            <div class="flex items-center text-xs font-bold text-error">
-                <i class="ph-bold ph-trend-down mr-1"></i> -2.1% so với kỳ trước
-            </div>
-        </div>
-
-        <div class="bg-dark-card border border-dark-border rounded-2xl p-6">
-            <p class="text-text-sub text-sm font-medium mb-1">Tỷ lệ hoàn hủy</p>
-            <h3 class="text-3xl font-bold text-white mb-2">1.2%</h3>
-            <div class="flex items-center text-xs font-medium text-text-sub">
-                Tương đương 51 vé
-            </div>
-        </div>
-
+    <div class="app-card border app-border rounded-2xl p-6">
+        <p class="app-muted text-sm font-medium mb-1">Tổng vé bán ra</p>
+        <h3 class="text-3xl font-bold app-text mb-2">{{ number_format($summary['ticketsSold']) }}</h3>
     </div>
 
-    <!-- Chart Area -->
-    <div class="bg-dark-card border border-dark-border rounded-2xl p-6 mb-6">
-        <h3 class="font-bold text-white text-lg mb-6">Biểu đồ doanh thu theo ngày</h3>
-        
-        <!-- CSS Line Chart Mock -->
-        <div class="h-80 w-full relative">
-            <!-- Grid lines -->
-            <div class="absolute inset-0 flex flex-col justify-between pointer-events-none z-0">
-                <div class="border-t border-dark-border/50 w-full h-0 flex items-center"><span class="absolute -left-12 text-[10px] text-text-sub w-10 text-right">100M</span></div>
-                <div class="border-t border-dark-border/50 w-full h-0 flex items-center"><span class="absolute -left-12 text-[10px] text-text-sub w-10 text-right">75M</span></div>
-                <div class="border-t border-dark-border/50 w-full h-0 flex items-center"><span class="absolute -left-12 text-[10px] text-text-sub w-10 text-right">50M</span></div>
-                <div class="border-t border-dark-border/50 w-full h-0 flex items-center"><span class="absolute -left-12 text-[10px] text-text-sub w-10 text-right">25M</span></div>
-                <div class="border-t border-dark-border/50 w-full h-0 flex items-center"><span class="absolute -left-12 text-[10px] text-text-sub w-10 text-right">0</span></div>
-            </div>
-
-            <!-- SVG Line -->
-            <svg class="absolute inset-0 w-full h-full z-10" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <defs>
-                    <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#FF3D57" stop-opacity="0.3"></stop>
-                        <stop offset="100%" stop-color="#FF3D57" stop-opacity="0"></stop>
-                    </linearGradient>
-                </defs>
-                <path d="M0,80 L10,60 L20,65 L30,45 L40,55 L50,30 L60,35 L70,20 L80,25 L90,10 L100,5 L100,100 L0,100 Z" fill="url(#gradient)"></path>
-                <polyline points="0,80 10,60 20,65 30,45 40,55 50,30 60,35 70,20 80,25 90,10 100,5" fill="none" stroke="#FF3D57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
-            </svg>
-
-            <!-- X-Axis Labels -->
-            <div class="absolute -bottom-6 left-0 right-0 flex justify-between text-[10px] text-text-sub">
-                <span>01/05</span>
-                <span>04/05</span>
-                <span>07/05</span>
-                <span>10/05</span>
-                <span>13/05</span>
-                <span>16/05</span>
-                <span>19/05</span>
-            </div>
-        </div>
+    <div class="app-card border app-border rounded-2xl p-6">
+        <p class="app-muted text-sm font-medium mb-1">Giá vé trung bình</p>
+        <h3 class="text-3xl font-bold app-text mb-2">{{ number_format($summary['averageTicketPrice'], 0, ',', '.') }}đ</h3>
     </div>
 
-    <!-- Tables -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <!-- Doanh thu theo rạp -->
-        <div class="bg-dark-card border border-dark-border rounded-2xl overflow-hidden">
-            <div class="p-6 border-b border-dark-border">
-                <h3 class="font-bold text-white">Doanh thu theo Cụm rạp</h3>
-            </div>
-            
-            <div class="p-6">
-                <div class="space-y-6">
-                    <div>
-                        <div class="flex justify-between text-sm mb-2">
-                            <span class="text-white font-bold">MovieMate Hà Nội</span>
-                            <span class="text-white font-bold">250.5M</span>
-                        </div>
-                        <div class="w-full h-2 bg-dark-main rounded-full overflow-hidden">
-                            <div class="h-full bg-brand-start rounded-full" style="width: 55%"></div>
-                        </div>
-                        <p class="text-[10px] text-text-sub mt-1 text-right">55% tổng doanh thu</p>
-                    </div>
+    <div class="app-card border app-border rounded-2xl p-6">
+        <p class="app-muted text-sm font-medium mb-1">Tỷ lệ hoàn hủy</p>
+        <h3 class="text-3xl font-bold app-text mb-2">{{ number_format($summary['cancelRate'], 1) }}%</h3>
+        <p class="text-xs app-muted">{{ number_format($summary['cancelledBookings']) }} đơn đã hủy</p>
+    </div>
+</div>
 
-                    <div>
-                        <div class="flex justify-between text-sm mb-2">
-                            <span class="text-white font-bold">MovieMate Hồ Chí Minh</span>
-                            <span class="text-white font-bold">120.2M</span>
-                        </div>
-                        <div class="w-full h-2 bg-dark-main rounded-full overflow-hidden">
-                            <div class="h-full bg-brand-start rounded-full" style="width: 27%"></div>
-                        </div>
-                        <p class="text-[10px] text-text-sub mt-1 text-right">27% tổng doanh thu</p>
-                    </div>
+<div class="app-card border app-border rounded-2xl p-6 mb-6">
+    <h3 class="font-bold app-text text-lg mb-6">Doanh thu theo ngày</h3>
 
-                    <div>
-                        <div class="flex justify-between text-sm mb-2">
-                            <span class="text-white font-bold">MovieMate Cầu Giấy</span>
-                            <span class="text-white font-bold">50.0M</span>
-                        </div>
-                        <div class="w-full h-2 bg-dark-main rounded-full overflow-hidden">
-                            <div class="h-full bg-brand-start rounded-full" style="width: 11%"></div>
-                        </div>
-                        <p class="text-[10px] text-text-sub mt-1 text-right">11% tổng doanh thu</p>
-                    </div>
+    <div class="h-80 flex items-end justify-between gap-2 sm:gap-3 relative">
+        <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+            <div class="border-t app-border w-full h-0 opacity-60"></div>
+            <div class="border-t app-border w-full h-0 opacity-60"></div>
+            <div class="border-t app-border w-full h-0 opacity-60"></div>
+            <div class="border-t app-border w-full h-0 opacity-60"></div>
+        </div>
 
-                    <div>
-                        <div class="flex justify-between text-sm mb-2">
-                            <span class="text-white font-bold">MovieMate Đà Nẵng</span>
-                            <span class="text-white font-bold">29.8M</span>
-                        </div>
-                        <div class="w-full h-2 bg-dark-main rounded-full overflow-hidden">
-                            <div class="h-full bg-brand-start rounded-full" style="width: 7%"></div>
-                        </div>
-                        <p class="text-[10px] text-text-sub mt-1 text-right">7% tổng doanh thu</p>
-                    </div>
+        @foreach($revenueByDay as $day)
+            <div class="w-full min-w-8 flex flex-col items-center gap-2 relative z-10 group h-full justify-end">
+                <div class="absolute -top-12 app-secondary border app-border app-text text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                    {{ number_format($day['revenue'], 0, ',', '.') }}đ · {{ $day['bookings_count'] }} đơn
                 </div>
+                <div class="w-full max-w-[36px] bg-gradient-to-t from-brand-start/30 to-brand-start rounded-t-md" style="height: {{ $day['height'] }}%"></div>
+                <span class="text-[10px] app-muted">{{ $day['label'] }}</span>
             </div>
+        @endforeach
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="app-card border app-border rounded-2xl overflow-hidden">
+        <div class="p-6 border-b app-border">
+            <h3 class="font-bold app-text">Doanh thu theo cụm rạp</h3>
         </div>
 
-        <!-- Phương thức thanh toán -->
-        <div class="bg-dark-card border border-dark-border rounded-2xl overflow-hidden">
-            <div class="p-6 border-b border-dark-border">
-                <h3 class="font-bold text-white">Theo Phương thức thanh toán</h3>
+        <div class="p-6">
+            <div class="space-y-6">
+                @forelse($revenueByCinema as $cinema)
+                    @php
+                        $percent = $summary['totalRevenue'] > 0 ? ($cinema->revenue / $summary['totalRevenue']) * 100 : 0;
+                    @endphp
+                    <div>
+                        <div class="flex justify-between gap-4 text-sm mb-2">
+                            <span class="app-text font-bold">{{ $cinema->name }}</span>
+                            <span class="app-text font-bold">{{ number_format($cinema->revenue, 0, ',', '.') }}đ</span>
+                        </div>
+                        <div class="w-full h-2 app-secondary rounded-full overflow-hidden">
+                            <div class="h-full bg-brand-start rounded-full" style="width: {{ min(100, $percent) }}%"></div>
+                        </div>
+                        <p class="text-[10px] app-muted mt-1 text-right">{{ number_format($percent, 1) }}% tổng doanh thu · {{ number_format($cinema->bookings_count) }} đơn</p>
+                    </div>
+                @empty
+                    <p class="app-muted text-center">Chưa có doanh thu theo rạp trong kỳ này.</p>
+                @endforelse
             </div>
-            
-            <div class="p-6 flex flex-col justify-center h-[calc(100%-73px)]">
-                
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between p-4 bg-dark-main border border-dark-border rounded-xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
-                                <i class="ph-bold ph-qr-code text-xl"></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-white text-sm">VNPAY</p>
-                                <p class="text-xs text-text-sub">1,850 giao dịch</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-bold text-white">210.5M</p>
-                            <p class="text-xs text-success">46.7%</p>
-                        </div>
-                    </div>
+        </div>
+    </div>
 
-                    <div class="flex items-center justify-between p-4 bg-dark-main border border-dark-border rounded-xl">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-500">
-                                <i class="ph-bold ph-wallet text-xl"></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-white text-sm">MoMo</p>
-                                <p class="text-xs text-text-sub">1,420 giao dịch</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-bold text-white">150.0M</p>
-                            <p class="text-xs text-success">33.3%</p>
-                        </div>
-                    </div>
+    <div class="app-card border app-border rounded-2xl overflow-hidden">
+        <div class="p-6 border-b app-border">
+            <h3 class="font-bold app-text">Theo phương thức thanh toán</h3>
+        </div>
 
-                    <div class="flex items-center justify-between p-4 bg-dark-main border border-dark-border rounded-xl">
+        <div class="p-6">
+            <div class="space-y-4">
+                @forelse($paymentMethods as $method)
+                    <div class="flex items-center justify-between gap-4 p-4 app-secondary border app-border rounded-xl">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-brand-start/10 flex items-center justify-center text-brand-start">
+                            <div class="w-10 h-10 rounded-lg bg-ai-start/10 flex items-center justify-center text-ai-start">
                                 <i class="ph-bold ph-credit-card text-xl"></i>
                             </div>
                             <div>
-                                <p class="font-bold text-white text-sm">Thẻ ATM / Visa</p>
-                                <p class="text-xs text-text-sub">980 giao dịch</p>
+                                <p class="font-bold app-text text-sm uppercase">{{ $method->payment_method }}</p>
+                                <p class="text-xs app-muted">{{ number_format($method->transactions_count) }} giao dịch</p>
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="font-bold text-white">90.0M</p>
-                            <p class="text-xs text-success">20.0%</p>
+                            <p class="font-bold app-text">{{ number_format($method->revenue, 0, ',', '.') }}đ</p>
+                            <p class="text-xs text-success">{{ number_format($method->percent, 1) }}%</p>
                         </div>
                     </div>
-                </div>
-
+                @empty
+                    <p class="app-muted text-center">Chưa có dữ liệu thanh toán trong kỳ này.</p>
+                @endforelse
             </div>
         </div>
-
     </div>
-
+</div>
 @endsection

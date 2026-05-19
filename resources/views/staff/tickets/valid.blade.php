@@ -1,87 +1,76 @@
 @extends('layouts.staff')
 
-@section('title', 'Vé Hợp Lệ - MovieMate Staff')
+@section('title', 'Vé hợp lệ - MovieMate Staff')
 @section('page-title', 'Kết quả kiểm tra vé')
 
+@php
+    $showtimeText = $booking->showtime?->show_date
+        ? (($booking->showtime?->show_time ? \Carbon\Carbon::parse($booking->showtime->show_time)->format('H:i') . ' - ' : '') . \Carbon\Carbon::parse($booking->showtime->show_date)->format('d/m/Y'))
+        : 'Đang cập nhật';
+    $seatCodes = $booking->bookingSeats->pluck('seat.seat_code')->filter()->join(', ') ?: 'Chưa có ghế';
+    $seatCount = $booking->bookingSeats->count();
+@endphp
+
 @section('content')
-    @php
-        $bookingCode = $booking?->booking_code ?? 'MMT-2026-0001';
-        $customerName = $booking?->user?->name ?? 'Nguyen Manh';
-        $movieTitle = $booking?->showtime?->movie?->title ?? 'Phim demo';
-        $cinemaRoom = trim(($booking?->showtime?->cinema?->name ?? 'MovieMate') . ' / ' . ($booking?->showtime?->room?->name ?? 'Phong 3'), ' /');
-        $showtimeText = $booking?->showtime?->show_date
-            ? (($booking->showtime->show_time ? \Carbon\Carbon::parse($booking->showtime->show_time)->format('H:i') . ' - ' : '') . \Carbon\Carbon::parse($booking->showtime->show_date)->format('d/m/Y'))
-            : '09:30 - 19/05/2026';
-        $seatCodes = $booking?->bookingSeats?->pluck('seat.seat_code')->filter()->join(', ') ?: 'F7, F8';
-        $ticketType = $booking ? ($booking->bookingSeats->count() . ' ghe') : '2x Ghe VIP';
-    @endphp
-    <div class="max-w-xl mx-auto">
-        
-        <div class="bg-success/10 border-2 border-success rounded-3xl p-8 text-center shadow-lg shadow-success/20 mb-6">
-            
-            <div class="w-20 h-20 bg-success text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-success/40">
-                <i class="ph-bold ph-check text-4xl"></i>
-            </div>
-
-            <h2 class="text-3xl font-bold text-success mb-2">Vé Hợp Lệ</h2>
-            <p class="text-text-sub font-medium mb-6">Vé chưa được sử dụng và đúng suất chiếu hiện tại.</p>
-
-            <div class="bg-dark-card border border-dark-border rounded-2xl p-6 text-left mb-8">
-                <div class="border-b border-dark-border pb-4 mb-4 flex justify-between items-center">
-                    <div>
-                        <p class="text-xs text-text-sub uppercase tracking-wider mb-1">Mã đặt vé</p>
-                        <p class="text-xl font-bold text-white font-mono">MMT-2026-0001</p>
-                    </div>
-                    <div class="px-3 py-1 bg-success/20 text-success text-xs font-bold rounded uppercase">
-                        Chưa sử dụng
-                    </div>
-                </div>
-
-                <div class="space-y-4 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-text-sub">Khách hàng</span>
-                        <span class="text-white font-medium">Nguyễn Mạnh</span>
-                    </div>
-                    <div class="flex justify-between items-start">
-                        <span class="text-text-sub">Phim</span>
-                        <span class="text-white font-bold text-right max-w-[60%]">Thanh Gươm Diệt Quỷ</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-text-sub">Rạp / Phòng</span>
-                        <span class="text-white font-medium text-right">MovieMate Cầu Giấy / Phòng 3</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-text-sub">Suất chiếu</span>
-                        <span class="text-success font-bold text-right">09:30 - Thứ 3, 19/05/2026</span>
-                    </div>
-                    <div class="flex justify-between pt-4 border-t border-dark-border">
-                        <span class="text-text-sub">Ghế</span>
-                        <span class="text-2xl text-white font-bold text-right">F7, F8</span>
-                    </div>
-                    <div class="flex justify-between pt-2">
-                        <span class="text-text-sub">Loại vé</span>
-                        <span class="text-white font-medium text-right">2x Ghế VIP (160.000đ)</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-3">
-                @if($booking)
-                    <form method="POST" action="{{ route('staff.tickets.use', $booking) }}">
-                        @csrf
-                @endif
-                <button type="{{ $booking ? 'submit' : 'button' }}" class="w-full py-4 bg-success text-white rounded-xl font-bold text-lg hover:bg-success/90 hover:shadow-lg hover:shadow-success/30 transition-all">
-                    Xác nhận cho khách vào rạp
-                </button>
-                @if($booking)
-                    </form>
-                @endif
-                <a href="{{ route('staff.tickets.check') }}" class="w-full py-3 bg-dark-main border border-dark-border text-white rounded-xl font-medium hover:bg-dark-border transition-colors">
-                    Quay lại quét vé
-                </a>
-            </div>
-
+<div class="max-w-xl mx-auto">
+    <div class="bg-success/10 border-2 border-success rounded-3xl p-8 text-center shadow-lg shadow-success/20 mb-6">
+        <div class="w-20 h-20 bg-success text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-success/40">
+            <i class="ph-bold ph-check text-4xl"></i>
         </div>
 
+        <h1 class="text-3xl font-bold text-success mb-2">Vé hợp lệ</h1>
+        <p class="app-muted font-medium mb-6">Vé đã thanh toán và chưa được sử dụng.</p>
+
+        <div class="app-card border app-border rounded-2xl p-6 text-left mb-8">
+            <div class="border-b app-border pb-4 mb-4 flex justify-between items-center gap-4">
+                <div>
+                    <p class="text-xs app-muted uppercase tracking-wider mb-1">Mã đặt vé</p>
+                    <p class="text-xl font-bold app-text font-mono">{{ $booking->booking_code }}</p>
+                </div>
+                <div class="px-3 py-1 bg-success/20 text-success text-xs font-bold rounded uppercase">
+                    Chưa sử dụng
+                </div>
+            </div>
+
+            <div class="space-y-4 text-sm">
+                <div class="flex justify-between gap-4">
+                    <span class="app-muted">Khách hàng</span>
+                    <span class="app-text font-semibold text-right">{{ $booking->user->name ?? 'Khách' }}</span>
+                </div>
+                <div class="flex justify-between gap-4 items-start">
+                    <span class="app-muted">Phim</span>
+                    <span class="app-text font-bold text-right max-w-[60%]">{{ $booking->showtime?->movie?->title ?? 'Không rõ phim' }}</span>
+                </div>
+                <div class="flex justify-between gap-4">
+                    <span class="app-muted">Rạp / Phòng</span>
+                    <span class="app-text font-semibold text-right">{{ $booking->showtime?->cinema?->name ?? 'Không rõ rạp' }} / {{ $booking->showtime?->room?->name ?? 'Không rõ phòng' }}</span>
+                </div>
+                <div class="flex justify-between gap-4">
+                    <span class="app-muted">Suất chiếu</span>
+                    <span class="text-success font-bold text-right">{{ $showtimeText }}</span>
+                </div>
+                <div class="flex justify-between gap-4 pt-4 border-t app-border">
+                    <span class="app-muted">Ghế</span>
+                    <span class="text-2xl app-text font-bold text-right">{{ $seatCodes }}</span>
+                </div>
+                <div class="flex justify-between gap-4 pt-2">
+                    <span class="app-muted">Tổng tiền</span>
+                    <span class="app-text font-semibold text-right">{{ $seatCount }} vé - {{ number_format($booking->total_amount, 0, ',', '.') }}đ</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <form method="POST" action="{{ route('staff.tickets.confirmUsed', $booking) }}">
+                @csrf
+                <button type="submit" class="w-full py-4 bg-success text-white rounded-2xl font-bold text-lg hover:bg-success/90 hover:shadow-lg hover:shadow-success/30 transition-all">
+                    Xác nhận sử dụng vé
+                </button>
+            </form>
+            <a href="{{ route('staff.tickets.check') }}" class="w-full py-3 app-secondary border app-border app-text rounded-2xl font-semibold hover:border-success transition-colors">
+                Quay lại kiểm tra vé
+            </a>
+        </div>
     </div>
+</div>
 @endsection

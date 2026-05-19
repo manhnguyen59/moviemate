@@ -1,70 +1,54 @@
 @extends('layouts.staff')
 
-@section('title', 'Kiểm tra vé QR - MovieMate Staff')
-@section('page-title', 'Kiểm tra vé QR')
+@section('title', 'Kiểm tra vé - MovieMate Staff')
+@section('page-title', 'Kiểm tra vé')
 
 @section('content')
-    <div class="max-w-3xl mx-auto">
-        
-        <div class="bg-dark-card border border-dark-border rounded-3xl p-8 sm:p-12 text-center shadow-2xl relative overflow-hidden">
-            <!-- Background Elements -->
-            <div class="absolute top-0 right-0 w-[300px] h-[300px] bg-ai-start/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
-            
-            <h2 class="text-2xl font-bold text-white mb-2 relative z-10">Kiểm tra vé khách hàng</h2>
-            <p class="text-text-sub mb-8 relative z-10">Đưa mã QR của khách hàng vào khung hình hoặc nhập mã vé thủ công để kiểm tra.</p>
+<div class="max-w-3xl mx-auto">
+    <div class="app-card border app-border rounded-3xl p-8 sm:p-12 text-center shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-[300px] h-[300px] bg-ai-start/10 rounded-full blur-[90px] -translate-y-1/2 translate-x-1/2"></div>
 
-            <!-- Scanner Frame -->
-            <div class="relative w-64 h-64 mx-auto mb-8">
-                <!-- Frame corners -->
-                <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-ai-start rounded-tl-lg"></div>
-                <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-ai-start rounded-tr-lg"></div>
-                <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-ai-start rounded-bl-lg"></div>
-                <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-ai-start rounded-br-lg"></div>
-                
-                <!-- Scanning line animation -->
-                <div class="absolute top-0 left-0 w-full h-1 bg-ai-start shadow-[0_0_10px_rgba(124,58,237,1)] animate-[fade-in-up_2s_ease-in-out_infinite_alternate]"></div>
-
-                <!-- Camera view placeholder -->
-                <div class="absolute inset-2 bg-dark-main border border-dark-border/50 rounded-lg flex flex-col items-center justify-center opacity-80">
-                    <i class="ph-bold ph-qr-code text-6xl text-text-sub mb-2"></i>
-                    <span class="text-xs text-text-sub uppercase tracking-wider font-medium">Camera View</span>
-                </div>
+        <div class="relative z-10">
+            <div class="w-20 h-20 rounded-3xl bg-ai-start/10 text-ai-start flex items-center justify-center mx-auto mb-5 border border-ai-start/20">
+                <i class="ph-bold ph-qr-code text-5xl"></i>
             </div>
 
-            <!-- Manual Input Form -->
-            <div class="max-w-md mx-auto relative z-10">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="h-px bg-dark-border flex-grow"></div>
-                    <span class="text-xs text-text-sub font-medium uppercase tracking-wider">Hoặc nhập tay</span>
-                    <div class="h-px bg-dark-border flex-grow"></div>
-                </div>
+            <h1 class="text-3xl font-bold app-text mb-2">Kiểm tra vé khách hàng</h1>
+            <p class="app-muted mb-8 max-w-xl mx-auto">
+                Nhập mã booking_code trên vé điện tử hoặc mã QR để kiểm tra trạng thái vé trong hệ thống.
+            </p>
 
-                <form action="{{ route('staff.tickets.check.submit') }}" method="POST" class="flex gap-2">
-                    @csrf
-                    <input type="text" name="booking_code" value="{{ old('booking_code') }}" class="flex-grow px-4 py-3 bg-dark-main border border-dark-border rounded-xl text-white font-mono text-center focus:outline-none focus:border-ai-start uppercase tracking-widest placeholder-text-sub/30" placeholder="MMT-YYYY-XXXX">
-                    <button type="submit" class="px-6 py-3 bg-ai-start text-white font-bold rounded-xl hover:bg-ai-end transition-colors whitespace-nowrap">
+            <form action="{{ route('staff.tickets.check.submit') }}" method="POST" class="max-w-lg mx-auto">
+                @csrf
+                <label for="booking_code" class="block text-left text-sm font-bold app-text mb-3">Mã vé booking_code</label>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input
+                        id="booking_code"
+                        type="text"
+                        name="booking_code"
+                        value="{{ old('booking_code') }}"
+                        class="flex-grow px-4 py-3 app-input border app-border rounded-2xl app-text font-mono text-center sm:text-left focus:outline-none focus:border-ai-start uppercase tracking-widest"
+                        placeholder="MMT-2026-0001"
+                        autocomplete="off"
+                        autofocus
+                    >
+                    <button type="submit" class="px-6 py-3 bg-ai-start text-white font-bold rounded-2xl hover:bg-ai-end transition-colors whitespace-nowrap">
                         Kiểm tra
                     </button>
-                </form>
-            </div>
-            
-        </div>
+                </div>
+            </form>
 
-        <!-- Demo Buttons (For testing only) -->
-        <div class="mt-8 pt-8 border-t border-dark-border">
-            <p class="text-xs text-text-sub mb-4 text-center uppercase tracking-wider font-bold">Demo Trạng Thái Vé (Dành cho Test)</p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="{{ route('staff.tickets.valid') }}" class="px-4 py-2 bg-success/10 border border-success/30 text-success rounded-lg text-sm font-bold hover:bg-success hover:text-white transition-colors">
-                    Vé Hợp Lệ
+            <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="{{ route('staff.tickets.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-3 app-secondary border app-border app-text rounded-2xl font-semibold hover:border-ai-start transition-colors">
+                    <i class="ph ph-list-checks"></i>
+                    Xem danh sách vé
                 </a>
-                <a href="{{ route('staff.tickets.used') }}" class="px-4 py-2 bg-warning/10 border border-warning/30 text-warning rounded-lg text-sm font-bold hover:bg-warning hover:text-white transition-colors">
-                    Vé Đã Dùng
-                </a>
-                <a href="{{ route('staff.tickets.notFound') }}" class="px-4 py-2 bg-error/10 border border-error/30 text-error rounded-lg text-sm font-bold hover:bg-error hover:text-white transition-colors">
-                    Vé Không Tồn Tại
+                <a href="{{ route('staff.dashboard') }}" class="inline-flex items-center justify-center gap-2 px-5 py-3 app-secondary border app-border app-text rounded-2xl font-semibold hover:border-brand-start transition-colors">
+                    <i class="ph ph-squares-four"></i>
+                    Về dashboard
                 </a>
             </div>
         </div>
-
     </div>
+</div>
 @endsection

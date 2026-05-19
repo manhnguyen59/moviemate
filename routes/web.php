@@ -5,15 +5,19 @@ use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\CinemaController as AdminCinemaController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\GenreController as AdminGenreController;
+use App\Http\Controllers\Admin\AnalyticsController as AdminAnalyticsController;
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
 use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\SeatController as AdminSeatController;
 use App\Http\Controllers\Admin\ShowtimeController as AdminShowtimeController;
+use App\Http\Controllers\Staff\DashboardController as StaffDashboardController;
 use App\Http\Controllers\Staff\TicketCheckController as StaffTicketCheckController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\MovieController;
 use App\Http\Controllers\User\BookingController;
+use App\Http\Controllers\User\AiController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -52,9 +56,8 @@ Route::middleware('user')->group(function () {
         ->name('user.bookings.cancel');
 });
 
-Route::get('/ai/recommend', function () {
-    return view('user.ai.recommend');
-})->name('user.ai.recommend');
+Route::get('/ai/recommend', [AiController::class, 'recommend'])->name('user.ai.recommend');
+Route::post('/ai/recommend', [AiController::class, 'recommendStore'])->name('user.ai.recommend.submit');
 
 Route::get('/ai/chatbot', function () {
     return view('user.ai.chatbot');
@@ -74,9 +77,8 @@ Route::get('/staff/login', function () {
 
 // Staff Routes
 Route::prefix('staff')->name('staff.')->middleware('staff')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('staff.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [StaffDashboardController::class, 'index'])
+        ->name('dashboard');
 
     Route::get('/tickets/check', [StaffTicketCheckController::class, 'show'])
         ->name('tickets.check');
@@ -84,17 +86,20 @@ Route::prefix('staff')->name('staff.')->middleware('staff')->group(function () {
     Route::post('/tickets/check', [StaffTicketCheckController::class, 'check'])
         ->name('tickets.check.submit');
 
-    Route::post('/tickets/{booking}/use', [StaffTicketCheckController::class, 'markUsed'])
-        ->name('tickets.use');
-
-    Route::get('/tickets/valid/{booking?}', [StaffTicketCheckController::class, 'valid'])
-        ->name('tickets.valid');
-
-    Route::get('/tickets/used/{booking?}', [StaffTicketCheckController::class, 'used'])
-        ->name('tickets.used');
-
     Route::get('/tickets/not-found', [StaffTicketCheckController::class, 'notFound'])
         ->name('tickets.notFound');
+
+    Route::get('/tickets/{booking}/valid', [StaffTicketCheckController::class, 'valid'])
+        ->name('tickets.valid');
+
+    Route::get('/tickets/{booking}/used', [StaffTicketCheckController::class, 'used'])
+        ->name('tickets.used');
+
+    Route::post('/tickets/{booking}/confirm-used', [StaffTicketCheckController::class, 'confirmUsed'])
+        ->name('tickets.confirmUsed');
+
+    Route::post('/tickets/{booking}/use', [StaffTicketCheckController::class, 'confirmUsed'])
+        ->name('tickets.use');
 
     Route::get('/tickets', [StaffTicketCheckController::class, 'index'])
         ->name('tickets.index');
@@ -110,9 +115,7 @@ Route::get('/api/cinemas/{cinema}/rooms', function (App\Models\Cinema $cinema) {
 })->middleware('admin');
 
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('movies', AdminMovieController::class);
     Route::resource('genres', AdminGenreController::class)->except(['show']);
@@ -146,13 +149,11 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         return view('admin.reviews.index');
     })->name('reviews.index');
 
-    Route::get('/analytics/revenue', function () {
-        return view('admin.analytics.revenue');
-    })->name('analytics.revenue');
+    Route::get('/analytics/revenue', [AdminAnalyticsController::class, 'revenue'])
+        ->name('analytics.revenue');
 
-    Route::get('/analytics/top-movies', function () {
-        return view('admin.analytics.top-movies');
-    })->name('analytics.topMovies');
+    Route::get('/analytics/top-movies', [AdminAnalyticsController::class, 'topMovies'])
+        ->name('analytics.topMovies');
 
     Route::get('/ai/movie-content', function () {
         return view('admin.ai.movie-content');

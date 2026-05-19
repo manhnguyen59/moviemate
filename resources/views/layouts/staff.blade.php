@@ -106,6 +106,25 @@
         <!-- Content Area -->
         <div class="flex-grow p-4 sm:p-8 overflow-y-auto">
             <div class="max-w-7xl mx-auto pb-10">
+                @if(session('success') || session('error') || $errors->any())
+                    <div class="space-y-3 mb-6">
+                        @if(session('success'))
+                            <div class="rounded-2xl border border-success/30 bg-success/10 text-success px-4 py-3 text-sm font-medium">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        @if(session('error'))
+                            <div class="rounded-2xl border border-error/30 bg-error/10 text-error px-4 py-3 text-sm font-medium">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+                        @if($errors->any())
+                            <div class="rounded-2xl border border-error/30 bg-error/10 text-error px-4 py-3 text-sm font-medium">
+                                {{ $errors->first() }}
+                            </div>
+                        @endif
+                    </div>
+                @endif
                 @yield('content')
             </div>
         </div>

@@ -22,6 +22,12 @@ return [
         'key' => env('RESEND_API_KEY'),
     ],
 
+    'ai' => [
+        'provider' => env('AI_PROVIDER', 'openai'),
+        'key' => env('AI_API_KEY'),
+        'model' => env('AI_MODEL', env('AI_PROVIDER') === 'gemini' ? 'gemini-1.5-flash' : 'gpt-4o-mini'),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),

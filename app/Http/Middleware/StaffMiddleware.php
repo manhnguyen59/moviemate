@@ -13,7 +13,7 @@ class StaffMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && optional(Auth::user()->role)->name === 'Staff') {
+        if (Auth::check() && in_array(optional(Auth::user()->role)->name, ['Staff', 'Admin'], true)) {
             return $next($request);
         }
 
