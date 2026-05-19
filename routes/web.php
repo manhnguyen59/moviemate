@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\MovieController;
+use App\Http\Controllers\User\BookingController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -22,9 +23,7 @@ Route::get('/movies', [MovieController::class, 'index'])->name('user.movies.inde
 Route::get('/movies/{slug}', [MovieController::class, 'show'])->name('user.movies.show');
 
 Route::middleware('user')->group(function () {
-    Route::get('/booking/select-seat', function () {
-        return view('user.bookings.select-seat');
-    })->name('user.bookings.selectSeat');
+    Route::get('/booking/select-seat/{showtime}', [BookingController::class, 'selectSeat'])->name('user.bookings.selectSeat');
 
     Route::get('/booking/checkout', function () {
         return view('user.bookings.checkout');
