@@ -30,6 +30,7 @@
                 <th class="border px-4 py-2">Tên</th>
                 <th class="border px-4 py-2">Địa chỉ</th>
                 <th class="border px-4 py-2">Thành phố</th>
+                <th class="border px-4 py-2">Tọa độ</th>
                 <th class="border px-4 py-2">Số điện thoại</th>
                 <th class="border px-4 py-2">Trạng thái</th>
                 <th class="border px-4 py-2">Hành động</th>
@@ -42,6 +43,13 @@
                     <td class="border px-4 py-2">{{ $cinema->name }}</td>
                     <td class="border px-4 py-2">{{ $cinema->address }}</td>
                     <td class="border px-4 py-2">{{ $cinema->city }}</td>
+                    <td class="border px-4 py-2 text-sm">
+                        @if(! is_null($cinema->latitude) && ! is_null($cinema->longitude))
+                            {{ $cinema->latitude }}, {{ $cinema->longitude }}
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td class="border px-4 py-2">{{ $cinema->phone ?? '-' }}</td>
                     <td class="border px-4 py-2">{{ $cinema->status }}</td>
                     <td class="border px-4 py-2 space-x-2">
@@ -56,7 +64,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="border px-4 py-2 text-center">Không có rạp nào.</td>
+                    <td colspan="8" class="border px-4 py-2 text-center">Không có rạp nào.</td>
                 </tr>
             @endforelse
         </tbody>

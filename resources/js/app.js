@@ -5,6 +5,7 @@
  */
 
 const THEME_KEY = 'moviemate_theme';
+const SHOWTIME_QUERY_KEYS = ['cinema_id', 'date', 'city', 'brand', 'nearby', 'lat', 'lng'];
 
 function getStoredTheme() {
     try {
@@ -90,3 +91,183 @@ document.addEventListener('error', (event) => {
     image.dataset.fallbackApplied = 'true';
     image.src = posterFallbackSrc;
 }, true);
+
+function shouldPinShowtimeSection() {
+    const params = new URLSearchParams(window.location.search);
+
+    return window.location.hash === '#home-showtime-calendar'
+        || SHOWTIME_QUERY_KEYS.some((key) => params.has(key));
+}
+
+function scrollToShowtimeSection() {
+    const section = document.getElementById('home-showtime-calendar');
+
+    if (!section) {
+        return;
+    }
+
+    const headerOffset = 100;
+    const top = section.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+
+    window.scrollTo({
+        top: Math.max(top, 0),
+        behavior: 'auto',
+    });
+}
+
+function setShowtimeLoading(section, isLoading) {
+    section.classList.toggle('showtime-section-loading', isLoading);
+    section.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+}
+
+function setNearbyButtonLoading(button, isLoading) {
+    const label = button.querySelector('[data-nearby-label]');
+
+    button.disabled = isLoading;
+    button.classList.toggle('opacity-70', isLoading);
+    button.classList.toggle('cursor-wait', isLoading);
+
+    if (label) {
+        label.textContent = isLoading ? 'Đang lấy vị trí...' : 'Gần bạn';
+    }
+}
+
+function redirectToNearby(latitude, longitude) {
+    const url = new URL(window.location.href);
+
+    url.searchParams.set('nearby', '1');
+    url.searchParams.set('lat', String(latitude));
+    url.searchParams.set('lng', String(longitude));
+    url.hash = 'home-showtime-calendar';
+
+    window.location.href = url.toString();
+}
+
+function handleNearbyError(error) {
+    if (error.code === error.PERMISSION_DENIED) {
+        alert('Bạn cần cho phép truy cập vị trí để tìm rạp gần bạn.');
+        return;
+    }
+
+    if (error.code === error.POSITION_UNAVAILABLE) {
+        alert('Không thể xác định vị trí hiện tại.');
+        return;
+    }
+
+    if (error.code === error.TIMEOUT) {
+        alert('Lấy vị trí quá lâu, vui lòng thử lại.');
+        return;
+    }
+
+    alert('Không thể lấy vị trí hiện tại, vui lòng thử lại.');
+}
+
+function requestNearbyLocation(button) {
+    if (!navigator.geolocation) {
+        alert('Trình duyệt của bạn không hỗ trợ định vị.');
+        return;
+    }
+
+    setNearbyButtonLoading(button, true);
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            redirectToNearby(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+            setNearbyButtonLoading(button, false);
+            handleNearbyError(error);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000,
+        },
+    );
+}
+
+async function updateShowtimeSection(targetUrl) {
+    const section = document.getElementById('home-showtime-calendar');
+
+    if (!section) {
+        window.location.href = targetUrl.href;
+        return;
+    }
+
+    const ajaxUrl = new URL(section.dataset.showtimeAjaxUrl || '/ajax/showtimes', window.location.origin);
+    ajaxUrl.search = targetUrl.search;
+
+    setShowtimeLoading(section, true);
+
+    try {
+        const response = await fetch(ajaxUrl.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Showtime request failed: ${response.status}`);
+        }
+
+        const html = await response.text();
+        section.outerHTML = html;
+        history.pushState({}, '', targetUrl.toString());
+
+        const nextSection = document.getElementById('home-showtime-calendar');
+        if (nextSection) {
+            nextSection.setAttribute('aria-busy', 'false');
+        }
+    } catch (error) {
+        window.location.href = targetUrl.href;
+    }
+}
+
+if (shouldPinShowtimeSection()) {
+    document.documentElement.style.scrollBehavior = 'auto';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (shouldPinShowtimeSection()) {
+        requestAnimationFrame(scrollToShowtimeSection);
+    }
+});
+
+window.addEventListener('load', () => {
+    if (shouldPinShowtimeSection()) {
+        scrollToShowtimeSection();
+    }
+});
+
+window.addEventListener('popstate', () => {
+    if (shouldPinShowtimeSection()) {
+        window.location.reload();
+    }
+});
+
+document.addEventListener('click', (event) => {
+    const nearbyButton = event.target.closest('#nearbyCinemaBtn');
+
+    if (nearbyButton) {
+        event.preventDefault();
+        requestNearbyLocation(nearbyButton);
+        return;
+    }
+
+    const link = event.target.closest('a[data-showtime-filter]');
+
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const targetUrl = new URL(link.href, window.location.origin);
+
+    if (targetUrl.hash !== '#home-showtime-calendar') {
+        targetUrl.hash = 'home-showtime-calendar';
+    }
+
+    updateShowtimeSection(targetUrl);
+});

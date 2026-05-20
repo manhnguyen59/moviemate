@@ -21,6 +21,7 @@ use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\AiController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/ajax/showtimes', [HomeController::class, 'ajaxShowtimes'])->name('ajax.showtimes');
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');

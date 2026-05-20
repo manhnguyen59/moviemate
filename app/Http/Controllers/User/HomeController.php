@@ -16,14 +16,7 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $timezone = 'Asia/Ho_Chi_Minh';
-        $today = Carbon::today($timezone);
-        $endDate = $today->copy()->addDays(6);
-        $selectedDate = $this->normalizeSelectedDate($request->query('date'), $today);
-        $cityOptions = $this->cityOptions();
-        $brandTabs = ['Tất cả', 'MovieMate', 'CGV', 'Lotte', 'Galaxy', 'BHD', 'Beta', 'Cinestar'];
-        $selectedCity = $this->normalizeSelectedCity($request->query('city'), array_keys($cityOptions));
-        $selectedBrand = $this->normalizeSelectedBrand($request->query('brand'), $brandTabs);
+        $today = Carbon::today('Asia/Ho_Chi_Minh');
 
         $nowShowing = Movie::where('status', 'now_showing')
             ->orderByDesc('created_at')
@@ -32,6 +25,41 @@ class HomeController extends Controller
         $comingSoon = Movie::where('status', 'coming_soon')
             ->orderBy('release_date')
             ->get();
+
+        $showtimeData = $this->showtimeCalendarData($request);
+
+        $quickShowtimes = Showtime::with(['movie.genres', 'cinema', 'room'])
+            ->where('status', 'active')
+            ->whereDate('show_date', '>=', $today->toDateString())
+            ->orderBy('show_date')
+            ->orderBy('show_time')
+            ->limit(10)
+            ->get();
+
+        return view('user.home', array_merge(compact(
+            'nowShowing',
+            'comingSoon',
+            'quickShowtimes'
+        ), $showtimeData));
+    }
+
+    public function ajaxShowtimes(Request $request)
+    {
+        return view('user.partials.showtime-section', $this->showtimeCalendarData($request));
+    }
+
+    private function showtimeCalendarData(Request $request): array
+    {
+        $today = Carbon::today('Asia/Ho_Chi_Minh');
+        $endDate = $today->copy()->addDays(6);
+        $selectedDate = $this->normalizeSelectedDate($request->query('date'), $today);
+        $cityOptions = $this->cityOptions();
+        $brandTabs = ['Tất cả', 'MovieMate', 'CGV', 'Lotte', 'Galaxy', 'BHD', 'Beta', 'Cinestar'];
+        $selectedCity = $this->normalizeSelectedCity($request->query('city'), array_keys($cityOptions));
+        $selectedBrand = $this->normalizeSelectedBrand($request->query('brand'), $brandTabs);
+        $userLat = $this->normalizeCoordinate($request->query('lat'), -90, 90);
+        $userLng = $this->normalizeCoordinate($request->query('lng'), -180, 180);
+        $isNearby = $request->boolean('nearby') && ! is_null($userLat) && ! is_null($userLng);
 
         $cinemas = Cinema::query()
             ->where('status', 'active')
@@ -56,6 +84,27 @@ class HomeController extends Controller
             ])
             ->orderBy('name')
             ->get();
+
+        if ($isNearby) {
+            $cinemas = $cinemas
+                ->map(function (Cinema $cinema) use ($userLat, $userLng) {
+                    $cinema->distance = $this->cinemaHasCoordinates($cinema)
+                        ? $this->calculateDistance($userLat, $userLng, (float) $cinema->latitude, (float) $cinema->longitude)
+                        : null;
+
+                    return $cinema;
+                })
+                ->sortBy(fn (Cinema $cinema) => is_null($cinema->distance) ? PHP_FLOAT_MAX : $cinema->distance)
+                ->values();
+        } else {
+            $cinemas = $cinemas
+                ->map(function (Cinema $cinema) {
+                    $cinema->distance = null;
+
+                    return $cinema;
+                })
+                ->values();
+        }
 
         $requestedCinemaId = $request->integer('cinema_id');
         $selectedCinema = $cinemas->firstWhere('id', $requestedCinemaId) ?? $cinemas->first();
@@ -104,18 +153,7 @@ class HomeController extends Controller
                 ->values();
         }
 
-        $quickShowtimes = Showtime::with(['movie.genres', 'cinema', 'room'])
-            ->where('status', 'active')
-            ->whereDate('show_date', '>=', $today->toDateString())
-            ->orderBy('show_date')
-            ->orderBy('show_time')
-            ->limit(10)
-            ->get();
-
-        return view('user.home', compact(
-            'nowShowing',
-            'comingSoon',
-            'quickShowtimes',
+        return compact(
             'cinemas',
             'scheduleDates',
             'selectedCinema',
@@ -125,8 +163,46 @@ class HomeController extends Controller
             'cityOptions',
             'brandTabs',
             'selectedCity',
-            'selectedBrand'
-        ));
+            'selectedBrand',
+            'isNearby',
+            'userLat',
+            'userLng'
+        );
+    }
+
+    private function normalizeCoordinate(mixed $value, float $min, float $max): ?float
+    {
+        if (! is_numeric($value)) {
+            return null;
+        }
+
+        $coordinate = (float) $value;
+
+        return $coordinate >= $min && $coordinate <= $max ? $coordinate : null;
+    }
+
+    private function cinemaHasCoordinates(Cinema $cinema): bool
+    {
+        return ! is_null($cinema->latitude)
+            && ! is_null($cinema->longitude)
+            && is_numeric($cinema->latitude)
+            && is_numeric($cinema->longitude);
+    }
+
+    private function calculateDistance(float $lat1, float $lng1, float $lat2, float $lng2): float
+    {
+        $earthRadius = 6371;
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2)
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
+            * sin($dLng / 2) * sin($dLng / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c;
     }
 
     private function cityOptions(): array

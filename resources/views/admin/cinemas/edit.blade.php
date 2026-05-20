@@ -35,6 +35,18 @@
             <input type="text" name="city" value="{{ old('city', $cinema->city) }}" required class="w-full border rounded px-3 py-2">
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block font-medium">Vĩ độ</label>
+                <input type="number" name="latitude" value="{{ old('latitude', $cinema->latitude) }}" step="0.0000001" min="-90" max="90" placeholder="21.027763" class="w-full border rounded px-3 py-2">
+            </div>
+
+            <div>
+                <label class="block font-medium">Kinh độ</label>
+                <input type="number" name="longitude" value="{{ old('longitude', $cinema->longitude) }}" step="0.0000001" min="-180" max="180" placeholder="105.834160" class="w-full border rounded px-3 py-2">
+            </div>
+        </div>
+
         <div>
             <label class="block font-medium">Số điện thoại</label>
             <input type="text" name="phone" value="{{ old('phone', $cinema->phone) }}" class="w-full border rounded px-3 py-2">
