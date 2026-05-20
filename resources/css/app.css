@@ -109,6 +109,14 @@ html.light {
 .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 
+.showtime-section summary::-webkit-details-marker {
+    display: none;
+}
+
+.showtime-section {
+    isolation: isolate;
+}
+
 .primary-gradient {
     background: linear-gradient(135deg, var(--color-brand-start), var(--color-brand-end));
 }

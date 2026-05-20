@@ -153,6 +153,8 @@
     </div>
 </section>
 
+@include('user.partials.showtime-section')
+
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
         <div>
