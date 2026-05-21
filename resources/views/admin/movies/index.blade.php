@@ -27,6 +27,7 @@
         <thead class="bg-gray-200">
             <tr>
                 <th class="border px-4 py-2">#</th>
+                <th class="border px-4 py-2">Poster</th>
                 <th class="border px-4 py-2">Tiêu đề</th>
                 <th class="border px-4 py-2">Thể loại</th>
                 <th class="border px-4 py-2">Trạng thái</th>
@@ -37,6 +38,15 @@
             @forelse($movies as $movie)
                 <tr>
                     <td class="border px-4 py-2">{{ $movie->id }}</td>
+                    <td class="border px-4 py-2">
+                        <div class="w-12 h-16 rounded overflow-hidden bg-slate-900 text-white flex items-center justify-center">
+                            @if($movie->poster_url)
+                                <img src="{{ $movie->poster_url }}" alt="{{ $movie->title }}" class="w-full h-full object-cover" loading="lazy">
+                            @else
+                                <span class="text-[10px] font-bold">MM</span>
+                            @endif
+                        </div>
+                    </td>
                     <td class="border px-4 py-2">{{ $movie->title }}</td>
                     <td class="border px-4 py-2">
                         {{ $movie->genres->pluck('name')->join(', ') }}
@@ -56,7 +66,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="border px-4 py-2 text-center">Không có phim nào.</td>
+                    <td colspan="6" class="border px-4 py-2 text-center">Không có phim nào.</td>
                 </tr>
             @endforelse
         </tbody>

@@ -6,7 +6,7 @@
 <section class="cinema-surface relative overflow-hidden py-10 md:py-14">
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <p class="text-brand-start text-sm font-extrabold uppercase tracking-[0.25em] mb-3">MovieMate Cinema</p>
-        <h1 class="hero-title text-4xl md:text-5xl font-extrabold app-text mb-4">Phim tại MovieMate</h1>
+        <h1 class="hero-title text-4xl md:text-5xl font-extrabold app-text mb-4">{{ $pageTitle }}</h1>
         <p class="app-muted max-w-2xl">Tìm phim đang chiếu, sắp chiếu và chọn suất phù hợp cho buổi xem tiếp theo.</p>
 
         <div class="mt-8 flex flex-wrap gap-2">
@@ -24,7 +24,7 @@
         <form method="GET" action="{{ route('user.movies.index') }}" class="mt-6 cinema-card p-3 grid grid-cols-1 md:grid-cols-[1fr_180px_180px_170px_auto] gap-3">
             <label class="flex items-center gap-3 px-4 app-input border app-border rounded-2xl">
                 <i class="ph ph-magnifying-glass app-muted text-xl"></i>
-                <input type="text" name="search" placeholder="Tìm kiếm tên phim..." value="{{ request('search') }}" class="w-full bg-transparent app-text placeholder:text-text-sub/70 focus:outline-none py-3">
+                <input type="text" name="keyword" placeholder="Tìm kiếm tên phim..." value="{{ request('keyword', request('search')) }}" class="w-full bg-transparent app-text placeholder:text-text-sub/70 focus:outline-none py-3">
             </label>
 
             <select name="genre_id" class="cinema-input">
@@ -60,7 +60,7 @@
 <section id="showtimes" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
         <div>
-            <h2 class="text-3xl font-extrabold app-text">Danh sách phim</h2>
+            <h2 class="text-3xl font-extrabold app-text">{{ $pageTitle }}</h2>
             <p class="app-muted mt-2">{{ $movies->total() }} phim phù hợp với bộ lọc hiện tại.</p>
         </div>
     </div>
@@ -84,3 +84,4 @@
     </div>
 </section>
 @endsection
+

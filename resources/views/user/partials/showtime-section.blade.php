@@ -284,8 +284,8 @@
                             <div class="flex gap-4">
                                 <div class="w-20 sm:w-24 shrink-0">
                                     <div class="aspect-[2/3] rounded-2xl overflow-hidden bg-gradient-to-br from-brand-start to-brand-end shadow-lg shadow-black/10">
-                                        @if($movie?->poster)
-                                            <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title ?? 'Poster phim' }}" class="w-full h-full object-cover">
+                                        @if($movie?->poster_url)
+                                            <img src="{{ $movie->poster_url }}" alt="{{ $movie->title ?? 'Poster phim' }}" class="w-full h-full object-cover" loading="lazy">
                                         @else
                                             <div class="w-full h-full flex flex-col items-center justify-center text-white text-center p-3">
                                                 <i class="ph-fill ph-film-slate text-3xl mb-2"></i>

@@ -42,8 +42,8 @@
         <div class="flex space-x-4">
             <div class="w-1/2">
                 <label class="block font-medium">Poster hiện tại</label>
-                @if($movie->poster)
-                    <img src="{{ asset('storage/' . $movie->poster) }}" alt="Poster" class="h-32 mb-2">
+                @if($movie->poster_url)
+                    <img src="{{ $movie->poster_url }}" alt="Poster" class="h-32 mb-2 object-cover">
                 @else
                     <p>Chưa có poster.</p>
                 @endif
@@ -52,8 +52,8 @@
 
             <div class="w-1/2">
                 <label class="block font-medium">Cover Image hiện tại</label>
-                @if($movie->cover_image)
-                    <img src="{{ asset('storage/' . $movie->cover_image) }}" alt="Cover" class="h-32 mb-2">
+                @if($movie->cover_url)
+                    <img src="{{ $movie->cover_url }}" alt="Cover" class="h-32 mb-2 object-cover">
                 @else
                     <p>Chưa có cover image.</p>
                 @endif

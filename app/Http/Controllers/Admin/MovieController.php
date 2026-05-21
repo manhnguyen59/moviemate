@@ -72,12 +72,12 @@ class MovieController extends Controller
         // Handle file uploads
         if ($request->hasFile('poster')) {
             $validated['poster'] = $request->file('poster')
-                ->store('posters', 'public');
+                ->store('movies/posters', 'public');
         }
 
         if ($request->hasFile('cover_image')) {
             $validated['cover_image'] = $request->file('cover_image')
-                ->store('covers', 'public');
+                ->store('movies/covers', 'public');
         }
 
         $movie = Movie::create($validated);
@@ -144,21 +144,26 @@ class MovieController extends Controller
 
         // Handle poster replacement
         if ($request->hasFile('poster')) {
-            // Delete old file if exists
-            if ($movie->poster && Storage::disk('public')->exists($movie->poster)) {
-                Storage::disk('public')->delete($movie->poster);
+            $oldPoster = Movie::storageDiskPath($movie->poster);
+
+            if ($oldPoster && Storage::disk('public')->exists($oldPoster)) {
+                Storage::disk('public')->delete($oldPoster);
             }
+
             $validated['poster'] = $request->file('poster')
-                ->store('posters', 'public');
+                ->store('movies/posters', 'public');
         }
 
         // Handle cover image replacement
         if ($request->hasFile('cover_image')) {
-            if ($movie->cover_image && Storage::disk('public')->exists($movie->cover_image)) {
-                Storage::disk('public')->delete($movie->cover_image);
+            $oldCover = Movie::storageDiskPath($movie->cover_image);
+
+            if ($oldCover && Storage::disk('public')->exists($oldCover)) {
+                Storage::disk('public')->delete($oldCover);
             }
+
             $validated['cover_image'] = $request->file('cover_image')
-                ->store('covers', 'public');
+                ->store('movies/covers', 'public');
         }
 
         $movie->update($validated);
@@ -184,11 +189,14 @@ class MovieController extends Controller
         $movie->genres()->detach();
 
         // Delete associated files
-        if ($movie->poster && Storage::disk('public')->exists($movie->poster)) {
-            Storage::disk('public')->delete($movie->poster);
+        $posterPath = Movie::storageDiskPath($movie->poster);
+        $coverPath = Movie::storageDiskPath($movie->cover_image);
+
+        if ($posterPath && Storage::disk('public')->exists($posterPath)) {
+            Storage::disk('public')->delete($posterPath);
         }
-        if ($movie->cover_image && Storage::disk('public')->exists($movie->cover_image)) {
-            Storage::disk('public')->delete($movie->cover_image);
+        if ($coverPath && Storage::disk('public')->exists($coverPath)) {
+            Storage::disk('public')->delete($coverPath);
         }
 
         $movie->delete();

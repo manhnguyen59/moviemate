@@ -33,16 +33,16 @@
             <strong>Thể loại:</strong>
             <p>{{ $movie->genres->pluck('name')->join(', ') }}</p>
         </div>
-        @if($movie->poster)
+        @if($movie->poster_url)
             <div class="col-span-2">
                 <strong>Poster:</strong><br>
-                <img src="{{ asset('storage/' . $movie->poster) }}" alt="Poster" class="max-w-xs">
+                <img src="{{ $movie->poster_url }}" alt="Poster" class="max-w-xs">
             </div>
         @endif
-        @if($movie->cover_image)
+        @if($movie->cover_url)
             <div class="col-span-2">
                 <strong>Cover Image:</strong><br>
-                <img src="{{ asset('storage/' . $movie->cover_image) }}" alt="Cover" class="max-w-xs">
+                <img src="{{ $movie->cover_url }}" alt="Cover" class="max-w-xs">
             </div>
         @endif
         @if($movie->trailer_url)

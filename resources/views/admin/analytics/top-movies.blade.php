@@ -52,7 +52,7 @@
                 @forelse($topMovies as $movie)
                     @php
                         $rank = ($topMovies->currentPage() - 1) * $topMovies->perPage() + $loop->iteration;
-                        $poster = $movie->poster ? asset('storage/' . $movie->poster) : asset('images/placeholder.png');
+                        $poster = \App\Models\Movie::imageUrl($movie->poster ?? null);
                     @endphp
                     <tr class="hover:bg-white/5 transition-colors">
                         <td class="p-4 text-center">
@@ -61,7 +61,13 @@
                         <td class="p-4">
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-14 rounded overflow-hidden shrink-0 border app-border">
-                                    <img src="{{ $poster }}" alt="{{ $movie->title }}" class="w-full h-full object-cover">
+                                    @if($poster)
+                                        <img src="{{ $poster }}" alt="{{ $movie->title }}" class="w-full h-full object-cover" loading="lazy">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center bg-slate-900 text-white text-[10px] font-bold">
+                                            MM
+                                        </div>
+                                    @endif
                                 </div>
                                 <a href="{{ route('admin.movies.show', $movie->id) }}" class="font-bold app-text hover:text-brand-start transition-colors block max-w-xs truncate">
                                     {{ $movie->title }}

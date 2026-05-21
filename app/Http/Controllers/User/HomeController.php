@@ -17,29 +17,40 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $today = Carbon::today('Asia/Ho_Chi_Minh');
+        $now = now('Asia/Ho_Chi_Minh');
 
-        $nowShowing = Movie::where('status', 'now_showing')
+        $nowShowingMovies = Movie::with('genres')
+            ->where('status', 'now_showing')
             ->orderByDesc('created_at')
+            ->take(4)
             ->get();
 
-        $comingSoon = Movie::where('status', 'coming_soon')
-            ->orderBy('release_date')
+        $comingSoonMovies = Movie::with('genres')
+            ->where('status', 'coming_soon')
+            ->orderByDesc('created_at')
+            ->take(4)
             ->get();
 
         $showtimeData = $this->showtimeCalendarData($request);
 
-        $quickShowtimes = Showtime::with(['movie.genres', 'cinema', 'room'])
+        $latestShowtimes = Showtime::with(['movie.genres', 'cinema', 'room'])
             ->where('status', 'active')
-            ->whereDate('show_date', '>=', $today->toDateString())
+            ->where(function ($query) use ($today, $now) {
+                $query->whereDate('show_date', '>', $today->toDateString())
+                    ->orWhere(function ($query) use ($today, $now) {
+                        $query->whereDate('show_date', $today->toDateString())
+                            ->whereTime('show_time', '>=', $now->format('H:i:s'));
+                    });
+            })
             ->orderBy('show_date')
             ->orderBy('show_time')
-            ->limit(10)
+            ->take(6)
             ->get();
 
         return view('user.home', array_merge(compact(
-            'nowShowing',
-            'comingSoon',
-            'quickShowtimes'
+            'nowShowingMovies',
+            'comingSoonMovies',
+            'latestShowtimes'
         ), $showtimeData));
     }
 

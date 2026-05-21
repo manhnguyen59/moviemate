@@ -3,8 +3,8 @@
 @section('title', $movie->title . ' - MovieMate')
 
 @php
-    $poster = $movie->poster ? asset('storage/' . $movie->poster) : null;
-    $cover = $movie->cover_image ? asset('storage/' . $movie->cover_image) : $poster;
+    $poster = $movie->poster_url;
+    $cover = $movie->cover_url ?: $poster;
     $genresText = $movie->genres->pluck('name')->join(', ') ?: 'Đang cập nhật';
     $showtimesByDate = $showtimes->groupBy(fn ($showtime) => \Carbon\Carbon::parse($showtime->show_date)->format('Y-m-d'));
 @endphp
@@ -13,7 +13,7 @@
 <div class="cinema-surface relative overflow-hidden">
     <div class="absolute inset-x-0 top-0 h-[28rem] opacity-40">
         @if($cover)
-            <img src="{{ $cover }}" alt="{{ $movie->title }}" class="w-full h-full object-cover blur-sm scale-105">
+            <img src="{{ $cover }}" alt="{{ $movie->title }}" class="w-full h-full object-cover blur-sm scale-105" loading="lazy">
             <div class="absolute inset-0 bg-gradient-to-b from-dark-main/60 via-dark-main/80 to-dark-main"></div>
         @else
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,61,87,0.28),transparent_34%),radial-gradient(circle_at_82%_12%,rgba(124,58,237,0.22),transparent_32%)]"></div>
@@ -25,7 +25,7 @@
             <div class="lg:col-span-4">
                 <div class="poster-frame rounded-3xl cinema-card overflow-hidden shadow-2xl shadow-black/30">
                     @if($poster)
-                        <img src="{{ $poster }}" alt="{{ $movie->title }}">
+                        <img src="{{ $poster }}" alt="{{ $movie->title }}" loading="lazy">
                     @else
                         <div class="fallback-poster">
                             <i class="ph-fill ph-film-slate"></i>

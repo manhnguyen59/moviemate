@@ -17,7 +17,9 @@ class MovieController extends Controller
         $query = Movie::with('genres')
             ->whereIn('status', ['now_showing', 'coming_soon']);
 
-        if ($search = $request->query('search')) {
+        $search = $request->query('keyword', $request->query('search'));
+
+        if ($search) {
             $query->where('title', 'like', "%{$search}%");
         }
 
@@ -31,7 +33,9 @@ class MovieController extends Controller
             $query->where('country', $country);
         }
 
-        if ($genreId = $request->query('genre_id')) {
+        $genreId = $request->query('genre_id', $request->query('genre'));
+
+        if ($genreId) {
             $query->whereHas('genres', function ($q) use ($genreId) {
                 $q->where('genres.id', $genreId);
             });
@@ -47,7 +51,13 @@ class MovieController extends Controller
             ->orderBy('country')
             ->pluck('country');
 
-        return view('user.movies.index', compact('movies', 'countries'));
+        $pageTitle = match ($request->query('status')) {
+            'now_showing' => 'Phim đang chiếu',
+            'coming_soon' => 'Phim sắp chiếu',
+            default => 'Tất cả phim',
+        };
+
+        return view('user.movies.index', compact('movies', 'countries', 'pageTitle'));
     }
 
     /**

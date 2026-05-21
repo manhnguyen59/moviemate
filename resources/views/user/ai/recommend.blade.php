@@ -171,7 +171,7 @@
                 <div class="space-y-5">
                     @foreach($recommendations as $index => $item)
                         @php
-                            $poster = $item['poster'] ? asset('storage/' . $item['poster']) : asset('images/placeholder.png');
+                            $poster = \App\Models\Movie::imageUrl($item['poster'] ?? null);
                             $detailUrl = route('user.movies.show', $item['slug']);
                             $showtimeUrl = $detailUrl . '#showtimes';
                         @endphp
@@ -184,7 +184,15 @@
                             <div class="flex flex-col md:flex-row gap-6">
                                 <a href="{{ $detailUrl }}" class="w-full max-w-44 mx-auto md:mx-0 md:w-36 shrink-0">
                                     <div class="poster-frame rounded-3xl shadow-2xl shadow-black">
-                                        <img src="{{ $poster }}" alt="{{ $item['title'] }}">
+                                        @if($poster)
+                                            <img src="{{ $poster }}" alt="{{ $item['title'] }}" loading="lazy">
+                                        @else
+                                            <div class="fallback-poster">
+                                                <i class="ph-fill ph-film-slate"></i>
+                                                <strong class="text-lg">MovieMate</strong>
+                                                <span>{{ $item['title'] }}</span>
+                                            </div>
+                                        @endif
                                     </div>
                                 </a>
 

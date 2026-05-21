@@ -7,8 +7,8 @@
 <article class="movie-card group cinema-card overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-brand-start/60">
     <a href="{{ route('user.movies.show', $movie->slug) }}" class="block">
         <div class="poster-frame">
-            @if($movie->poster)
-                <img src="{{ asset('storage/' . $movie->poster) }}" alt="{{ $movie->title }}">
+            @if($movie->poster_url)
+                <img src="{{ $movie->poster_url }}" alt="{{ $movie->title }}" loading="lazy">
             @else
                 <div class="fallback-poster">
                     <i class="ph-fill ph-film-slate"></i>

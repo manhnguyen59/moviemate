@@ -56,7 +56,7 @@
                             'expired' => ['label' => 'Hết hạn', 'class' => 'bg-gray-100 text-gray-700'],
                         ];
                         $status = $statusMap[$booking->booking_status] ?? $statusMap['paid'];
-                        $poster = $booking->showtime->movie->poster ? asset('storage/' . $booking->showtime->movie->poster) : asset('images/placeholder.png');
+                        $poster = $booking->showtime->movie->poster_url;
                     @endphp
 
                     <article class="app-card border border-brand-start/20 rounded-3xl p-4 sm:p-6 hover:border-brand-start/60 transition-colors relative overflow-hidden">
@@ -67,7 +67,14 @@
                         <div class="flex flex-col sm:flex-row gap-5">
                             <div class="w-28 shrink-0">
                                 <div class="poster-frame rounded-2xl">
-                                    <img src="{{ $poster }}" alt="{{ $booking->showtime->movie->title }}">
+                                    @if($poster)
+                                        <img src="{{ $poster }}" alt="{{ $booking->showtime->movie->title }}" loading="lazy">
+                                    @else
+                                        <div class="fallback-poster">
+                                            <i class="ph-fill ph-film-slate"></i>
+                                            <strong class="text-sm">MovieMate</strong>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
