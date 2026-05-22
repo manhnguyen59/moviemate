@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Room;
 use App\Models\Cinema;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RoomController extends Controller
 {
@@ -44,10 +45,14 @@ class RoomController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge([
+            'room_type' => $this->normalizeRoomType($request->input('room_type')),
+        ]);
+
         $validated = $request->validate([
             'cinema_id'   => ['required', 'exists:cinemas,id'],
             'name'        => ['required', 'string', 'max:255'],
-            'room_type'   => ['required', 'string', 'max:50'],
+            'room_type'   => ['required', Rule::in(['2D', '3D', 'IMAX'])],
             'total_seats' => ['required', 'integer', 'min:0'],
             'status'      => ['required', 'in:active,inactive'],
         ]);
@@ -56,7 +61,7 @@ class RoomController extends Controller
 
         return redirect()
             ->route('admin.rooms.index')
-            ->with('success', 'Thêm phòng chiếu thành công.');
+            ->with('success', 'ThÃªm phÃ²ng chiáº¿u thÃ nh cÃ´ng.');
     }
 
     /**
@@ -84,10 +89,14 @@ class RoomController extends Controller
      */
     public function update(Request $request, Room $room)
     {
+        $request->merge([
+            'room_type' => $this->normalizeRoomType($request->input('room_type')),
+        ]);
+
         $validated = $request->validate([
             'cinema_id'   => ['required', 'exists:cinemas,id'],
             'name'        => ['required', 'string', 'max:255'],
-            'room_type'   => ['required', 'string', 'max:50'],
+            'room_type'   => ['required', Rule::in(['2D', '3D', 'IMAX'])],
             'total_seats' => ['required', 'integer', 'min:0'],
             'status'      => ['required', 'in:active,inactive'],
         ]);
@@ -96,7 +105,7 @@ class RoomController extends Controller
 
         return redirect()
             ->route('admin.rooms.index')
-            ->with('success', 'Cập nhật phòng chiếu thành công.');
+            ->with('success', 'Cáº­p nháº­t phÃ²ng chiáº¿u thÃ nh cÃ´ng.');
     }
 
     /**
@@ -110,6 +119,30 @@ class RoomController extends Controller
 
         return redirect()
             ->route('admin.rooms.index')
-            ->with('success', 'Xóa phòng chiếu thành công.');
+            ->with('success', 'XÃ³a phÃ²ng chiáº¿u thÃ nh cÃ´ng.');
+    }
+
+    private function normalizeRoomType(?string $roomType): ?string
+    {
+        if ($roomType === null) {
+            return null;
+        }
+
+        $value = trim($roomType);
+        $upper = mb_strtoupper($value, 'UTF-8');
+
+        if (str_starts_with($upper, '2D')) {
+            return '2D';
+        }
+
+        if (str_starts_with($upper, '3D')) {
+            return '3D';
+        }
+
+        if (str_contains($upper, 'IMAX')) {
+            return 'IMAX';
+        }
+
+        return $value;
     }
 }

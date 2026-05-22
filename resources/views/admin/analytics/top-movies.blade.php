@@ -103,7 +103,7 @@
     </div>
 </div>
 
-<div class="bg-gradient-to-br from-[#1E1B4B] to-dark-main border border-ai-start/30 rounded-2xl p-6">
+<div class="dark-surface bg-gradient-to-br from-[#1E1B4B] to-dark-main border border-ai-start/30 rounded-2xl p-6">
     <h3 class="font-bold text-white mb-4 flex items-center gap-2">
         <i class="ph-fill ph-lightbulb text-warning"></i> Gợi ý vận hành
     </h3>

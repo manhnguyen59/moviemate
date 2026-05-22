@@ -21,7 +21,7 @@
     $titleHover = 'hover:text-pink-400';
 @endphp
 
-<article class="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/[0.08] {{ $cardBg }} shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-orange-400/25 {{ $cinemaGlow }}">
+<article class="group dark-surface flex h-full flex-col overflow-hidden rounded-3xl border border-white/[0.08] {{ $cardBg }} shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-orange-400/25 {{ $cinemaGlow }}">
     <a href="{{ $detailUrl }}" class="block">
         <div class="relative aspect-[2/3] overflow-hidden rounded-t-3xl bg-slate-950">
             @if($poster)

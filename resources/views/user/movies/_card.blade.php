@@ -4,7 +4,7 @@
     $genresText = $movie->genres?->pluck('name')->take(2)->join(', ') ?: 'Đang cập nhật';
 @endphp
 
-<article class="movie-card group cinema-card overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-brand-start/60">
+<article class="movie-card group dark-surface border border-white/10 rounded-[1.25rem] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-brand-start/60">
     <a href="{{ route('user.movies.show', $movie->slug) }}" class="block">
         <div class="poster-frame">
             @if($movie->poster_url)
@@ -42,24 +42,24 @@
     </a>
 
     <div class="p-4">
-        <h3 class="app-text font-bold text-sm sm:text-base line-clamp-2 min-h-[2.75rem]">
+        <h3 class="text-white font-bold text-sm sm:text-base line-clamp-2 min-h-[2.75rem]">
             <a href="{{ route('user.movies.show', $movie->slug) }}" class="hover:text-brand-start transition-colors">
                 {{ $movie->title ?? 'Chưa có tên phim' }}
             </a>
         </h3>
 
-        <p class="mt-2 text-xs app-muted line-clamp-1">{{ $genresText }}</p>
+        <p class="mt-2 text-xs text-slate-300 line-clamp-1">{{ $genresText }}</p>
 
-        <div class="mt-3 grid grid-cols-2 gap-2 app-muted text-xs">
+        <div class="mt-3 grid grid-cols-2 gap-2 text-slate-300 text-xs">
             <span class="inline-flex items-center gap-1"><i class="ph ph-clock"></i>{{ $movie->duration ?? '--' }} phút</span>
             <span class="inline-flex items-center gap-1 justify-end"><i class="ph ph-calendar-blank"></i>{{ $releaseDate }}</span>
         </div>
 
         <div class="mt-4 grid grid-cols-2 gap-2">
-            <a href="{{ route('user.movies.show', $movie->slug) }}" class="btn-secondary !rounded-xl !px-3 !py-2 text-xs">
+            <a href="{{ route('user.movies.show', $movie->slug) }}" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-white/10 hover:border-white/20">
                 Chi tiết
             </a>
-            <a href="{{ route('user.movies.show', $movie->slug) }}#showtimes" class="btn-primary !rounded-xl !px-3 !py-2 text-xs">
+            <a href="{{ route('user.movies.show', $movie->slug) }}#showtimes" class="inline-flex items-center justify-center gap-2 rounded-xl primary-gradient px-3 py-2 text-xs font-bold text-white transition-all hover:shadow-lg hover:shadow-brand-start/25">
                 Đặt vé
             </a>
         </div>

@@ -10,12 +10,12 @@
 
     <script>
         (function() {
-            var theme = localStorage.getItem('moviemate_theme') || 'dark';
+            var theme = localStorage.getItem('theme') || localStorage.getItem('moviemate_theme') || 'dark';
             document.documentElement.classList.toggle('light', theme === 'light');
         })();
     </script>
 </head>
-<body class="app-bg font-sans antialiased flex flex-col min-h-screen overflow-x-hidden">
+<body class="app-page font-sans antialiased flex flex-col min-h-screen overflow-x-hidden">
     <header class="app-header fixed w-full top-0 z-50 backdrop-blur-xl border-b app-border transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 md:h-20">

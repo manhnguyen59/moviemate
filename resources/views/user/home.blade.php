@@ -199,7 +199,7 @@
             <p class="bg-gradient-to-r from-pink-500 via-red-500 to-orange-500 bg-clip-text text-sm font-black uppercase tracking-[0.28em] text-transparent mb-3">Now Showing</p>
             <h2 class="text-3xl sm:text-4xl font-black app-text">Phim đang chiếu</h2>
         </div>
-        <a href="{{ route('user.movies.index', ['status' => 'now_showing']) }}" class="inline-flex w-fit items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-bold app-text transition-all duration-300 hover:border-brand-start/40 hover:bg-brand-start/10 hover:text-brand-start hover:shadow-lg hover:shadow-brand-start/10">
+        <a href="{{ route('user.movies.index', ['status' => 'now_showing']) }}" class="inline-flex w-fit items-center justify-center gap-2 rounded-xl border app-border app-card px-5 py-3 text-sm font-bold app-text-soft transition-all duration-300 hover:border-brand-start/40 hover:bg-brand-start/10 hover:text-brand-start hover:shadow-lg hover:shadow-brand-start/10">
             Xem tất cả <i class="ph ph-arrow-right"></i>
         </a>
     </div>
@@ -208,7 +208,7 @@
         @forelse($nowShowingMovies as $movie)
             @include('user.movies._home-movie-card', ['movie' => $movie, 'type' => 'now_showing'])
         @empty
-            <div class="col-span-full rounded-3xl border border-white/[0.08] bg-[linear-gradient(180deg,#111827_0%,#0B1020_100%)] p-10 text-center shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+            <div class="col-span-full dark-surface rounded-3xl border border-white/[0.08] p-10 text-center shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
                 <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-start/10 text-brand-start">
                     <i class="ph-fill ph-film-strip text-4xl"></i>
                 </div>
@@ -228,9 +228,9 @@
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 mb-8">
         <div>
             <p class="bg-gradient-to-r from-pink-500 via-red-500 to-orange-500 bg-clip-text text-sm font-semibold uppercase tracking-[0.28em] text-transparent mb-3 opacity-90">Coming Soon</p>
-            <h2 class="text-3xl sm:text-4xl font-bold text-white">Phim sắp chiếu</h2>
+            <h2 class="text-3xl sm:text-4xl font-bold app-heading">Phim sắp chiếu</h2>
         </div>
-        <a href="{{ route('user.movies.index', ['status' => 'coming_soon']) }}" class="inline-flex w-fit items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-bold text-gray-300 transition-all duration-300 hover:border-orange-400/25 hover:bg-pink-500/10 hover:text-white hover:shadow-lg hover:shadow-pink-500/10">
+        <a href="{{ route('user.movies.index', ['status' => 'coming_soon']) }}" class="inline-flex w-fit items-center justify-center gap-2 rounded-xl border app-border app-card px-5 py-3 text-sm font-bold app-text-soft transition-all duration-300 hover:border-orange-400/25 hover:bg-pink-500/10 hover:text-brand-start hover:shadow-lg hover:shadow-pink-500/10">
             Xem tất cả <i class="ph ph-arrow-right"></i>
         </a>
     </div>
@@ -239,7 +239,7 @@
         @forelse($comingSoonMovies as $movie)
             @include('user.movies._home-movie-card', ['movie' => $movie, 'type' => 'coming_soon'])
         @empty
-            <div class="col-span-full rounded-3xl border border-white/[0.08] bg-[linear-gradient(180deg,#131A2E_0%,#0B1020_100%)] p-10 text-center shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+            <div class="col-span-full dark-surface rounded-3xl border border-white/[0.08] p-10 text-center shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
                 <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-pink-500/10 text-pink-400">
                     <i class="ph-fill ph-film-strip text-4xl"></i>
                 </div>

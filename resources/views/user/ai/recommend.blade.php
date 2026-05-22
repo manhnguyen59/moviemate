@@ -176,7 +176,7 @@
                             $showtimeUrl = $detailUrl . '#showtimes';
                         @endphp
 
-                        <article class="{{ $index === 0 ? 'bg-gradient-to-br from-[#1E1B4B] to-dark-main border-ai-start/30 shadow-ai-start/10' : 'app-card app-border' }} border rounded-3xl p-5 sm:p-6 relative overflow-hidden shadow-2xl">
+                        <article class="{{ $index === 0 ? 'dark-surface bg-gradient-to-br from-[#1E1B4B] to-dark-main border-ai-start/30 shadow-ai-start/10' : 'app-card app-border' }} border rounded-3xl p-5 sm:p-6 relative overflow-hidden shadow-2xl">
                             @if($index === 0)
                                 <i class="ph-fill ph-sparkle absolute top-6 right-6 text-4xl text-ai-start/45"></i>
                             @endif

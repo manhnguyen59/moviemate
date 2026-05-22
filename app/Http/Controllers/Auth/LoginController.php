@@ -8,48 +8,56 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    /**
-     * Show the login form.
-     */
     public function showLoginForm()
     {
+        if (Auth::check()) {
+            return $this->redirectByRole();
+        }
+
         return view('user.auth.login');
     }
 
-    /**
-     * Handle a login request.
-     */
     public function login(Request $request)
     {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required|string',
-            'remember' => 'sometimes|boolean',
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ], [
+            'email.required' => 'Vui lòng nhập email.',
+            'email.email' => 'Email không đúng định dạng.',
+            'password.required' => 'Vui lòng nhập mật khẩu.',
         ]);
 
-        $credentials = $request->only('email', 'password');
-        $remember    = $request->filled('remember');
+        $remember = $request->boolean('remember');
 
-        if (Auth::attempt($credentials, $remember)) {
-            $request->session()->regenerate();
-
-            $role = Auth::user()->role?->name;
-
-            return match ($role) {
-                'Admin' => redirect()->intended(route('admin.dashboard')),
-                'Staff' => redirect()->intended(route('staff.dashboard')),
-                default => redirect()->intended(route('home')),
-            };
+        if (! Auth::attempt($credentials, $remember)) {
+            return back()
+                ->withErrors([
+                    'email' => 'Email hoặc mật khẩu không chính xác.',
+                ])
+                ->onlyInput('email', 'remember');
         }
 
-        return back()->withErrors([
-            'email' => 'Thông tin đăng nhập không chính xác.',
-        ])->withInput($request->only('email', 'remember'));
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        if (isset($user->status) && $user->status !== 'active') {
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors([
+                    'email' => 'Tài khoản của bạn đang bị khóa hoặc chưa được kích hoạt.',
+                ])
+                ->onlyInput('email', 'remember');
+        }
+
+        return $this->redirectByRole();
     }
 
-    /**
-     * Log the user out of the application.
-     */
     public function logout(Request $request)
     {
         Auth::logout();
@@ -57,6 +65,21 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('login')->with('success', 'Đăng xuất thành công.');
+    }
+
+    private function redirectByRole()
+    {
+        $roleName = strtolower(optional(Auth::user()->role)->name ?? 'user');
+
+        if ($roleName === 'admin') {
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        if ($roleName === 'staff') {
+            return redirect()->intended(route('staff.dashboard'));
+        }
+
+        return redirect()->intended(route('home'));
     }
 }

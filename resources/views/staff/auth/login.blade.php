@@ -8,13 +8,13 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
         (function() {
-            var t = localStorage.getItem('moviemate_theme') || 'dark';
+            var t = localStorage.getItem('theme') || localStorage.getItem('moviemate_theme') || 'dark';
             if (t === 'light') document.documentElement.classList.add('light');
             else document.documentElement.classList.remove('light');
         })();
     </script>
 </head>
-<body class="bg-dark-main text-text-main font-sans antialiased min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden">
+<body class="app-page font-sans antialiased min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden">
 
     <button data-theme-toggle type="button"
         class="fixed top-4 right-4 z-30 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-dark-card/80 backdrop-blur border border-dark-border text-text-sub hover:text-text-main hover:border-ai-start transition-all text-sm"

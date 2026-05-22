@@ -13,7 +13,9 @@ class StaffMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && in_array(optional(Auth::user()->role)->name, ['Staff', 'Admin'], true)) {
+        $roleName = strtolower(optional(Auth::user()->role)->name ?? '');
+
+        if (Auth::check() && in_array($roleName, ['staff', 'admin'], true)) {
             return $next($request);
         }
 

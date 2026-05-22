@@ -9,13 +9,13 @@
     {{-- Prevent theme flash --}}
     <script>
         (function() {
-            var t = localStorage.getItem('moviemate_theme') || 'dark';
+            var t = localStorage.getItem('theme') || localStorage.getItem('moviemate_theme') || 'dark';
             if (t === 'light') document.documentElement.classList.add('light');
             else document.documentElement.classList.remove('light');
         })();
     </script>
 </head>
-<body class="app-bg font-sans antialiased flex h-screen overflow-hidden">
+<body class="app-page font-sans antialiased flex h-screen overflow-hidden">
 
     <!-- Mobile Sidebar Backdrop -->
     <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden hidden"></div>
@@ -160,10 +160,10 @@
         </header>
 
         <!-- Content Area -->
-        <div class="flex-grow p-4 sm:p-6 lg:p-8 overflow-y-auto">
-            <div class="max-w-[1600px] mx-auto pb-10">
+        <div class="flex-grow overflow-y-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 pb-12">
                 <div class="sm:hidden mb-4">
-                    <h1 class="text-xl font-bold app-text">@yield('page-title')</h1>
+                    <h1 class="text-xl font-bold app-heading">@yield('page-title')</h1>
                 </div>
                 @yield('content')
             </div>

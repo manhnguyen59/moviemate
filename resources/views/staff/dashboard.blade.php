@@ -57,7 +57,7 @@
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-    <a href="{{ route('staff.tickets.check') }}" class="group bg-gradient-to-br from-dark-card to-dark-main border border-ai-start/30 rounded-2xl p-6 hover:border-ai-start transition-colors relative overflow-hidden">
+    <a href="{{ route('staff.tickets.check') }}" class="group dark-surface bg-gradient-to-br from-dark-card to-dark-main border border-ai-start/30 rounded-2xl p-6 hover:border-ai-start transition-colors relative overflow-hidden">
         <i class="ph-fill ph-qr-code absolute -right-6 -bottom-6 text-9xl text-ai-start/10 transition-colors"></i>
         <div class="flex items-center gap-4 mb-2 relative z-10">
             <div class="w-12 h-12 rounded-xl bg-ai-start text-white flex items-center justify-center shadow-lg shadow-ai-start/30">
@@ -70,7 +70,7 @@
         </div>
     </a>
 
-    <a href="{{ route('staff.tickets.index') }}" class="group bg-gradient-to-br from-dark-card to-dark-main border border-brand-start/30 rounded-2xl p-6 hover:border-brand-start transition-colors relative overflow-hidden">
+    <a href="{{ route('staff.tickets.index') }}" class="group dark-surface bg-gradient-to-br from-dark-card to-dark-main border border-brand-start/30 rounded-2xl p-6 hover:border-brand-start transition-colors relative overflow-hidden">
         <i class="ph-fill ph-ticket absolute -right-6 -bottom-6 text-9xl text-brand-start/10 transition-colors"></i>
         <div class="flex items-center gap-4 mb-2 relative z-10">
             <div class="w-12 h-12 rounded-xl bg-brand-start text-white flex items-center justify-center shadow-lg shadow-brand-start/30">

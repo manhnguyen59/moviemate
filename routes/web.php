@@ -19,6 +19,7 @@ use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\MovieController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\AiController;
+use App\Http\Controllers\User\ProfileController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/ajax/showtimes', [HomeController::class, 'ajaxShowtimes'])->name('ajax.showtimes');
@@ -29,7 +30,7 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
 
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::get('/movies', [MovieController::class, 'index'])->name('user.movies.index');
 
@@ -64,9 +65,10 @@ Route::post('/ai/recommend', [AiController::class, 'recommendStore'])->name('use
 Route::get('/ai/chatbot', [AiController::class, 'chatbot'])->name('user.ai.chatbot');
 Route::post('/ai/chatbot', [AiController::class, 'chatbotStore'])->name('user.ai.chatbot.submit');
 
-Route::get('/profile', function () {
-    return view('user.profile.index');
-})->middleware('user')->name('user.profile');
+Route::middleware('user')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('user.profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('user.profile.update');
+});
 
 Route::get('/admin/login', function () {
     return view('admin.auth.login');

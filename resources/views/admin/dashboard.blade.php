@@ -78,7 +78,7 @@
         </div>
     </div>
 
-    <div class="bg-gradient-to-br from-[#1E1B4B] to-dark-main border border-ai-start/30 rounded-2xl p-6 relative overflow-hidden flex flex-col">
+    <div class="dark-surface bg-gradient-to-br from-[#1E1B4B] to-dark-main border border-ai-start/30 rounded-2xl p-6 relative overflow-hidden flex flex-col">
         <i class="ph-fill ph-sparkle absolute top-6 right-6 text-4xl text-ai-start/30"></i>
         <div class="flex items-center gap-3 mb-4">
             <div class="w-8 h-8 rounded-full bg-ai-start/20 flex items-center justify-center">

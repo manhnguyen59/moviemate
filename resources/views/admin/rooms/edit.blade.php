@@ -37,7 +37,11 @@
                 </div>
                 <div>
                     <label class="cinema-label">Loại phòng *</label>
-                    <input type="text" name="room_type" value="{{ old('room_type', $room->room_type) }}" required class="cinema-input">
+                    <select name="room_type" required class="cinema-input">
+                        <option value="2D" {{ old('room_type', $room->room_type) === '2D' ? 'selected' : '' }}>2D</option>
+                        <option value="3D" {{ old('room_type', $room->room_type) === '3D' ? 'selected' : '' }}>3D</option>
+                        <option value="IMAX" {{ old('room_type', $room->room_type) === 'IMAX' ? 'selected' : '' }}>IMAX</option>
+                    </select>
                 </div>
             </div>
 
