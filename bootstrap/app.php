@@ -1,5 +1,9 @@
 <?php
 
+use App\Console\Commands\GenerateMovieMateDocx;
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\StaffMiddleware;
+use App\Http\Middleware\UserMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -10,12 +14,15 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withCommands([
+        GenerateMovieMateDocx::class,
+    ])
     ->withMiddleware(function (Middleware $middleware): void {
         // Register role based middleware aliases
         $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
-            'staff' => \App\Http\Middleware\StaffMiddleware::class,
-            'user' => \App\Http\Middleware\UserMiddleware::class,
+            'admin' => AdminMiddleware::class,
+            'staff' => StaffMiddleware::class,
+            'user' => UserMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
