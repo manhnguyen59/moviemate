@@ -13,6 +13,12 @@
                 <h2 class="font-bold app-text mb-1">{{ Auth::user()->name }}</h2>
                 <p class="text-xs text-ai-start font-bold mb-5">Hạng {{ Auth::user()->role->name ?? 'Khách' }}</p>
 
+                <div class="w-full rounded-2xl border border-ai-start/30 bg-ai-start/10 px-4 py-3 mb-4 text-left">
+                    <p class="text-xs app-muted">Thành viên {{ Auth::user()->membership_tier }}</p>
+                    <p class="text-2xl font-extrabold text-ai-start">{{ number_format(Auth::user()->loyalty_points, 0, ',', '.') }}</p>
+                    <p class="text-xs app-muted">điểm khả dụng</p>
+                </div>
+
                 <div class="w-full space-y-1 text-left">
                     <a href="{{ route('user.profile') }}" class="flex items-center gap-3 px-4 py-2.5 app-muted hover:app-text hover:bg-brand-start/5 rounded-xl font-medium transition-colors text-sm">
                         <i class="ph ph-user text-lg"></i> Thông tin cá nhân
@@ -93,6 +99,9 @@
                                     <div>
                                         <p class="text-xs app-muted mb-0.5">Tổng tiền</p>
                                         <p class="app-text font-bold text-lg">{{ number_format($booking->total_amount,0,',','.') }}đ</p>
+                                        @if($booking->loyalty_points_earned > 0)
+                                            <p class="text-xs text-ai-start font-semibold">+{{ number_format($booking->loyalty_points_earned,0,',','.') }} điểm</p>
+                                        @endif
                                     </div>
                                     <div class="flex gap-2">
                                         <a href="{{ route('user.bookings.ticket', $booking) }}" class="px-4 py-2 bg-gradient-to-r from-brand-start to-brand-end text-white rounded-xl text-xs font-bold hover:shadow-lg transition-all">

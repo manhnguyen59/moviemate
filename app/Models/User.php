@@ -22,6 +22,8 @@ class User extends Authenticatable
         'role_id',
         'avatar',
         'status',
+        'loyalty_points',
+        'lifetime_loyalty_points',
     ];
 
     protected $hidden = [
@@ -32,6 +34,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'role_id' => 'integer',
+        'loyalty_points' => 'integer',
+        'lifetime_loyalty_points' => 'integer',
         'password' => 'hashed',
     ];
 
@@ -58,5 +62,34 @@ class User extends Authenticatable
     public function aiRecommendations(): HasMany
     {
         return $this->hasMany(AiRecommendation::class);
+    }
+
+    public function loyaltyPointTransactions(): HasMany
+    {
+        return $this->hasMany(LoyaltyPointTransaction::class);
+    }
+
+    public function getMembershipTierAttribute(): string
+    {
+        $points = (int) $this->lifetime_loyalty_points;
+
+        return match (true) {
+            $points >= 2000 => 'Kim cương',
+            $points >= 1000 => 'Vàng',
+            $points >= 500 => 'Bạc',
+            default => 'Thành viên',
+        };
+    }
+
+    public function getPointsToNextTierAttribute(): int
+    {
+        $points = (int) $this->lifetime_loyalty_points;
+
+        return match (true) {
+            $points < 500 => 500 - $points,
+            $points < 1000 => 1000 - $points,
+            $points < 2000 => 2000 - $points,
+            default => 0,
+        };
     }
 }

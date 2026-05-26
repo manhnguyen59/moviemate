@@ -33,7 +33,13 @@
                 <div class="flex justify-between gap-4"><span class="app-muted">Thời gian</span><span class="app-text font-semibold text-right">{{ $booking->showtime?->show_date ? \Carbon\Carbon::parse($booking->showtime->show_date)->format('d/m/Y') : 'Đang cập nhật' }} {{ $booking->showtime?->show_time ? \Carbon\Carbon::parse($booking->showtime->show_time)->format('H:i') : '--:--' }}</span></div>
                 <div class="flex justify-between gap-4"><span class="app-muted">Ghế</span><span class="app-text font-bold text-right">{{ $booking->bookingSeats->pluck('seat.seat_code')->join(', ') }}</span></div>
                 <div class="flex justify-between gap-4"><span class="app-muted">Tổng tiền</span><span class="app-text font-bold text-right">{{ number_format($booking->total_amount,0,',','.') }}đ</span></div>
+                <div class="flex justify-between gap-4"><span class="app-muted">Điểm tích lũy</span><span class="text-ai-start font-bold text-right">+{{ number_format($booking->loyalty_points_earned,0,',','.') }} điểm</span></div>
             </div>
+        </div>
+
+        <div class="rounded-2xl border border-ai-start/30 bg-ai-start/10 px-4 py-3 mb-6">
+            <p class="text-sm app-text font-semibold">Hạng {{ $booking->user->membership_tier }}</p>
+            <p class="text-xs app-muted mt-1">Bạn đang có {{ number_format($booking->user->loyalty_points,0,',','.') }} điểm khả dụng.</p>
         </div>
 
         <p class="text-sm app-muted mb-8">

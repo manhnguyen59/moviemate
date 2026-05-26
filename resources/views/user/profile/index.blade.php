@@ -19,6 +19,12 @@
                     <h2 class="text-lg font-bold app-heading mb-0.5">{{ $user->name }}</h2>
                     <p class="text-xs text-ai-start font-bold mb-5">Vai trò {{ $roleName }}</p>
 
+                    <div class="w-full rounded-2xl border border-ai-start/30 bg-ai-start/10 px-4 py-3 mb-4 text-left">
+                        <p class="text-xs app-muted">Thành viên {{ $user->membership_tier }}</p>
+                        <p class="text-2xl font-extrabold text-ai-start">{{ number_format($user->loyalty_points, 0, ',', '.') }}</p>
+                        <p class="text-xs app-muted">điểm khả dụng</p>
+                    </div>
+
                     <div class="w-full space-y-1 text-left">
                         <a href="{{ route('user.profile') }}" class="flex items-center gap-3 px-4 py-2.5 bg-brand-start/10 text-brand-start rounded-xl font-bold border border-brand-start/20 text-sm">
                             <i class="ph-fill ph-user text-lg"></i> Thông tin cá nhân
@@ -45,6 +51,21 @@
                     <div class="mb-6 pb-4 border-b app-border">
                         <h1 class="text-xl font-bold app-heading">Thông tin cá nhân</h1>
                         <p class="mt-1 text-sm app-text-muted">Cập nhật họ tên và số điện thoại dùng cho đặt vé.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="app-secondary border app-border rounded-2xl p-4">
+                            <p class="text-xs app-muted mb-1">Hạng thành viên</p>
+                            <p class="app-text font-bold">{{ $user->membership_tier }}</p>
+                        </div>
+                        <div class="app-secondary border app-border rounded-2xl p-4">
+                            <p class="text-xs app-muted mb-1">Điểm khả dụng</p>
+                            <p class="text-ai-start font-bold">{{ number_format($user->loyalty_points, 0, ',', '.') }}</p>
+                        </div>
+                        <div class="app-secondary border app-border rounded-2xl p-4">
+                            <p class="text-xs app-muted mb-1">Điểm lên hạng</p>
+                            <p class="app-text font-bold">{{ $user->points_to_next_tier > 0 ? number_format($user->points_to_next_tier, 0, ',', '.').' điểm' : 'Cao nhất' }}</p>
+                        </div>
                     </div>
 
                         @if($errors->any())

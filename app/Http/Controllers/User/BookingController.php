@@ -202,11 +202,14 @@ class BookingController extends Controller
                     $totalAmount += $price;
                 }
 
+                $loyaltyPoints = $this->calculateLoyaltyPoints($totalAmount);
+
                 $booking = Booking::create([
                     'user_id' => Auth::id(),
                     'showtime_id' => $showtime->id,
                     'booking_code' => $this->generateBookingCode(),
                     'total_amount' => $totalAmount,
+                    'loyalty_points_earned' => $loyaltyPoints,
                     'payment_status' => 'paid',
                     'booking_status' => 'paid',
                 ]);
@@ -227,6 +230,20 @@ class BookingController extends Controller
                     'transaction_code' => 'FAKE-'.now()->format('YmdHis').'-'.$booking->id,
                     'paid_at' => now(),
                 ]);
+
+                if ($loyaltyPoints > 0) {
+                    $user = $booking->user()->lockForUpdate()->first();
+
+                    $user->increment('loyalty_points', $loyaltyPoints);
+                    $user->increment('lifetime_loyalty_points', $loyaltyPoints);
+
+                    $booking->loyaltyPointTransactions()->create([
+                        'user_id' => $user->id,
+                        'points' => $loyaltyPoints,
+                        'type' => 'earn',
+                        'description' => 'Tích điểm từ đơn đặt vé '.$booking->booking_code,
+                    ]);
+                }
 
                 return $booking;
             });
@@ -321,12 +338,42 @@ class BookingController extends Controller
             return back()->with('error', 'Ve nay khong the huy.');
         }
 
-        $booking->update([
-            'booking_status' => 'cancelled',
-            'payment_status' => $booking->payment_status === 'paid' ? 'refunded' : $booking->payment_status,
-        ]);
+        DB::transaction(function () use ($booking) {
+            $booking->update([
+                'booking_status' => 'cancelled',
+                'payment_status' => $booking->payment_status === 'paid' ? 'refunded' : $booking->payment_status,
+            ]);
 
-        $booking->bookingSeats()->delete();
+            if ($booking->loyalty_points_earned > 0) {
+                $alreadyReversed = $booking->loyaltyPointTransactions()
+                    ->where('type', 'reverse')
+                    ->exists();
+
+                if (! $alreadyReversed) {
+                    $user = $booking->user()->lockForUpdate()->first();
+                    $pointsToReverse = min((int) $booking->loyalty_points_earned, (int) $user->loyalty_points);
+
+                    if ($pointsToReverse > 0) {
+                        $user->decrement('loyalty_points', $pointsToReverse);
+                    }
+
+                    $lifetimePointsToReverse = min((int) $booking->loyalty_points_earned, (int) $user->lifetime_loyalty_points);
+
+                    if ($lifetimePointsToReverse > 0) {
+                        $user->decrement('lifetime_loyalty_points', $lifetimePointsToReverse);
+                    }
+
+                    $booking->loyaltyPointTransactions()->create([
+                        'user_id' => $booking->user_id,
+                        'points' => -1 * (int) $booking->loyalty_points_earned,
+                        'type' => 'reverse',
+                        'description' => 'Hoàn điểm do hủy vé '.$booking->booking_code,
+                    ]);
+                }
+            }
+
+            $booking->bookingSeats()->delete();
+        });
 
         return back()->with('success', 'Da huy ve thanh cong.');
     }
@@ -358,6 +405,11 @@ class BookingController extends Controller
     {
         return str_contains($exception->getMessage(), 'booking_seats_showtime_id_seat_id_unique')
             || str_contains($exception->getMessage(), 'booking_seats.showtime_id, booking_seats.seat_id');
+    }
+
+    protected function calculateLoyaltyPoints(float $totalAmount): int
+    {
+        return (int) floor($totalAmount / 10000);
     }
 
     /**
