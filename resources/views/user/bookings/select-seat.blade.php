@@ -4,6 +4,14 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+    <div class="mb-5">
+        <a href="{{ $showtime->movie?->slug ? route('user.movies.show', $showtime->movie->slug).'#showtimes' : route('user.movies.index') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl app-secondary border app-border app-text text-sm font-bold hover:border-brand-start hover:text-brand-start transition-colors">
+            <i class="ph ph-arrow-left"></i>
+            Quay lại lịch chiếu
+        </a>
+    </div>
+
     <div class="mb-8">
         <div class="flex items-center justify-center sm:justify-start gap-2 sm:gap-4 text-xs sm:text-sm">
             <div class="flex items-center gap-2 text-brand-start font-semibold">

@@ -13,8 +13,10 @@ use App\Http\Controllers\Admin\MovieController as AdminMovieController;
 use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\SeatController as AdminSeatController;
 use App\Http\Controllers\Admin\ShowtimeController as AdminShowtimeController;
+use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\Staff\DashboardController as StaffDashboardController;
 use App\Http\Controllers\Staff\TicketCheckController as StaffTicketCheckController;
+use App\Http\Controllers\Payment\PayosController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\MovieController;
 use App\Http\Controllers\User\BookingController;
@@ -33,6 +35,8 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 
+Route::post('/payment/payos/webhook', [PayosController::class, 'webhook'])->name('payment.payos.webhook');
+
 Route::get('/movies', [MovieController::class, 'index'])->name('user.movies.index');
 
 Route::get('/movies/{slug}', [MovieController::class, 'show'])->name('user.movies.show');
@@ -41,6 +45,9 @@ Route::get('/showtimes', [UserShowtimeController::class, 'index'])->name('user.s
 Route::get('/showtimes/ajax', [UserShowtimeController::class, 'ajax'])->name('user.showtimes.ajax');
 
 Route::middleware('user')->group(function () {
+    Route::get('/payment/payos/return/{booking}', [PayosController::class, 'return'])->name('payment.payos.return');
+    Route::get('/payment/payos/cancel/{booking}', [PayosController::class, 'cancel'])->name('payment.payos.cancel');
+
     Route::get('/booking/select-seat/{showtime}', [BookingController::class, 'selectSeat'])
         ->name('user.bookings.selectSeat');
 
@@ -136,6 +143,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::patch('/seats/{seat}', [AdminSeatController::class, 'update'])->name('seats.update');
 
     Route::resource('showtimes', AdminShowtimeController::class)->except(['show']);
+    Route::resource('vouchers', AdminVoucherController::class)->except(['show']);
 
     Route::get('/bookings', function () {
         return view('admin.bookings.index');

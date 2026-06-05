@@ -46,6 +46,7 @@
                 <form method="GET" action="{{ route('user.bookings.history') }}" class="flex gap-2">
                     <select name="status" class="app-input border app-border rounded-xl text-sm px-3 py-2">
                         <option value="">Tất cả</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chờ thanh toán</option>
                         <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Chưa sử dụng</option>
                         <option value="used" {{ request('status') == 'used' ? 'selected' : '' }}>Đã sử dụng</option>
                         <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã hủy</option>
@@ -65,12 +66,13 @@
                 @forelse($bookings as $booking)
                     @php
                         $statusMap = [
+                            'pending' => ['label' => 'Chờ thanh toán', 'class' => 'bg-yellow-100 text-yellow-700'],
                             'paid' => ['label' => 'Chưa sử dụng', 'class' => 'bg-brand-start text-white'],
                             'used' => ['label' => 'Đã sử dụng', 'class' => 'bg-blue-100 text-blue-700'],
                             'cancelled' => ['label' => 'Đã hủy', 'class' => 'bg-red-100 text-red-700'],
                             'expired' => ['label' => 'Hết hạn', 'class' => 'bg-gray-100 text-gray-700'],
                         ];
-                        $status = $statusMap[$booking->booking_status] ?? $statusMap['paid'];
+                        $status = $statusMap[$booking->booking_status] ?? $statusMap['pending'];
                         $poster = $booking->showtime->movie->poster_url;
                     @endphp
 
@@ -113,15 +115,21 @@
                                         @endif
                                     </div>
                                     <div class="flex gap-2">
-                                        <a href="{{ route('user.bookings.ticket', $booking) }}" class="px-4 py-2 bg-gradient-to-r from-brand-start to-brand-end text-white rounded-xl text-xs font-bold hover:shadow-lg transition-all">
-                                            Xem vé QR
-                                        </a>
-                                        @if($booking->booking_status === 'paid')
+                                        @if($booking->booking_status === 'pending' && $booking->payment?->checkout_url)
+                                            <a href="{{ $booking->payment->checkout_url }}" class="px-4 py-2 bg-gradient-to-r from-brand-start to-brand-end text-white rounded-xl text-xs font-bold hover:shadow-lg transition-all">
+                                                Thanh toán tiếp
+                                            </a>
+                                        @else
+                                            <a href="{{ route('user.bookings.ticket', $booking) }}" class="px-4 py-2 bg-gradient-to-r from-brand-start to-brand-end text-white rounded-xl text-xs font-bold hover:shadow-lg transition-all">
+                                                Xem vé QR
+                                            </a>
+                                        @endif
+                                        @if(in_array($booking->booking_status, ['pending', 'paid'], true))
                                             <form method="POST" action="{{ route('user.bookings.cancel', $booking) }}" class="inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="px-3 py-2 border app-border app-muted hover:app-text rounded-xl text-xs font-semibold transition-colors">
-                                                    Hủy vé
+                                                <button type="submit" class="px-3 py-2 border app-border app-muted hover:app-text rounded-xl text-xs font-semibold transition-colors" onclick="return confirm('{{ $booking->booking_status === 'pending' ? 'Bạn chắc chắn muốn hủy thanh toán này?' : 'Bạn chắc chắn muốn hủy vé này?' }}')">
+                                                    {{ $booking->booking_status === 'pending' ? 'Hủy thanh toán' : 'Hủy vé' }}
                                                 </button>
                                             </form>
                                         @endif

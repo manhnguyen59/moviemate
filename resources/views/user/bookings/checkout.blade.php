@@ -3,11 +3,22 @@
 @section('title', 'Thanh toán - MovieMate')
 
 @php
-    $loyaltyPoints = (int) floor($totalAmount / 10000);
+    $loyaltyPoints = app(\App\Services\LoyaltyPointService::class)->calculate($totalAmount);
+    $subtotalAmount = $subtotalAmount ?? $totalAmount;
+    $voucherSummary = $voucherSummary ?? ['voucher' => null, 'code' => null, 'discount' => 0, 'total' => $totalAmount];
+    $selectedSeatQuery = collect($seatSummaries)->pluck('id')->join(',');
 @endphp
 
 @section('content')
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+    <div class="mb-5">
+        <a href="{{ route('user.bookings.selectSeat', $showtime) }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl app-secondary border app-border app-text text-sm font-bold hover:border-brand-start hover:text-brand-start transition-colors">
+            <i class="ph ph-arrow-left"></i>
+            Quay lại chọn ghế
+        </a>
+    </div>
+
     <div class="mb-8">
         <div class="flex items-center justify-center sm:justify-start gap-2 sm:gap-4 text-xs sm:text-sm">
             <div class="flex items-center gap-2 text-brand-start font-semibold">
@@ -26,6 +37,10 @@
             </div>
         </div>
     </div>
+
+    <form id="voucherPreviewForm" method="GET" action="{{ route('user.bookings.checkout', $showtime) }}">
+        <input type="hidden" name="selected_seats" value="{{ $selectedSeatQuery }}">
+    </form>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
         <div class="app-card border app-border rounded-3xl p-6 shadow-2xl shadow-black/20">
@@ -53,6 +68,19 @@
                 <span class="text-3xl font-extrabold text-brand-start">{{ number_format($totalAmount,0,',','.') }}đ</span>
             </div>
 
+            @if(($voucherSummary['discount'] ?? 0) > 0)
+                <div class="mt-3 rounded-2xl border border-success/30 bg-success/10 px-4 py-3">
+                    <div class="flex justify-between gap-4 text-sm">
+                        <span class="app-muted">Tạm tính</span>
+                        <span class="app-text font-bold">{{ number_format($subtotalAmount,0,',','.') }}đ</span>
+                    </div>
+                    <div class="flex justify-between gap-4 text-sm mt-2">
+                        <span class="app-muted">Voucher {{ $voucherSummary['code'] }}</span>
+                        <span class="text-success font-bold">-{{ number_format($voucherSummary['discount'],0,',','.') }}đ</span>
+                    </div>
+                </div>
+            @endif
+
             <div class="mt-4 rounded-2xl border border-ai-start/30 bg-ai-start/10 px-4 py-3 flex items-center justify-between gap-4">
                 <div>
                     <p class="text-xs app-muted">Điểm thành viên dự kiến</p>
@@ -71,24 +99,37 @@
             @foreach($seatSummaries as $seat)
                 <input type="hidden" name="seat_ids[]" value="{{ $seat['id'] }}">
             @endforeach
+            <input type="hidden" name="payment_method" value="payos">
+            @if($voucherSummary['code'])
+                <input type="hidden" name="voucher_code" value="{{ $voucherSummary['code'] }}">
+            @endif
 
             <h2 class="text-2xl font-bold app-text mb-5">Phương thức thanh toán</h2>
 
+            <div class="mb-5 rounded-2xl app-input border app-border p-4">
+                <label for="voucher_code" class="block text-sm font-bold app-text mb-2">Mã voucher</label>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input id="voucher_code" form="voucherPreviewForm" type="text" name="voucher_code" value="{{ old('voucher_code', $voucherSummary['code'] ?? $voucherCode ?? '') }}" class="app-input border app-border rounded-xl px-4 py-2.5 text-sm flex-1" placeholder="Nhập mã giảm giá">
+                    <button form="voucherPreviewForm" type="submit" class="px-4 py-2.5 rounded-xl bg-brand-start text-white text-sm font-bold">Áp dụng</button>
+                </div>
+                @if(($voucherSummary['discount'] ?? 0) > 0)
+                    <p class="mt-2 text-xs font-semibold text-success">Đã giảm {{ number_format($voucherSummary['discount'],0,',','.') }}đ.</p>
+                @endif
+                @error('voucher_code')
+                    <p class="mt-2 text-xs font-semibold text-error">{{ $message }}</p>
+                @enderror
+            </div>
+
             <div class="space-y-3">
-                <label class="flex items-center gap-3 p-4 app-input border border-brand-start rounded-2xl cursor-pointer hover:border-brand-start transition-colors">
-                    <input type="radio" name="payment_method" value="fake" checked class="text-brand-start focus:ring-brand-start w-4 h-4">
-                    <span class="app-text font-semibold">Thanh toán giả lập (đã thanh toán)</span>
-                </label>
-
-                <label class="flex items-center gap-3 p-4 app-input border app-border rounded-2xl cursor-pointer hover:border-brand-start transition-colors">
-                    <input type="radio" name="payment_method" value="counter" class="text-brand-start focus:ring-brand-start w-4 h-4">
-                    <span class="app-text font-semibold">Thanh toán tại quầy</span>
-                </label>
-
-                <label class="flex items-center gap-3 p-4 app-input border app-border rounded-2xl cursor-pointer hover:border-brand-start transition-colors">
-                    <input type="radio" name="payment_method" value="vnpay" class="text-brand-start focus:ring-brand-start w-4 h-4">
-                    <span class="app-text font-semibold">Thanh toán VNPay (giả lập)</span>
-                </label>
+                <div class="flex items-start gap-3 p-4 app-input border border-brand-start rounded-2xl">
+                    <div class="w-10 h-10 rounded-xl bg-brand-start/10 text-brand-start flex items-center justify-center shrink-0">
+                        <i class="ph-fill ph-qr-code text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="app-text font-bold">QR chuyển khoản ngân hàng qua payOS</p>
+                        <p class="app-muted text-sm mt-1">Sau khi xác nhận, hệ thống sẽ chuyển sang cổng payOS để tạo mã QR. Vé chỉ được kích hoạt khi payOS báo thanh toán thành công.</p>
+                    </div>
+                </div>
             </div>
 
             <button type="submit" class="w-full mt-6 py-4 bg-gradient-to-r from-brand-start to-brand-end text-white rounded-2xl font-bold hover:shadow-lg hover:shadow-brand-start/30 transition-all">

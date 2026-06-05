@@ -12,9 +12,12 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'showtime_id',
+        'voucher_id',
         'booking_code',
         'total_amount',
         'loyalty_points_earned',
+        'voucher_code',
+        'discount_amount',
         'payment_status',
         'booking_status',
         'used_at',
@@ -24,6 +27,7 @@ class Booking extends Model
         'used_at'      => 'datetime',
         'total_amount' => 'decimal:2',
         'loyalty_points_earned' => 'integer',
+        'discount_amount' => 'decimal:2',
     ];
 
     public function user(): BelongsTo
@@ -44,6 +48,11 @@ class Booking extends Model
     public function payment(): HasOne
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function voucher(): BelongsTo
+    {
+        return $this->belongsTo(Voucher::class);
     }
 
     public function loyaltyPointTransactions(): HasMany

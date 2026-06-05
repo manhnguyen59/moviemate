@@ -76,6 +76,10 @@
                 <i class="{{ request()->routeIs('admin.bookings.*') ? 'ph-fill' : 'ph' }} ph-ticket text-lg"></i>
                 Vé đặt
             </a>
+            <a href="{{ route('admin.vouchers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.vouchers.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.vouchers.*') ? 'ph-fill' : 'ph' }} ph-ticket text-lg"></i>
+                Voucher
+            </a>
             <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.users.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
                 <i class="{{ request()->routeIs('admin.users.*') ? 'ph-fill' : 'ph' }} ph-users text-lg"></i>
                 Người dùng

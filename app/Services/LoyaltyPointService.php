@@ -12,7 +12,7 @@ class LoyaltyPointService
 {
     public function calculate(float|int $totalAmount): int
     {
-        return max(0, (int) floor((float) $totalAmount / 10000));
+        return max(0, (int) floor((float) $totalAmount / 1000));
     }
 
     public function awardForBooking(Booking $booking): void

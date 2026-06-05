@@ -9,12 +9,12 @@
             <a href="{{ route('user.bookings.history') }}" class="app-muted hover:app-text transition-colors flex items-center gap-2">
                 <i class="ph-bold ph-arrow-left"></i> Lịch sử
             </a>
-            <button class="app-muted hover:app-text transition-colors flex items-center gap-2" onclick="window.print()">
+            <button id="download-ticket-image" type="button" class="app-muted hover:app-text transition-colors flex items-center gap-2">
                 <i class="ph-bold ph-download-simple"></i> Lưu vé
             </button>
         </div>
 
-        <div class="bg-white rounded-3xl overflow-hidden shadow-2xl relative">
+        <div id="ticket-image-card" class="bg-white rounded-3xl overflow-hidden shadow-2xl relative">
             <div class="bg-gradient-to-r from-brand-start to-brand-end p-6 text-center relative overflow-hidden">
                 <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
                 <div class="relative z-10">
@@ -31,6 +31,7 @@
                     <img
                         src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ urlencode($booking->booking_code) }}"
                         alt="QR Code {{ $booking->booking_code }}"
+                        crossorigin="anonymous"
                         class="w-[200px] h-[200px]"
                     >
                 </div>
@@ -100,3 +101,38 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script>
+        const downloadTicketButton = document.getElementById('download-ticket-image');
+        const ticketImageCard = document.getElementById('ticket-image-card');
+
+        if (downloadTicketButton && ticketImageCard) {
+            downloadTicketButton.addEventListener('click', async function () {
+                const originalText = downloadTicketButton.innerHTML;
+                downloadTicketButton.disabled = true;
+                downloadTicketButton.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin"></i> Dang tao anh';
+
+                try {
+                    const canvas = await html2canvas(ticketImageCard, {
+                        backgroundColor: '#ffffff',
+                        scale: Math.min(window.devicePixelRatio || 2, 3),
+                        useCORS: true,
+                        allowTaint: false,
+                    });
+
+                    const link = document.createElement('a');
+                    link.download = 'moviemate-{{ $booking->booking_code }}.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (error) {
+                    alert('Khong tao duoc anh ve. Vui long tai lai trang roi thu lai.');
+                } finally {
+                    downloadTicketButton.disabled = false;
+                    downloadTicketButton.innerHTML = originalText;
+                }
+            });
+        }
+    </script>
+@endpush
