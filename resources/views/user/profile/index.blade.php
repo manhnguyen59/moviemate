@@ -32,6 +32,9 @@
                         <a href="{{ route('user.bookings.history') }}" class="flex items-center gap-3 px-4 py-2.5 app-text-muted hover:app-text hover:bg-brand-start/5 rounded-xl font-medium transition-colors text-sm">
                             <i class="ph ph-ticket text-lg"></i> Lịch sử đặt vé
                         </a>
+                        <a href="{{ route('user.loyalty.history') }}" class="flex items-center gap-3 px-4 py-2.5 app-text-muted hover:app-text hover:bg-brand-start/5 rounded-xl font-medium transition-colors text-sm">
+                            <i class="ph ph-coins text-lg"></i> Lịch sử điểm
+                        </a>
                         <a href="#" class="flex items-center gap-3 px-4 py-2.5 app-text-muted hover:app-text hover:bg-brand-start/5 rounded-xl font-medium transition-colors text-sm">
                             <i class="ph ph-star text-lg"></i> Đánh giá của tôi
                         </a>

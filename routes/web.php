@@ -20,6 +20,7 @@ use App\Http\Controllers\User\MovieController;
 use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\AiController;
 use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\ShowtimeController as UserShowtimeController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/ajax/showtimes', [HomeController::class, 'ajaxShowtimes'])->name('ajax.showtimes');
@@ -35,6 +36,9 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->
 Route::get('/movies', [MovieController::class, 'index'])->name('user.movies.index');
 
 Route::get('/movies/{slug}', [MovieController::class, 'show'])->name('user.movies.show');
+
+Route::get('/showtimes', [UserShowtimeController::class, 'index'])->name('user.showtimes.index');
+Route::get('/showtimes/ajax', [UserShowtimeController::class, 'ajax'])->name('user.showtimes.ajax');
 
 Route::middleware('user')->group(function () {
     Route::get('/booking/select-seat/{showtime}', [BookingController::class, 'selectSeat'])
@@ -68,6 +72,7 @@ Route::post('/ai/chatbot', [AiController::class, 'chatbotStore'])->name('user.ai
 Route::middleware('user')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('user.profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('user.profile.update');
+    Route::get('/loyalty-history', [ProfileController::class, 'loyaltyHistory'])->name('user.loyalty.history');
 });
 
 Route::get('/admin/login', function () {

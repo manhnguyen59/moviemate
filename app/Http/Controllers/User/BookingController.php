@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\BookingSeat;
 use App\Models\Seat;
 use App\Models\Showtime;
+use App\Services\LoyaltyPointService;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -202,7 +203,7 @@ class BookingController extends Controller
                     $totalAmount += $price;
                 }
 
-                $loyaltyPoints = $this->calculateLoyaltyPoints($totalAmount);
+                $loyaltyPoints = app(LoyaltyPointService::class)->calculate($totalAmount);
 
                 $booking = Booking::create([
                     'user_id' => Auth::id(),
@@ -231,19 +232,7 @@ class BookingController extends Controller
                     'paid_at' => now(),
                 ]);
 
-                if ($loyaltyPoints > 0) {
-                    $user = $booking->user()->lockForUpdate()->first();
-
-                    $user->increment('loyalty_points', $loyaltyPoints);
-                    $user->increment('lifetime_loyalty_points', $loyaltyPoints);
-
-                    $booking->loyaltyPointTransactions()->create([
-                        'user_id' => $user->id,
-                        'points' => $loyaltyPoints,
-                        'type' => 'earn',
-                        'description' => 'Tích điểm từ đơn đặt vé '.$booking->booking_code,
-                    ]);
-                }
+                app(LoyaltyPointService::class)->awardForBooking($booking);
 
                 return $booking;
             });
@@ -344,33 +333,7 @@ class BookingController extends Controller
                 'payment_status' => $booking->payment_status === 'paid' ? 'refunded' : $booking->payment_status,
             ]);
 
-            if ($booking->loyalty_points_earned > 0) {
-                $alreadyReversed = $booking->loyaltyPointTransactions()
-                    ->where('type', 'reverse')
-                    ->exists();
-
-                if (! $alreadyReversed) {
-                    $user = $booking->user()->lockForUpdate()->first();
-                    $pointsToReverse = min((int) $booking->loyalty_points_earned, (int) $user->loyalty_points);
-
-                    if ($pointsToReverse > 0) {
-                        $user->decrement('loyalty_points', $pointsToReverse);
-                    }
-
-                    $lifetimePointsToReverse = min((int) $booking->loyalty_points_earned, (int) $user->lifetime_loyalty_points);
-
-                    if ($lifetimePointsToReverse > 0) {
-                        $user->decrement('lifetime_loyalty_points', $lifetimePointsToReverse);
-                    }
-
-                    $booking->loyaltyPointTransactions()->create([
-                        'user_id' => $booking->user_id,
-                        'points' => -1 * (int) $booking->loyalty_points_earned,
-                        'type' => 'reverse',
-                        'description' => 'Hoàn điểm do hủy vé '.$booking->booking_code,
-                    ]);
-                }
-            }
+            app(LoyaltyPointService::class)->reverseForCancelledBooking($booking);
 
             $booking->bookingSeats()->delete();
         });
@@ -405,11 +368,6 @@ class BookingController extends Controller
     {
         return str_contains($exception->getMessage(), 'booking_seats_showtime_id_seat_id_unique')
             || str_contains($exception->getMessage(), 'booking_seats.showtime_id, booking_seats.seat_id');
-    }
-
-    protected function calculateLoyaltyPoints(float $totalAmount): int
-    {
-        return (int) floor($totalAmount / 10000);
     }
 
     /**

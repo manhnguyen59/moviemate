@@ -26,6 +26,9 @@
                     <a href="{{ route('user.bookings.history') }}" class="flex items-center gap-3 px-4 py-2.5 bg-brand-start/10 text-brand-start rounded-xl font-bold border border-brand-start/20 text-sm">
                         <i class="ph-fill ph-ticket text-lg"></i> Lịch sử đặt vé
                     </a>
+                    <a href="{{ route('user.loyalty.history') }}" class="flex items-center gap-3 px-4 py-2.5 app-muted hover:app-text hover:bg-brand-start/5 rounded-xl font-medium transition-colors text-sm">
+                        <i class="ph ph-coins text-lg"></i> Lịch sử điểm
+                    </a>
                     <a href="#" class="flex items-center gap-3 px-4 py-2.5 app-muted hover:app-text hover:bg-brand-start/5 rounded-xl font-medium transition-colors text-sm">
                         <i class="ph ph-star text-lg"></i> Đánh giá của tôi
                     </a>
@@ -51,6 +54,12 @@
                     <button type="submit" class="px-4 py-2 bg-brand-start text-white text-sm font-bold rounded-xl">Lọc</button>
                 </form>
             </div>
+
+            @if($errors->any())
+                <div class="mb-5 rounded-2xl border border-error/30 bg-error/10 text-error px-4 py-3 text-sm font-semibold">
+                    {{ $errors->first() }}
+                </div>
+            @endif
 
             <div class="space-y-5">
                 @forelse($bookings as $booking)

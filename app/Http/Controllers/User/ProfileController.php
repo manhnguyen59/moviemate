@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\LoyaltyPointTransaction;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -30,5 +31,36 @@ class ProfileController extends Controller
         return redirect()
             ->route('user.profile')
             ->with('success', 'Cập nhật thông tin cá nhân thành công.');
+    }
+
+    public function loyaltyHistory(Request $request)
+    {
+        $query = LoyaltyPointTransaction::query()
+            ->where('user_id', $request->user()->id)
+            ->with(['booking.showtime.movie']);
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->query('type'));
+        }
+
+        $transactions = $query->latest()->paginate(12)->withQueryString();
+
+        $summary = [
+            'available_points' => (int) $request->user()->loyalty_points,
+            'lifetime_points' => (int) $request->user()->lifetime_loyalty_points,
+            'earned_points' => LoyaltyPointTransaction::where('user_id', $request->user()->id)
+                ->where('points', '>', 0)
+                ->sum('points'),
+            'used_points' => abs((int) LoyaltyPointTransaction::where('user_id', $request->user()->id)
+                ->where('points', '<', 0)
+                ->sum('points')),
+        ];
+
+        return view('user.profile.loyalty-history', [
+            'user' => $request->user(),
+            'transactions' => $transactions,
+            'summary' => $summary,
+            'selectedType' => $request->query('type'),
+        ]);
     }
 }

@@ -1,66 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Services;
 
-use App\Http\Controllers\Controller;
 use App\Models\Cinema;
-use App\Models\Movie;
 use App\Models\Showtime;
-use App\Services\ShowtimeCalendarService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class ShowtimeCalendarService
 {
-    /**
-     * Show the home page with now showing and coming soon movies.
-     */
-    public function index(Request $request)
-    {
-        $today = Carbon::today('Asia/Ho_Chi_Minh');
-        $now = now('Asia/Ho_Chi_Minh');
-
-        $nowShowingMovies = Movie::with('genres')
-            ->where('status', 'now_showing')
-            ->orderByDesc('created_at')
-            ->take(4)
-            ->get();
-
-        $comingSoonMovies = Movie::with('genres')
-            ->where('status', 'coming_soon')
-            ->orderByDesc('created_at')
-            ->take(4)
-            ->get();
-
-        $showtimeData = app(ShowtimeCalendarService::class)->data($request);
-
-        $latestShowtimes = Showtime::with(['movie.genres', 'cinema', 'room'])
-            ->where('status', 'active')
-            ->where(function ($query) use ($today, $now) {
-                $query->whereDate('show_date', '>', $today->toDateString())
-                    ->orWhere(function ($query) use ($today, $now) {
-                        $query->whereDate('show_date', $today->toDateString())
-                            ->whereTime('show_time', '>=', $now->format('H:i:s'));
-                    });
-            })
-            ->orderBy('show_date')
-            ->orderBy('show_time')
-            ->take(6)
-            ->get();
-
-        return view('user.home', array_merge(compact(
-            'nowShowingMovies',
-            'comingSoonMovies',
-            'latestShowtimes'
-        ), $showtimeData));
-    }
-
-    public function ajaxShowtimes(Request $request)
-    {
-        return view('user.partials.showtime-section', app(ShowtimeCalendarService::class)->data($request));
-    }
-
-    private function showtimeCalendarData(Request $request): array
+    public function data(Request $request): array
     {
         $today = Carbon::today('Asia/Ho_Chi_Minh');
         $endDate = $today->copy()->addDays(6);
@@ -97,26 +46,13 @@ class HomeController extends Controller
             ->orderBy('name')
             ->get();
 
-        if ($isNearby) {
-            $cinemas = $cinemas
-                ->map(function (Cinema $cinema) use ($userLat, $userLng) {
-                    $cinema->distance = $this->cinemaHasCoordinates($cinema)
-                        ? $this->calculateDistance($userLat, $userLng, (float) $cinema->latitude, (float) $cinema->longitude)
-                        : null;
+        $cinemas = $isNearby
+            ? $this->sortByDistance($cinemas, $userLat, $userLng)
+            : $cinemas->map(function (Cinema $cinema) {
+                $cinema->distance = null;
 
-                    return $cinema;
-                })
-                ->sortBy(fn (Cinema $cinema) => is_null($cinema->distance) ? PHP_FLOAT_MAX : $cinema->distance)
-                ->values();
-        } else {
-            $cinemas = $cinemas
-                ->map(function (Cinema $cinema) {
-                    $cinema->distance = null;
-
-                    return $cinema;
-                })
-                ->values();
-        }
+                return $cinema;
+            })->values();
 
         $requestedCinemaId = $request->integer('cinema_id');
         $selectedCinema = $cinemas->firstWhere('id', $requestedCinemaId) ?? $cinemas->first();
@@ -182,6 +118,20 @@ class HomeController extends Controller
         );
     }
 
+    private function sortByDistance($cinemas, ?float $userLat, ?float $userLng)
+    {
+        return $cinemas
+            ->map(function (Cinema $cinema) use ($userLat, $userLng) {
+                $cinema->distance = $this->cinemaHasCoordinates($cinema)
+                    ? $this->calculateDistance($userLat, $userLng, (float) $cinema->latitude, (float) $cinema->longitude)
+                    : null;
+
+                return $cinema;
+            })
+            ->sortBy(fn (Cinema $cinema) => is_null($cinema->distance) ? PHP_FLOAT_MAX : $cinema->distance)
+            ->values();
+    }
+
     private function normalizeCoordinate(mixed $value, float $min, float $max): ?float
     {
         if (! is_numeric($value)) {
@@ -204,7 +154,6 @@ class HomeController extends Controller
     private function calculateDistance(float $lat1, float $lng1, float $lat2, float $lng2): float
     {
         $earthRadius = 6371;
-
         $dLat = deg2rad($lat2 - $lat1);
         $dLng = deg2rad($lng2 - $lng1);
 
@@ -212,16 +161,14 @@ class HomeController extends Controller
             + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
             * sin($dLng / 2) * sin($dLng / 2);
 
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
-        return $earthRadius * $c;
+        return $earthRadius * (2 * atan2(sqrt($a), sqrt(1 - $a)));
     }
 
     private function cityOptions(): array
     {
         return [
-            'Hà Nội' => ['Hà Nội', 'Ha Noi', 'Hanoi'],
-            'TP. Hồ Chí Minh' => ['TP. Hồ Chí Minh', 'Hồ Chí Minh', 'Ho Chi Minh City', 'HCMC', 'Sài Gòn', 'Sai Gon'],
+            'Hà Nội' => ['Ha Noi', 'Hanoi', 'Hà Nội', 'Hà Nội'],
+            'TP. Hồ Chí Minh' => ['TP. Hồ Chí Minh', 'Hồ Chí Minh', 'TP. Ho Chi Minh', 'Ho Chi Minh', 'Ho Chi Minh City', 'HCMC', 'Sai Gon', 'Sài Gòn'],
             'Đà Nẵng' => ['Đà Nẵng', 'Da Nang', 'Danang'],
         ];
     }
@@ -233,7 +180,7 @@ class HomeController extends Controller
 
     private function normalizeSelectedBrand(mixed $brand, array $allowedBrands): ?string
     {
-        if (! is_string($brand) || $brand === '' || $brand === 'Tất cả') {
+        if (! is_string($brand) || $brand === '' || in_array($brand, ['Tất cả', 'Tat ca'], true)) {
             return null;
         }
 
@@ -247,7 +194,7 @@ class HomeController extends Controller
         }
 
         try {
-            $parsedDate = Carbon::createFromFormat('Y-m-d', $date, $fallback->timezone);
+            $parsedDate = Carbon::createFromFormat('Y-m-d', $date, $fallback->getTimezone());
         } catch (\Throwable) {
             return $fallback->toDateString();
         }
