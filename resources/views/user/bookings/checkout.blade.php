@@ -2,6 +2,10 @@
 
 @section('title', 'Thanh toán - MovieMate')
 
+@php
+    $loyaltyPoints = (int) floor($totalAmount / 10000);
+@endphp
+
 @section('content')
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
     <div class="mb-8">
@@ -47,6 +51,17 @@
             <div class="flex justify-between items-center mt-5 pt-5 border-t app-border">
                 <span class="app-muted text-sm font-semibold">Tổng tiền:</span>
                 <span class="text-3xl font-extrabold text-brand-start">{{ number_format($totalAmount,0,',','.') }}đ</span>
+            </div>
+
+            <div class="mt-4 rounded-2xl border border-ai-start/30 bg-ai-start/10 px-4 py-3 flex items-center justify-between gap-4">
+                <div>
+                    <p class="text-xs app-muted">Điểm thành viên dự kiến</p>
+                    <p class="app-text font-bold">+{{ number_format($loyaltyPoints, 0, ',', '.') }} điểm</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs app-muted">Điểm hiện có</p>
+                    <p class="text-ai-start font-bold">{{ number_format($user->loyalty_points ?? 0, 0, ',', '.') }}</p>
+                </div>
             </div>
         </div>
 

@@ -14,6 +14,7 @@ class Booking extends Model
         'showtime_id',
         'booking_code',
         'total_amount',
+        'loyalty_points_earned',
         'payment_status',
         'booking_status',
         'used_at',
@@ -22,6 +23,7 @@ class Booking extends Model
     protected $casts = [
         'used_at'      => 'datetime',
         'total_amount' => 'decimal:2',
+        'loyalty_points_earned' => 'integer',
     ];
 
     public function user(): BelongsTo
@@ -42,5 +44,10 @@ class Booking extends Model
     public function payment(): HasOne
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function loyaltyPointTransactions(): HasMany
+    {
+        return $this->hasMany(LoyaltyPointTransaction::class);
     }
 }

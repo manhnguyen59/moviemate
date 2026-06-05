@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\BookingSeat;
 use App\Models\Seat;
 use App\Models\Showtime;
+use App\Services\LoyaltyPointService;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -202,11 +203,14 @@ class BookingController extends Controller
                     $totalAmount += $price;
                 }
 
+                $loyaltyPoints = app(LoyaltyPointService::class)->calculate($totalAmount);
+
                 $booking = Booking::create([
                     'user_id' => Auth::id(),
                     'showtime_id' => $showtime->id,
                     'booking_code' => $this->generateBookingCode(),
                     'total_amount' => $totalAmount,
+                    'loyalty_points_earned' => $loyaltyPoints,
                     'payment_status' => 'paid',
                     'booking_status' => 'paid',
                 ]);
@@ -227,6 +231,8 @@ class BookingController extends Controller
                     'transaction_code' => 'FAKE-'.now()->format('YmdHis').'-'.$booking->id,
                     'paid_at' => now(),
                 ]);
+
+                app(LoyaltyPointService::class)->awardForBooking($booking);
 
                 return $booking;
             });
@@ -321,12 +327,16 @@ class BookingController extends Controller
             return back()->with('error', 'Ve nay khong the huy.');
         }
 
-        $booking->update([
-            'booking_status' => 'cancelled',
-            'payment_status' => $booking->payment_status === 'paid' ? 'refunded' : $booking->payment_status,
-        ]);
+        DB::transaction(function () use ($booking) {
+            $booking->update([
+                'booking_status' => 'cancelled',
+                'payment_status' => $booking->payment_status === 'paid' ? 'refunded' : $booking->payment_status,
+            ]);
 
-        $booking->bookingSeats()->delete();
+            app(LoyaltyPointService::class)->reverseForCancelledBooking($booking);
+
+            $booking->bookingSeats()->delete();
+        });
 
         return back()->with('success', 'Da huy ve thanh cong.');
     }

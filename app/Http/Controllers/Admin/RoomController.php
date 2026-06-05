@@ -61,7 +61,7 @@ class RoomController extends Controller
 
         return redirect()
             ->route('admin.rooms.index')
-            ->with('success', 'ThÃªm phÃ²ng chiáº¿u thÃ nh cÃ´ng.');
+            ->with('success', 'Thêm phòng chiếu thành công.');
     }
 
     /**
@@ -105,7 +105,7 @@ class RoomController extends Controller
 
         return redirect()
             ->route('admin.rooms.index')
-            ->with('success', 'Cáº­p nháº­t phÃ²ng chiáº¿u thÃ nh cÃ´ng.');
+            ->with('success', 'Cập nhật phòng chiếu thành công.');
     }
 
     /**
@@ -119,7 +119,7 @@ class RoomController extends Controller
 
         return redirect()
             ->route('admin.rooms.index')
-            ->with('success', 'XÃ³a phÃ²ng chiáº¿u thÃ nh cÃ´ng.');
+            ->with('success', 'Xóa phòng chiếu thành công.');
     }
 
     private function normalizeRoomType(?string $roomType): ?string
