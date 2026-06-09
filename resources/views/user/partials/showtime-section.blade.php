@@ -19,6 +19,8 @@
     $cityLabel = $selectedCity ?: 'Tất cả thành phố';
     $brandLabel = $selectedBrand ?: 'Tất cả';
     $nearbyParams = $isNearby ? ['nearby' => 1, 'lat' => $userLat, 'lng' => $userLng] : [];
+    $showtimeAjaxRoute = $showtimeAjaxRoute ?? 'ajax.showtimes';
+    $showtimeBaseRoute = $showtimeBaseRoute ?? 'home';
     $nearestCinemaId = $isNearby ? optional($cinemaList->first(fn ($cinema) => ! is_null($cinema->distance ?? null)))->id : null;
     $directionUrl = null;
 
@@ -98,8 +100,8 @@
         return url('/booking/select-seat');
     };
 
-    $homeShowtimeUrl = function (array $params = []) use ($nearbyParams) {
-        return route('home', array_filter(array_merge($nearbyParams, $params), fn ($value) => filled($value))) . '#home-showtime-calendar';
+    $homeShowtimeUrl = function (array $params = []) use ($nearbyParams, $showtimeBaseRoute) {
+        return route($showtimeBaseRoute, array_filter(array_merge($nearbyParams, $params), fn ($value) => filled($value))) . '#home-showtime-calendar';
     };
 
     $cinemaBadge = function ($name) {
@@ -110,7 +112,7 @@
     };
 @endphp
 
-<section id="home-showtime-calendar" data-showtime-ajax-url="{{ route('ajax.showtimes') }}" class="showtime-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" aria-live="polite">
+<section id="home-showtime-calendar" data-showtime-ajax-url="{{ route($showtimeAjaxRoute) }}" class="showtime-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" aria-live="polite">
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-7">
         <div>
             <p class="text-brand-start text-sm font-extrabold uppercase tracking-[0.22em] mb-2">MovieMate Cinema</p>
@@ -168,8 +170,9 @@
                     <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
                         @foreach($brandTabs as $tab)
                             @php
-                                $brandValue = $tab === 'Tất cả' ? null : $tab;
-                                $isActiveBrand = ($tab === 'Tất cả' && ! $selectedBrand) || $selectedBrand === $tab;
+                                $isAllBrandTab = in_array($tab, ['Tất cả', 'Tat ca'], true);
+                                $brandValue = $isAllBrandTab ? null : $tab;
+                                $isActiveBrand = ($isAllBrandTab && ! $selectedBrand) || $selectedBrand === $tab;
                             @endphp
                             <a data-showtime-filter href="{{ $homeShowtimeUrl(['city' => $selectedCity, 'brand' => $brandValue, 'date' => $selectedDate]) }}" class="shrink-0 px-4 py-2.5 rounded-full border text-sm font-bold transition-all {{ $isActiveBrand ? 'bg-gradient-to-r from-brand-start to-brand-end text-white border-transparent shadow-lg shadow-brand-start/20' : 'app-secondary app-border app-muted hover:text-brand-start hover:border-brand-start' }}">
                                 {{ $tab }}
