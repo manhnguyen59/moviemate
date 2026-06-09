@@ -32,6 +32,7 @@
                     <a href="{{ route('home') }}" class="px-4 py-2 rounded-full app-text hover:text-brand-start hover:bg-white/5 transition-colors font-medium text-sm">Trang chủ</a>
                     <a href="{{ route('user.movies.index') }}" class="px-4 py-2 rounded-full app-muted hover:text-brand-start hover:bg-white/5 transition-colors font-medium text-sm">Phim</a>
                     <a href="{{ route('user.showtimes.index') }}" class="px-4 py-2 rounded-full app-muted hover:text-brand-start hover:bg-white/5 transition-colors font-medium text-sm">Lịch chiếu</a>
+                    <a href="{{ route('foods.index') }}" class="px-4 py-2 rounded-full app-muted hover:text-brand-start hover:bg-white/5 transition-colors font-medium text-sm">Đồ ăn</a>
                     <a href="{{ route('user.ai.recommend') }}" class="px-4 py-2 rounded-full flex items-center gap-1.5 app-muted hover:text-ai-start hover:bg-ai-start/10 transition-colors font-medium text-sm">
                         <i class="ph-fill ph-sparkle text-ai-start"></i> AI Gợi ý
                     </a>
@@ -80,6 +81,7 @@
                 <a href="{{ route('home') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-text hover:bg-brand-start/10 hover:text-brand-start transition-colors">Trang chủ</a>
                 <a href="{{ route('user.movies.index') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-muted hover:bg-brand-start/10 hover:text-brand-start transition-colors">Phim</a>
                 <a href="{{ route('user.showtimes.index') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-muted hover:bg-brand-start/10 hover:text-brand-start transition-colors">Lịch chiếu</a>
+                <a href="{{ route('foods.index') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-muted hover:bg-brand-start/10 hover:text-brand-start transition-colors">Đồ ăn</a>
                 <a href="{{ route('user.ai.recommend') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-ai-start hover:bg-ai-start/10 transition-colors">
                     <i class="ph-fill ph-sparkle"></i> AI Gợi ý
                 </a>

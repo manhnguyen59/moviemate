@@ -72,6 +72,14 @@
             </a>
 
             <p class="px-3 text-[10px] font-bold app-muted uppercase tracking-wider mb-1 mt-5">Kinh doanh</p>
+            <a href="{{ route('admin.foods.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.foods.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.foods.*') ? 'ph-fill' : 'ph' }} ph-burger text-lg"></i>
+                Món ăn
+            </a>
+            <a href="{{ route('admin.food-orders.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.food-orders.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
+                <i class="{{ request()->routeIs('admin.food-orders.*') ? 'ph-fill' : 'ph' }} ph-shopping-bag text-lg"></i>
+                Đơn đồ ăn
+            </a>
             <a href="{{ route('admin.bookings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('admin.bookings.*') ? 'bg-brand-start/10 text-brand-start font-bold' : 'app-muted hover:bg-brand-start/5 hover:text-brand-start transition-colors text-sm font-medium' }}">
                 <i class="{{ request()->routeIs('admin.bookings.*') ? 'ph-fill' : 'ph' }} ph-ticket text-lg"></i>
                 Vé đặt
