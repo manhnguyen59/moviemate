@@ -28,6 +28,13 @@ return [
         'model' => env('AI_MODEL', env('AI_PROVIDER') === 'gemini' ? 'gemini-1.5-flash' : 'gpt-4o-mini'),
     ],
 
+    'payos' => [
+        'client_id' => env('PAYOS_CLIENT_ID'),
+        'api_key' => env('PAYOS_API_KEY'),
+        'checksum_key' => env('PAYOS_CHECKSUM_KEY'),
+        'base_url' => env('PAYOS_BASE_URL', 'https://api-merchant.payos.vn'),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),

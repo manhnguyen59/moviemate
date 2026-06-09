@@ -8,6 +8,8 @@ use App\Models\BookingSeat;
 use App\Models\Seat;
 use App\Models\Showtime;
 use App\Services\LoyaltyPointService;
+use App\Services\PayosService;
+use App\Services\VoucherService;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -112,19 +114,25 @@ class BookingController extends Controller
             ];
         });
 
-        $totalAmount = $seatSummaries->sum('price');
+        $subtotalAmount = $seatSummaries->sum('price');
+        $voucherCode = $request->query('voucher_code');
+        $voucherSummary = app(VoucherService::class)->resolve($voucherCode, $subtotalAmount);
+        $totalAmount = $voucherSummary['total'];
 
         return view('user.bookings.checkout', [
             'showtime' => $showtime,
             'seats' => $seats,
             'seatSummaries' => $seatSummaries,
+            'subtotalAmount' => $subtotalAmount,
             'totalAmount' => $totalAmount,
+            'voucherSummary' => $voucherSummary,
+            'voucherCode' => $voucherCode,
             'user' => Auth::user(),
         ]);
     }
 
     /**
-     * Store a booking with fake successful payment.
+     * Store a pending booking and redirect to payOS QR payment.
      *
      * @throws \Throwable
      */
@@ -134,7 +142,8 @@ class BookingController extends Controller
             'showtime_id' => ['required', 'integer', 'exists:showtimes,id'],
             'seat_ids' => ['required', 'array', 'min:1'],
             'seat_ids.*' => ['integer', 'distinct'],
-            'payment_method' => ['required', 'in:fake,counter,vnpay'],
+            'payment_method' => ['nullable', 'in:payos'],
+            'voucher_code' => ['nullable', 'string', 'max:50'],
         ], [
             'seat_ids.required' => 'Vui lòng chọn ít nhất một ghế.',
             'seat_ids.array' => 'Dữ liệu ghế không hợp lệ.',
@@ -203,16 +212,24 @@ class BookingController extends Controller
                     $totalAmount += $price;
                 }
 
+                $subtotalAmount = $totalAmount;
+                $voucherSummary = app(VoucherService::class)->resolve($validated['voucher_code'] ?? null, $subtotalAmount);
+                $voucher = $voucherSummary['voucher'];
+                $discountAmount = (float) $voucherSummary['discount'];
+                $totalAmount = (float) $voucherSummary['total'];
                 $loyaltyPoints = app(LoyaltyPointService::class)->calculate($totalAmount);
 
                 $booking = Booking::create([
                     'user_id' => Auth::id(),
                     'showtime_id' => $showtime->id,
+                    'voucher_id' => $voucher?->id,
                     'booking_code' => $this->generateBookingCode(),
                     'total_amount' => $totalAmount,
                     'loyalty_points_earned' => $loyaltyPoints,
-                    'payment_status' => 'paid',
-                    'booking_status' => 'paid',
+                    'voucher_code' => $voucher?->code,
+                    'discount_amount' => $discountAmount,
+                    'payment_status' => 'pending',
+                    'booking_status' => 'pending',
                 ]);
 
                 foreach ($seats as $seat) {
@@ -225,14 +242,13 @@ class BookingController extends Controller
                 }
 
                 $booking->payment()->create([
-                    'payment_method' => $validated['payment_method'],
+                    'payment_method' => 'payos',
                     'amount' => $totalAmount,
-                    'status' => 'success',
-                    'transaction_code' => 'FAKE-'.now()->format('YmdHis').'-'.$booking->id,
-                    'paid_at' => now(),
+                    'status' => 'pending',
+                    'transaction_code' => 'PAYOS-'.$booking->id,
+                    'provider_order_code' => (string) $booking->id,
+                    'paid_at' => null,
                 ]);
-
-                app(LoyaltyPointService::class)->awardForBooking($booking);
 
                 return $booking;
             });
@@ -246,7 +262,38 @@ class BookingController extends Controller
             throw $exception;
         }
 
-        return redirect()->route('user.bookings.success', $booking);
+        try {
+            $paymentData = app(PayosService::class)->createPaymentLink($booking);
+
+            $booking->payment()->update([
+                'transaction_code' => $paymentData['paymentLinkId'] ?? 'PAYOS-'.$booking->id,
+                'provider_order_code' => (string) ($paymentData['orderCode'] ?? $booking->id),
+                'checkout_url' => $paymentData['checkoutUrl'] ?? null,
+                'qr_code' => $paymentData['qrCode'] ?? null,
+            ]);
+
+            return redirect()->away($paymentData['checkoutUrl']);
+        } catch (\Throwable $exception) {
+            DB::transaction(function () use ($booking) {
+                $booking = Booking::whereKey($booking->id)->lockForUpdate()->first();
+
+                if (! $booking || $booking->payment_status === 'paid') {
+                    return;
+                }
+
+                $booking->update([
+                    'payment_status' => 'failed',
+                    'booking_status' => 'cancelled',
+                ]);
+
+                $booking->payment?->update(['status' => 'failed']);
+                $booking->bookingSeats()->delete();
+            });
+
+            return redirect()
+                ->route('user.bookings.history')
+                ->with('error', 'Không tạo được QR thanh toán payOS: '.$exception->getMessage());
+        }
     }
 
     /**
@@ -328,12 +375,25 @@ class BookingController extends Controller
         }
 
         DB::transaction(function () use ($booking) {
+            $wasPaid = $booking->payment_status === 'paid';
+            $paymentStatus = $wasPaid ? 'refunded' : 'failed';
+
             $booking->update([
                 'booking_status' => 'cancelled',
-                'payment_status' => $booking->payment_status === 'paid' ? 'refunded' : $booking->payment_status,
+                'payment_status' => $paymentStatus,
+            ]);
+
+            $booking->payment?->update([
+                'status' => $wasPaid ? 'success' : 'failed',
             ]);
 
             app(LoyaltyPointService::class)->reverseForCancelledBooking($booking);
+
+            if ($wasPaid && $booking->voucher_id) {
+                \App\Models\Voucher::whereKey($booking->voucher_id)
+                    ->where('used_count', '>', 0)
+                    ->decrement('used_count');
+            }
 
             $booking->bookingSeats()->delete();
         });
