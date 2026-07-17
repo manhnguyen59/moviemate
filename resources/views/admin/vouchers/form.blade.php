@@ -41,6 +41,13 @@
     <div>
         <label class="admin-label">Giới hạn lượt dùng</label>
         <input type="number" name="usage_limit" min="1" value="{{ old('usage_limit', $voucher?->usage_limit) }}" class="admin-input" placeholder="Để trống nếu không giới hạn">
+        <p class="admin-help">Tổng số lượt sử dụng của voucher trên toàn hệ thống.</p>
+    </div>
+
+    <div>
+        <label class="admin-label">Giới hạn mỗi tài khoản</label>
+        <input type="number" name="per_user_limit" min="1" value="{{ old('per_user_limit', $voucher?->per_user_limit ?? 1) }}" class="admin-input" placeholder="Để trống nếu không giới hạn">
+        <p class="admin-help">Số lần tối đa một tài khoản được sử dụng voucher này.</p>
     </div>
 
     <div>

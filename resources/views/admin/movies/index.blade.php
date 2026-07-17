@@ -90,17 +90,17 @@
                         </td>
                         <td>
                             <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('admin.movies.show', $movie) }}" class="admin-btn-info admin-action-btn" title="Xem">
+                                <a href="{{ route('admin.movies.show', $movie) }}" class="admin-btn-info admin-action-btn" title="Xem" aria-label="Xem" data-tooltip="Xem">
                                     <i class="ph ph-eye"></i>
                                 </a>
-                                <a href="{{ route('admin.movies.edit', $movie) }}" class="admin-btn-warning admin-action-btn" title="Sửa">
+                                <a href="{{ route('admin.movies.edit', $movie) }}" class="admin-btn-warning admin-action-btn" title="Sửa" aria-label="Sửa" data-tooltip="Sửa">
                                     <i class="ph ph-pencil-simple"></i>
                                 </a>
                                 <form action="{{ route('admin.movies.destroy', $movie) }}" method="POST"
                                       onsubmit="return confirm('Bạn có chắc muốn xóa phim này?');" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="admin-btn-danger admin-action-btn" title="Xóa">
+                                    <button type="submit" class="admin-btn-danger admin-action-btn" title="Xóa" aria-label="Xóa" data-tooltip="Xóa">
                                         <i class="ph ph-trash"></i>
                                     </button>
                                 </form>

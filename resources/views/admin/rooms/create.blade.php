@@ -44,6 +44,16 @@
                 </div>
             </div>
 
+            <div>
+                <label class="cinema-label">Kiểu bố trí ghế *</label>
+                <select name="layout_style" required class="cinema-input">
+                    <option value="standard" {{ old('layout_style', 'standard') === 'standard' ? 'selected' : '' }}>Thẳng truyền thống</option>
+                    <option value="staggered" {{ old('layout_style') === 'staggered' ? 'selected' : '' }}>So le giữa các hàng</option>
+                    <option value="curved" {{ old('layout_style') === 'curved' ? 'selected' : '' }}>Vòng cung hướng màn hình</option>
+                </select>
+                <p class="app-muted text-xs mt-2">Mỗi phòng có thể chọn một thiết kế sơ đồ riêng.</p>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                     <label class="cinema-label">Số ghế *</label>

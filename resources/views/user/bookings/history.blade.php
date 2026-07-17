@@ -14,7 +14,7 @@
                 <p class="text-xs text-ai-start font-bold mb-5">Hạng {{ Auth::user()->role->name ?? 'Khách' }}</p>
 
                 <div class="w-full rounded-2xl border border-ai-start/30 bg-ai-start/10 px-4 py-3 mb-4 text-left">
-                    <p class="text-xs app-muted">Thành viên {{ Auth::user()->membership_tier }}</p>
+                    <p class="text-xs app-muted">Hạng {{ Auth::user()->membership_tier }}</p>
                     <p class="text-2xl font-extrabold text-ai-start">{{ number_format(Auth::user()->loyalty_points, 0, ',', '.') }}</p>
                     <p class="text-xs app-muted">điểm khả dụng</p>
                 </div>
@@ -110,6 +110,11 @@
                                     <div>
                                         <p class="text-xs app-muted mb-0.5">Tổng tiền</p>
                                         <p class="app-text font-bold text-lg">{{ number_format($booking->total_amount,0,',','.') }}đ</p>
+                                        @if($booking->booking_status === 'pending' && $booking->hold_expires_at)
+                                            <p class="text-xs text-warning font-semibold mt-1">
+                                                Giữ ghế còn <span class="seat-hold-countdown" data-expires-at="{{ $booking->hold_expires_at->toIso8601String() }}">--:--</span>
+                                            </p>
+                                        @endif
                                         @if($booking->loyalty_points_earned > 0)
                                             <p class="text-xs text-ai-start font-semibold">+{{ number_format($booking->loyalty_points_earned,0,',','.') }} điểm</p>
                                         @endif
@@ -153,3 +158,26 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    (() => {
+        const countdowns = [...document.querySelectorAll('.seat-hold-countdown')];
+        if (!countdowns.length) return;
+
+        const update = () => {
+            let expired = false;
+            countdowns.forEach((element) => {
+                const remaining = Math.max(0, new Date(element.dataset.expiresAt).getTime() - Date.now());
+                const seconds = Math.ceil(remaining / 1000);
+                element.textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+                if (remaining === 0) expired = true;
+            });
+            if (expired) window.location.reload();
+        };
+
+        update();
+        window.setInterval(update, 1000);
+    })();
+</script>
+@endpush

@@ -58,6 +58,7 @@
                     <div class="min-w-[560px] flex flex-col items-center gap-2.5">
                         @foreach($seatsByRow as $row => $rowSeats)
                             <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-3 transition-all" style="margin-left: {{ $showtime->room->seatRowOffset($loop->index, $seatsByRow->count()) }}px">
                                 <div class="w-5 text-center app-muted text-xs font-bold">{{ $row }}</div>
                                 <div class="flex gap-1.5">
                                     @foreach($rowSeats as $seat)
@@ -65,19 +66,22 @@
                                             $isBooked = in_array($seat->id, $bookedSeatIds);
                                             $isMaintenance = $seat->status !== 'active';
                                             $isVip = $seat->type === 'vip';
-                                            $price = $isVip ? ($showtime->vip_price ?? $showtime->price) : $showtime->price;
+                                            $isCouple = $seat->type === 'couple';
+                                            $price = $showtime->priceForSeatType($seat->type);
                                             if ($isBooked) {
                                                 $seatClass = 'bg-dark-border border-dark-border text-dark-border/40 cursor-not-allowed opacity-40';
                                             } elseif ($isMaintenance) {
                                                 $seatClass = 'bg-gray-300 border-gray-400 text-gray-600 cursor-not-allowed opacity-50';
                                             } elseif ($isVip) {
                                                 $seatClass = 'bg-ai-start/10 border-ai-start/50 text-ai-start hover:bg-ai-start hover:text-white';
+                                            } elseif ($isCouple) {
+                                                $seatClass = 'bg-warning/10 border-warning/50 text-warning hover:bg-warning hover:text-white';
                                             } else {
                                                 $seatClass = 'app-input border-[var(--border-color)] app-muted hover:border-brand-start hover:text-brand-start';
                                             }
                                         @endphp
                                         <button type="button"
-                                            class="w-8 h-8 rounded-t-lg border transition-all text-[10px] font-bold {{ $seatClass }} {{ $seat->number == 6 ? 'mr-4' : '' }}"
+                                            class="{{ $isCouple ? 'w-[4.5rem]' : 'w-8' }} h-8 rounded-t-lg border transition-all text-[10px] font-bold {{ $seatClass }} {{ $seat->number == 6 ? 'mr-4' : '' }}"
                                             data-seat-id="{{ $seat->id }}"
                                             data-seat-code="{{ $seat->seat_code }}"
                                             data-seat-type="{{ $seat->type }}"
@@ -88,6 +92,7 @@
                                     @endforeach
                                 </div>
                                 <div class="w-5 text-center app-muted text-xs font-bold">{{ $row }}</div>
+                                </div>
                             </div>
                         @endforeach
                     </div>
@@ -96,6 +101,7 @@
                 <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-8 pt-6 border-t app-border text-xs">
                     <div class="flex items-center gap-2 app-muted"><div class="w-6 h-6 rounded-t-lg app-input border app-border"></div> Ghế thường ({{ number_format($showtime->price,0,',','.') }}đ)</div>
                     <div class="flex items-center gap-2 app-muted"><div class="w-6 h-6 rounded-t-lg bg-ai-start/10 border border-ai-start/50"></div> Ghế VIP ({{ number_format($showtime->vip_price ?? $showtime->price,0,',','.') }}đ)</div>
+                    <div class="flex items-center gap-2 app-muted"><div class="w-10 h-6 rounded-t-lg bg-warning/10 border border-warning/50"></div> Ghế đôi ({{ number_format($showtime->priceForSeatType('couple'),0,',','.') }}đ)</div>
                     <div class="flex items-center gap-2 app-muted"><div class="w-6 h-6 rounded-t-lg bg-brand-start border border-brand-start"></div> Đang chọn</div>
                     <div class="flex items-center gap-2 app-muted"><div class="w-6 h-6 rounded-t-lg bg-dark-border border border-dark-border opacity-40"></div> Đã đặt</div>
                 </div>
@@ -142,13 +148,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (button.dataset.seatType === 'vip') {
             button.classList.add('bg-ai-start/10', 'border-ai-start/50', 'text-ai-start');
+        } else if (button.dataset.seatType === 'couple') {
+            button.classList.add('bg-warning/10', 'border-warning/50', 'text-warning');
         } else {
             button.classList.add('app-input', 'border-[var(--border-color)]', 'app-muted');
         }
     }
 
     function applySelectedStyle(button) {
-        button.classList.remove('app-input', 'border-[var(--border-color)]', 'app-muted', 'bg-ai-start/10', 'border-ai-start/50', 'text-ai-start');
+        button.classList.remove('app-input', 'border-[var(--border-color)]', 'app-muted', 'bg-ai-start/10', 'border-ai-start/50', 'text-ai-start', 'bg-warning/10', 'border-warning/50', 'text-warning');
         button.classList.add('bg-brand-start', 'border-brand-start', 'text-white', 'shadow-lg', 'shadow-brand-start/30');
     }
 

@@ -18,6 +18,7 @@ class RoomSeeder extends Seeder
                     'cinema_id' => $cinema->id,
                     'name' => "Room {$i}",
                     'room_type' => '2D',
+                    'layout_style' => $i === 1 ? 'standard' : 'staggered',
                     'total_seats' => 0, // will be updated after seats are created
                     'status' => 'active',
                 ]);

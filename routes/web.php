@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,8 @@ use App\Http\Controllers\Admin\RoomController as AdminRoomController;
 use App\Http\Controllers\Admin\SeatController as AdminSeatController;
 use App\Http\Controllers\Admin\ShowtimeController as AdminShowtimeController;
 use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
+use App\Http\Controllers\Admin\BookingController as AdminBookingController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Staff\DashboardController as StaffDashboardController;
 use App\Http\Controllers\Staff\TicketCheckController as StaffTicketCheckController;
 use App\Http\Controllers\Payment\PayosController;
@@ -23,8 +26,6 @@ use App\Http\Controllers\User\BookingController;
 use App\Http\Controllers\User\AiController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ShowtimeController as UserShowtimeController;
-use App\Http\Controllers\User\FoodController as UserFoodController;
-use App\Http\Controllers\User\OrderController as UserOrderController;
 use App\Http\Controllers\Admin\FoodController as AdminFoodController;
 use App\Http\Controllers\Admin\FoodOrderController as AdminFoodOrderController;
 
@@ -33,6 +34,8 @@ Route::get('/ajax/showtimes', [HomeController::class, 'ajaxShowtimes'])->name('a
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 
 Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
@@ -133,17 +136,13 @@ Route::get('/api/cinemas/{cinema}/rooms', function (App\Models\Cinema $cinema) {
     return $cinema->rooms()->select('id', 'name')->get();
 })->middleware('admin');
 
-Route::get('/foods', [UserFoodController::class, 'index'])->name('foods.index');
-Route::post('/foods/add', [UserFoodController::class, 'addToCart'])->name('foods.add');
-Route::get('/foods/cart', [UserOrderController::class, 'cart'])->name('foods.cart');
-Route::get('/foods/checkout', [UserOrderController::class, 'checkout'])->name('foods.checkout');
-Route::post('/foods/store', [UserOrderController::class, 'store'])->name('foods.store');
-Route::get('/foods/success/{order}', [UserOrderController::class, 'success'])->name('foods.success');
 
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('foods', AdminFoodController::class);
+    Route::resource('foods', AdminFoodController::class)->except(['show']);
+    Route::resource('food-orders', AdminFoodOrderController::class)->only(['index', 'show']);
+    Route::resource('vouchers', AdminVoucherController::class)->except(['show']);
 
     Route::resource('movies', AdminMovieController::class);
     Route::resource('genres', AdminGenreController::class)->except(['show']);
@@ -157,21 +156,9 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
 
     Route::resource('showtimes', AdminShowtimeController::class)->except(['show']);
 
-    Route::get('/bookings', function () {
-        return view('admin.bookings.index');
-    })->name('bookings.index');
+    Route::resource('bookings', AdminBookingController::class)->only(['index', 'show']);
 
-    Route::get('/bookings/{id}', function ($id) {
-        return view('admin.bookings.show');
-    })->name('bookings.show');
-
-    Route::get('/users', function () {
-        return view('admin.users.index');
-    })->name('users.index');
-
-    Route::get('/users/{id}', function ($id) {
-        return view('admin.users.show');
-    })->name('users.show');
+    Route::resource('users', AdminUserController::class)->only(['index', 'show']);
 
     Route::get('/reviews', function () {
         return view('admin.reviews.index');

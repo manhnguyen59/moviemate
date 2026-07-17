@@ -66,6 +66,9 @@ class PayosController extends Controller
             $booking->payment?->update([
                 'status' => 'failed',
             ]);
+            $booking->foodOrder()->update(['status' => 'cancelled']);
+
+            app(LoyaltyPointService::class)->restoreRedeemedPoints($booking);
 
             $booking->bookingSeats()->delete();
         });
@@ -119,6 +122,17 @@ class PayosController extends Controller
                 return false;
             }
 
+            if ($booking->booking_status === 'pending' && $booking->hold_expires_at && $booking->hold_expires_at->isPast()) {
+                $booking->update(['booking_status' => 'expired', 'payment_status' => 'failed']);
+                $booking->payment?->update(['status' => 'failed']);
+                $booking->foodOrder()->update(['status' => 'cancelled']);
+                app(LoyaltyPointService::class)->restoreRedeemedPoints($booking);
+                $booking->bookingSeats()->delete();
+
+                Log::warning('payOS payment ignored because the seat hold expired', ['booking_id' => $booking->id]);
+                return false;
+            }
+
             if (in_array($booking->booking_status, ['cancelled', 'expired'], true)
                 || in_array($booking->payment_status, ['failed', 'refunded'], true)) {
                 Log::warning('payOS paid webhook ignored because booking is not payable anymore', [
@@ -152,6 +166,7 @@ class PayosController extends Controller
                 'transaction_code' => $data['reference'] ?? $data['paymentLinkId'] ?? $booking->payment?->transaction_code,
                 'paid_at' => now(),
             ]);
+            $booking->foodOrder()->update(['status' => 'paid']);
 
             if ($booking->voucher_id) {
                 $booking->voucher()->increment('used_count');

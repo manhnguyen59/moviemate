@@ -46,6 +46,7 @@ class SeatController extends Controller
             'rows' => ['required', 'regex:/^[A-Z]-[A-Z]$/'],
             'seats_per_row' => ['required', 'integer', 'min:1', 'max:50'],
             'vip_rows' => ['nullable', 'string', 'max:100'],
+            'couple_rows' => ['nullable', 'string', 'max:100'],
         ]);
 
         [$startRow, $endRow] = explode('-', strtoupper($validated['rows']));
@@ -61,6 +62,17 @@ class SeatController extends Controller
             ->values()
             ->all();
 
+        $coupleRows = collect(explode(',', strtoupper($validated['couple_rows'] ?? '')))
+            ->map(fn ($row) => trim($row))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        if (array_intersect($vipRows, $coupleRows)) {
+            return back()->withInput()->with('error', 'Một hàng không thể đồng thời là hàng VIP và hàng ghế đôi.');
+        }
+
         $created = 0;
 
         for ($rowOrd = ord($startRow); $rowOrd <= ord($endRow); $rowOrd++) {
@@ -68,25 +80,32 @@ class SeatController extends Controller
 
             for ($number = 1; $number <= $validated['seats_per_row']; $number++) {
                 $seatCode = $row . $number;
+                $type = match (true) {
+                    in_array($row, $coupleRows, true) => 'couple',
+                    in_array($row, $vipRows, true) => 'vip',
+                    default => 'normal',
+                };
 
-                $exists = Seat::where('room_id', $room->id)
-                    ->where('seat_code', $seatCode)
-                    ->exists();
-
-                if ($exists) {
-                    continue;
-                }
-
-                Seat::create([
+                $seat = Seat::firstOrNew([
                     'room_id' => $room->id,
+                    'seat_code' => $seatCode,
+                ]);
+                $isNewSeat = ! $seat->exists;
+                $seat->fill([
                     'row' => $row,
                     'number' => $number,
-                    'seat_code' => $seatCode,
-                    'type' => in_array($row, $vipRows, true) ? 'vip' : 'normal',
-                    'status' => 'active',
+                    'type' => $type,
                 ]);
 
-                $created++;
+                if ($isNewSeat) {
+                    $seat->status = 'active';
+                }
+
+                $seat->save();
+
+                if ($isNewSeat) {
+                    $created++;
+                }
             }
         }
 

@@ -17,6 +17,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'google_id',
         'phone',
         'password',
         'role_id',
@@ -24,6 +25,7 @@ class User extends Authenticatable
         'status',
         'loyalty_points',
         'lifetime_loyalty_points',
+        'email_verified_at',
     ];
 
     protected $hidden = [

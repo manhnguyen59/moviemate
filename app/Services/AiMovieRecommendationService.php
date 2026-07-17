@@ -26,12 +26,14 @@ class AiMovieRecommendationService
 
         $recommendations = collect();
         $source = 'fallback';
+        $aiFailed = false;
 
         if ($this->hasApiKey()) {
             try {
                 $recommendations = $this->requestAiRecommendations($preferences, $candidates, $limit);
                 $source = $recommendations->isNotEmpty() ? $this->provider() : 'fallback';
             } catch (\Throwable $exception) {
+                $aiFailed = true;
                 Log::warning('AI movie recommendation failed, using fallback.', [
                     'message' => $exception->getMessage(),
                 ]);
@@ -55,9 +57,12 @@ class AiMovieRecommendationService
             'source' => $source,
             'recommendations' => $recommendations->values()->all(),
             'available_count' => $candidates->count(),
-            'message' => $source === 'fallback'
-                ? 'Đang dùng gợi ý mô phỏng từ database vì chưa cấu hình API key hoặc AI tạm thời không phản hồi.'
-                : null,
+            'message' => match (true) {
+                $source !== 'fallback' => null,
+                ! $this->hasApiKey() => 'Chưa cấu hình AI_API_KEY. Kết quả bên dưới được xếp hạng trực tiếp từ thể loại, tâm trạng, thời gian và rạp bạn đã chọn.',
+                $aiFailed => 'Dịch vụ AI tạm thời không phản hồi. MovieMate đã chuyển sang bộ gợi ý nội bộ.',
+                default => 'AI không trả về kết quả hợp lệ. MovieMate đã chuyển sang bộ gợi ý nội bộ.',
+            },
         ];
     }
 
@@ -72,7 +77,7 @@ class AiMovieRecommendationService
                 $query->whereDate('show_date', '>', $now->toDateString())
                     ->orWhere(function ($query) use ($now) {
                         $query->whereDate('show_date', $now->toDateString())
-                            ->whereTime('show_time', '>=', $now->format('H:i:s'));
+                            ->whereTime('show_time', '>=', $now->copy()->subMinutes(30)->format('H:i:s'));
                     });
             })
             ->whereHas('movie', function ($query) {
@@ -252,8 +257,24 @@ class AiMovieRecommendationService
                     $reasons[] = 'phù hợp khi đi cùng gia đình';
                 }
 
-                if ((string) ($preferences['mood'] ?? '') !== '') {
+                $moodGenres = $this->moodGenres((string) ($preferences['mood'] ?? ''));
+                $matchesMood = $movieGenres->contains(function ($genre) use ($moodGenres) {
+                    return collect($moodGenres)->contains(fn ($expected) => Str::contains($genre, $expected));
+                });
+
+                if ($matchesMood) {
+                    $score += 18;
                     $reasons[] = 'hợp với tâm trạng hiện tại của bạn';
+                }
+
+                $companionGenres = $this->companionGenres((string) ($preferences['companion'] ?? ''));
+                $matchesCompanion = $movieGenres->contains(function ($genre) use ($companionGenres) {
+                    return collect($companionGenres)->contains(fn ($expected) => Str::contains($genre, $expected));
+                });
+
+                if ($matchesCompanion) {
+                    $score += 8;
+                    $reasons[] = 'phù hợp với người đi cùng';
                 }
 
                 $reason = 'Gợi ý từ dữ liệu MovieMate vì phim '.implode(', ', array_slice($reasons ?: ['còn suất chiếu hợp lệ'], 0, 3)).'.';
@@ -263,6 +284,28 @@ class AiMovieRecommendationService
             ->sortByDesc('score')
             ->take($limit)
             ->values();
+    }
+
+    protected function moodGenres(string $mood): array
+    {
+        return match (Str::lower($mood)) {
+            'happy' => ['comedy', 'animation', 'family', 'hài', 'hoạt hình'],
+            'sad' => ['comedy', 'romance', 'drama', 'hài', 'tình cảm', 'chính kịch'],
+            'stress', 'chill' => ['comedy', 'romance', 'animation', 'family', 'hài', 'tình cảm', 'hoạt hình'],
+            'excited' => ['action', 'adventure', 'science fiction', 'horror', 'hành động', 'phiêu lưu', 'khoa học', 'kinh dị'],
+            'romantic' => ['romance', 'drama', 'tình cảm', 'chính kịch'],
+            default => [],
+        };
+    }
+
+    protected function companionGenres(string $companion): array
+    {
+        return match (Str::lower($companion)) {
+            'couple' => ['romance', 'comedy', 'drama', 'tình cảm', 'hài'],
+            'friends' => ['action', 'comedy', 'horror', 'adventure', 'hành động', 'hài', 'kinh dị'],
+            'family' => ['animation', 'family', 'comedy', 'hoạt hình', 'gia đình', 'hài'],
+            default => [],
+        };
     }
 
     protected function matchesPreferredTime(array $candidate, string $preferredTime): bool

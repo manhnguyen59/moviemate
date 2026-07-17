@@ -29,7 +29,7 @@
                              alt="{{ $user->name }}" class="w-full h-full object-cover">
                     </div>
                     <h2 class="text-lg font-bold app-heading mb-0.5">{{ $user->name }}</h2>
-                    <p class="text-xs text-ai-start font-bold mb-5">Thành viên {{ $user->membership_tier }}</p>
+                    <p class="text-xs text-ai-start font-bold mb-5">Hạng {{ $user->membership_tier }}</p>
 
                     <div class="w-full rounded-2xl border border-ai-start/30 bg-ai-start/10 px-4 py-3 mb-4 text-left">
                         <p class="text-xs app-muted">Điểm khả dụng</p>

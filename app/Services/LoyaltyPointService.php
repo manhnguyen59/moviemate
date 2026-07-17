@@ -10,6 +10,9 @@ use Illuminate\Validation\ValidationException;
 
 class LoyaltyPointService
 {
+    /** Mỗi điểm dùng thanh toán có giá trị 100đ (tỷ lệ hoàn điểm khoảng 10%). */
+    public const VALUE_PER_POINT = 100;
+
     public function calculate(float|int $totalAmount): int
     {
         return max(0, (int) floor((float) $totalAmount / 1000));
@@ -51,8 +54,9 @@ class LoyaltyPointService
     public function reverseForCancelledBooking(Booking $booking): void
     {
         $points = (int) $booking->loyalty_points_earned;
+        $wasAwarded = $booking->loyaltyPointTransactions()->where('type', 'earn')->exists();
 
-        if ($points <= 0 || $booking->loyaltyPointTransactions()->where('type', 'reverse')->exists()) {
+        if ($points <= 0 || ! $wasAwarded || $booking->loyaltyPointTransactions()->where('type', 'reverse')->exists()) {
             return;
         }
 
@@ -106,5 +110,49 @@ class LoyaltyPointService
                 'description' => $description,
             ]);
         });
+    }
+
+    public function redeemForBooking(User $user, Booking $booking, int $points): LoyaltyPointTransaction
+    {
+        if ($points <= 0) {
+            throw ValidationException::withMessages(['loyalty_points' => 'Số điểm sử dụng phải lớn hơn 0.']);
+        }
+
+        $lockedUser = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
+
+        if ((int) $lockedUser->loyalty_points < $points) {
+            throw ValidationException::withMessages(['loyalty_points' => 'Số điểm khả dụng không đủ.']);
+        }
+
+        $lockedUser->decrement('loyalty_points', $points);
+
+        return $booking->loyaltyPointTransactions()->create([
+            'user_id' => $lockedUser->id,
+            'points' => -$points,
+            'type' => 'redeem',
+            'description' => 'Dùng điểm giảm giá đơn vé '.$booking->booking_code,
+        ]);
+    }
+
+    public function restoreRedeemedPoints(Booking $booking): void
+    {
+        $points = (int) $booking->loyalty_points_redeemed;
+
+        if ($points <= 0 || $booking->loyaltyPointTransactions()->where('type', 'adjustment')->where('points', $points)->exists()) {
+            return;
+        }
+
+        $user = $booking->user()->lockForUpdate()->first();
+        if (! $user) {
+            return;
+        }
+
+        $user->increment('loyalty_points', $points);
+        $booking->loyaltyPointTransactions()->create([
+            'user_id' => $user->id,
+            'points' => $points,
+            'type' => 'adjustment',
+            'description' => 'Hoàn điểm do đơn vé '.$booking->booking_code.' bị hủy',
+        ]);
     }
 }

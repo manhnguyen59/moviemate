@@ -82,14 +82,14 @@
                         </td>
                         <td>
                             <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('admin.cinemas.edit', $cinema) }}" class="admin-btn-warning admin-action-btn" title="Sửa">
+                                <a href="{{ route('admin.cinemas.edit', $cinema) }}" class="admin-btn-warning admin-action-btn" title="Sửa" aria-label="Sửa" data-tooltip="Sửa">
                                     <i class="ph ph-pencil-simple"></i>
                                 </a>
                                 <form action="{{ route('admin.cinemas.destroy', $cinema) }}" method="POST" class="inline"
                                       onsubmit="return confirm('Bạn có chắc muốn xóa rạp này?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="admin-btn-danger admin-action-btn" title="Xóa">
+                                    <button type="submit" class="admin-btn-danger admin-action-btn" title="Xóa" aria-label="Xóa" data-tooltip="Xóa">
                                         <i class="ph ph-trash"></i>
                                     </button>
                                 </form>

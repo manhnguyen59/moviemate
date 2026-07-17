@@ -96,6 +96,7 @@ class VoucherController extends Controller
             'min_order_amount' => ['nullable', 'numeric', 'min:0'],
             'max_discount_amount' => ['nullable', 'numeric', 'min:0'],
             'usage_limit' => ['nullable', 'integer', 'min:1'],
+            'per_user_limit' => ['nullable', 'integer', 'min:1'],
             'starts_at' => ['nullable', 'date'],
             'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
             'status' => ['required', Rule::in(['active', 'inactive'])],
@@ -104,6 +105,7 @@ class VoucherController extends Controller
         $validated['min_order_amount'] = $validated['min_order_amount'] ?? 0;
         $validated['max_discount_amount'] = $validated['max_discount_amount'] ?? null;
         $validated['usage_limit'] = $validated['usage_limit'] ?? null;
+        $validated['per_user_limit'] = $validated['per_user_limit'] ?? null;
 
         if ($validated['discount_type'] === 'percent' && (float) $validated['discount_value'] > 100) {
             throw ValidationException::withMessages([

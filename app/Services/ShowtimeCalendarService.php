@@ -12,8 +12,12 @@ class ShowtimeCalendarService
     public function data(Request $request): array
     {
         $today = Carbon::today('Asia/Ho_Chi_Minh');
+        $now = now('Asia/Ho_Chi_Minh');
         $endDate = $today->copy()->addDays(6);
-        $selectedDate = $this->normalizeSelectedDate($request->query('date'), $today);
+        $selectedDate = $this->normalizeSelectedDate(
+            $request->query('date'),
+            $this->defaultSelectedDate($today, $endDate, $now)
+        );
         $cityOptions = $this->cityOptions();
         $brandTabs = ['Tất cả', 'MovieMate', 'CGV', 'Lotte', 'Galaxy', 'BHD', 'Beta', 'Cinestar'];
         $selectedCity = $this->normalizeSelectedCity($request->query('city'), array_keys($cityOptions));
@@ -38,9 +42,12 @@ class ShowtimeCalendarService
                 $query->where('name', 'like', '%'.$selectedBrand.'%');
             })
             ->withCount([
-                'showtimes as active_showtimes_count' => function ($query) use ($selectedDate) {
+                'showtimes as active_showtimes_count' => function ($query) use ($selectedDate, $today, $now) {
                     $query->where('status', 'active')
-                        ->whereDate('show_date', $selectedDate);
+                        ->whereDate('show_date', $selectedDate)
+                        ->when($selectedDate === $today->toDateString(), function ($query) use ($now) {
+                            $query->whereTime('show_time', '>=', $now->copy()->subMinutes(30)->format('H:i:s'));
+                        });
                 },
             ])
             ->orderBy('name')
@@ -76,6 +83,9 @@ class ShowtimeCalendarService
                 ->where('status', 'active')
                 ->where('cinema_id', $selectedCinema->id)
                 ->whereDate('show_date', $selectedDate)
+                ->when($selectedDate === $today->toDateString(), function ($query) use ($now) {
+                    $query->whereTime('show_time', '>=', $now->copy()->subMinutes(30)->format('H:i:s'));
+                })
                 ->whereHas('movie')
                 ->orderBy('show_time')
                 ->get();
@@ -84,6 +94,13 @@ class ShowtimeCalendarService
                 ->where('status', 'active')
                 ->where('cinema_id', $selectedCinema->id)
                 ->whereBetween('show_date', [$today->toDateString(), $endDate->toDateString()])
+                ->where(function ($query) use ($today, $now) {
+                    $query->whereDate('show_date', '>', $today->toDateString())
+                        ->orWhere(function ($query) use ($today, $now) {
+                            $query->whereDate('show_date', $today->toDateString())
+                                ->whereTime('show_time', '>=', $now->copy()->subMinutes(30)->format('H:i:s'));
+                        });
+                })
                 ->orderBy('show_date')
                 ->pluck('show_date')
                 ->map(fn ($showDate) => Carbon::parse($showDate)->toDateString())
@@ -202,6 +219,26 @@ class ShowtimeCalendarService
         return $parsedDate && $parsedDate->format('Y-m-d') === $date
             ? $parsedDate->toDateString()
             : $fallback->toDateString();
+    }
+
+    private function defaultSelectedDate(Carbon $today, Carbon $endDate, Carbon $now): Carbon
+    {
+        $firstAvailableDate = Showtime::query()
+            ->where('status', 'active')
+            ->whereBetween('show_date', [$today->toDateString(), $endDate->toDateString()])
+            ->where(function ($query) use ($today, $now) {
+                $query->whereDate('show_date', '>', $today->toDateString())
+                    ->orWhere(function ($query) use ($today, $now) {
+                        $query->whereDate('show_date', $today->toDateString())
+                            ->whereTime('show_time', '>=', $now->copy()->subMinutes(30)->format('H:i:s'));
+                    });
+            })
+            ->orderBy('show_date')
+            ->value('show_date');
+
+        return $firstAvailableDate
+            ? Carbon::parse($firstAvailableDate, $today->getTimezone())
+            : $today;
     }
 
     private function vietnameseWeekday(Carbon $date): string

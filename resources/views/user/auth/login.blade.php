@@ -90,13 +90,10 @@
                     </div>
                 </div>
 
-                <div class="mt-5 grid grid-cols-2 gap-3">
-                    <button type="button" class="flex items-center justify-center gap-2 w-full py-2.5 app-input border app-border rounded-xl app-text-muted hover:app-text hover:border-brand-start transition-colors text-sm font-medium">
+                <div class="mt-5">
+                    <a href="{{ route('auth.google.redirect') }}" class="flex items-center justify-center gap-2 w-full py-2.5 app-input border app-border rounded-xl app-text-muted hover:app-text hover:border-brand-start transition-colors text-sm font-medium">
                         <i class="ph-fill ph-google-logo text-lg"></i> Google
-                    </button>
-                    <button type="button" class="flex items-center justify-center gap-2 w-full py-2.5 app-input border app-border rounded-xl app-text-muted hover:app-text hover:border-brand-start transition-colors text-sm font-medium">
-                        <i class="ph-fill ph-facebook-logo text-lg text-blue-500"></i> Facebook
-                    </button>
+                    </a>
                 </div>
 
                 <p class="mt-6 text-center text-sm app-text-muted">

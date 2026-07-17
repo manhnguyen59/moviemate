@@ -32,6 +32,9 @@
                 <div class="flex justify-between gap-4"><span class="app-muted">Rạp</span><span class="app-text font-semibold text-right">{{ $booking->showtime->cinema->name }}</span></div>
                 <div class="flex justify-between gap-4"><span class="app-muted">Thời gian</span><span class="app-text font-semibold text-right">{{ $booking->showtime?->show_date ? \Carbon\Carbon::parse($booking->showtime->show_date)->format('d/m/Y') : 'Đang cập nhật' }} {{ $booking->showtime?->show_time ? \Carbon\Carbon::parse($booking->showtime->show_time)->format('H:i') : '--:--' }}</span></div>
                 <div class="flex justify-between gap-4"><span class="app-muted">Ghế</span><span class="app-text font-bold text-right">{{ $booking->bookingSeats->pluck('seat.seat_code')->join(', ') }}</span></div>
+                @if($booking->foodOrder)
+                    <div class="flex justify-between gap-4"><span class="app-muted">Đồ ăn</span><span class="app-text font-semibold text-right">{{ $booking->foodOrder->items->map(fn ($item) => $item->food->name.' x'.$item->quantity)->join(', ') }}</span></div>
+                @endif
                 <div class="flex justify-between gap-4"><span class="app-muted">Tổng tiền</span><span class="app-text font-bold text-right">{{ number_format($booking->total_amount,0,',','.') }}đ</span></div>
                 <div class="flex justify-between gap-4"><span class="app-muted">Điểm tích lũy</span><span class="text-ai-start font-bold text-right">+{{ number_format($booking->loyalty_points_earned,0,',','.') }} điểm</span></div>
             </div>

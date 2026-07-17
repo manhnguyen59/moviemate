@@ -20,7 +20,7 @@
                     <p class="text-xs text-ai-start font-bold mb-5">Vai trò {{ $roleName }}</p>
 
                     <div class="w-full rounded-2xl border border-ai-start/30 bg-ai-start/10 px-4 py-3 mb-4 text-left">
-                        <p class="text-xs app-muted">Thành viên {{ $user->membership_tier }}</p>
+                        <p class="text-xs app-muted">Hạng {{ $user->membership_tier }}</p>
                         <p class="text-2xl font-extrabold text-ai-start">{{ number_format($user->loyalty_points, 0, ',', '.') }}</p>
                         <p class="text-xs app-muted">điểm khả dụng</p>
                     </div>

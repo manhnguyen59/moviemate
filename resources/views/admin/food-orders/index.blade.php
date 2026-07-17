@@ -32,14 +32,14 @@
                         <tr class="hover:bg-brand-start/5 transition-colors">
                             <td class="px-5 py-4">
                                 <div class="font-semibold">#{{ $order->id }}</div>
-                                <div class="text-xs app-muted">{{ $order->created_at->format('d/m/Y H:i') }}</div>
+                                <div class="text-xs app-muted">{{ $order->created_at?->format('d/m/Y H:i') ?? '—' }}</div>
                             </td>
                             <td class="px-5 py-4">
                                 <div class="font-semibold">{{ $order->customer_name }}</div>
                                 <div class="text-xs app-muted">{{ $order->customer_phone }}</div>
                             </td>
                             <td class="px-5 py-4">{{ optional($order->pickupCinema)->name ?? 'Chưa chọn' }}</td>
-                            <td class="px-5 py-4 text-right font-bold">{{ number_format($order->total_amount,2) }}đ</td>
+                            <td class="px-5 py-4 text-right font-bold">{{ number_format($order->total_amount, 0, ',', '.') }}đ</td>
                             <td class="px-5 py-4">
                                 <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $order->status === 'paid' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning' }}">
                                     {{ ucfirst($order->status) }}

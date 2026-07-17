@@ -49,6 +49,7 @@
                     <th>Giảm</th>
                     <th>Đơn tối thiểu</th>
                     <th>Lượt dùng</th>
+                    <th>Mỗi tài khoản</th>
                     <th>Trạng thái</th>
                     <th class="text-right">Hành động</th>
                 </tr>
@@ -70,6 +71,7 @@
                         </td>
                         <td>{{ number_format($voucher->min_order_amount, 0, ',', '.') }}đ</td>
                         <td>{{ number_format($voucher->used_count) }}{{ $voucher->usage_limit ? ' / '.number_format($voucher->usage_limit) : '' }}</td>
+                        <td>{{ $voucher->per_user_limit ? number_format($voucher->per_user_limit).' lần' : 'Không giới hạn' }}</td>
                         <td>
                             <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $voucher->status === 'active' ? 'bg-success/10 text-success' : 'bg-error/10 text-error' }}">
                                 {{ $voucher->status === 'active' ? 'Đang bật' : 'Đã tắt' }}
@@ -77,13 +79,13 @@
                         </td>
                         <td>
                             <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('admin.vouchers.edit', $voucher) }}" class="admin-btn-warning admin-action-btn" title="Sửa">
+                                <a href="{{ route('admin.vouchers.edit', $voucher) }}" class="admin-btn-warning admin-action-btn" title="Sửa" aria-label="Sửa" data-tooltip="Sửa">
                                     <i class="ph ph-pencil-simple"></i>
                                 </a>
                                 <form action="{{ route('admin.vouchers.destroy', $voucher) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa voucher này?');" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="admin-btn-danger admin-action-btn" title="Xóa">
+                                    <button type="submit" class="admin-btn-danger admin-action-btn" title="Xóa" aria-label="Xóa" data-tooltip="Xóa">
                                         <i class="ph ph-trash"></i>
                                     </button>
                                 </form>
@@ -92,7 +94,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="admin-empty">
+                        <td colspan="8" class="admin-empty">
                             <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-start/10 text-brand-start">
                                 <i class="ph-fill ph-ticket text-3xl"></i>
                             </div>

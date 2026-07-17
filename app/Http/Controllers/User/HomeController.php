@@ -21,13 +21,21 @@ class HomeController extends Controller
         $now = now('Asia/Ho_Chi_Minh');
 
         $nowShowingMovies = Movie::with('genres')
-            ->where('status', 'now_showing')
+            ->where('status', '!=', 'stopped')
+            ->where(function ($query) use ($today) {
+                $query->where('status', 'now_showing')
+                    ->orWhereDate('release_date', '<=', $today->toDateString());
+            })
             ->orderByDesc('created_at')
             ->take(4)
             ->get();
 
         $comingSoonMovies = Movie::with('genres')
             ->where('status', 'coming_soon')
+            ->where(function ($query) use ($today) {
+                $query->whereNull('release_date')
+                    ->orWhereDate('release_date', '>', $today->toDateString());
+            })
             ->orderByDesc('created_at')
             ->take(4)
             ->get();
@@ -40,7 +48,7 @@ class HomeController extends Controller
                 $query->whereDate('show_date', '>', $today->toDateString())
                     ->orWhere(function ($query) use ($today, $now) {
                         $query->whereDate('show_date', $today->toDateString())
-                            ->whereTime('show_time', '>=', $now->format('H:i:s'));
+                            ->whereTime('show_time', '>=', $now->copy()->subMinutes(30)->format('H:i:s'));
                     });
             })
             ->orderBy('show_date')

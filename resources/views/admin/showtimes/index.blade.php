@@ -92,13 +92,13 @@
                             </td>
                             <td>
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('admin.showtimes.edit', $showtime) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl border app-border app-muted hover:text-brand-start hover:border-brand-start transition-colors" title="Chỉnh sửa">
+                                    <a href="{{ route('admin.showtimes.edit', $showtime) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl border app-border app-muted hover:text-brand-start hover:border-brand-start transition-colors" title="Chỉnh sửa" aria-label="Chỉnh sửa" data-tooltip="Chỉnh sửa">
                                         <i class="ph-bold ph-pencil-simple text-xs"></i>
                                     </a>
                                     <form method="POST" action="{{ route('admin.showtimes.destroy', $showtime) }}" onsubmit="return confirm('Bạn có chắc muốn xóa suất chiếu này?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl border app-border app-muted hover:text-white hover:bg-error hover:border-error transition-colors" title="Xóa">
+                                        <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl border app-border app-muted hover:text-white hover:bg-error hover:border-error transition-colors" title="Xóa" aria-label="Xóa" data-tooltip="Xóa">
                                             <i class="ph-bold ph-trash text-xs"></i>
                                         </button>
                                     </form>

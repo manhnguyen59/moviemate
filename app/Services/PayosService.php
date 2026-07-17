@@ -30,8 +30,8 @@ class PayosService
             'buyerPhone' => $booking->user?->phone,
             'items' => [
                 [
-                    'name' => Str::limit($booking->showtime?->movie?->title ?? 'Ve xem phim MovieMate', 80, ''),
-                    'quantity' => max(1, $booking->bookingSeats->count()),
+                    'name' => Str::limit('Ve + do an '.($booking->showtime?->movie?->title ?? 'MovieMate'), 80, ''),
+                    'quantity' => 1,
                     'price' => $amount,
                 ],
             ],

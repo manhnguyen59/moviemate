@@ -53,6 +53,7 @@ class RoomController extends Controller
             'cinema_id'   => ['required', 'exists:cinemas,id'],
             'name'        => ['required', 'string', 'max:255'],
             'room_type'   => ['required', Rule::in(['2D', '3D', 'IMAX'])],
+            'layout_style' => ['required', Rule::in(['standard', 'staggered', 'curved'])],
             'total_seats' => ['required', 'integer', 'min:0'],
             'status'      => ['required', 'in:active,inactive'],
         ]);
@@ -97,6 +98,7 @@ class RoomController extends Controller
             'cinema_id'   => ['required', 'exists:cinemas,id'],
             'name'        => ['required', 'string', 'max:255'],
             'room_type'   => ['required', Rule::in(['2D', '3D', 'IMAX'])],
+            'layout_style' => ['required', Rule::in(['standard', 'staggered', 'curved'])],
             'total_seats' => ['required', 'integer', 'min:0'],
             'status'      => ['required', 'in:active,inactive'],
         ]);

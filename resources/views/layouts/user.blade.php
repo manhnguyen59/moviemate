@@ -32,7 +32,6 @@
                     <a href="{{ route('home') }}" class="px-4 py-2 rounded-full app-text hover:text-brand-start hover:bg-white/5 transition-colors font-medium text-sm">Trang chủ</a>
                     <a href="{{ route('user.movies.index') }}" class="px-4 py-2 rounded-full app-muted hover:text-brand-start hover:bg-white/5 transition-colors font-medium text-sm">Phim</a>
                     <a href="{{ route('user.showtimes.index') }}" class="px-4 py-2 rounded-full app-muted hover:text-brand-start hover:bg-white/5 transition-colors font-medium text-sm">Lịch chiếu</a>
-                    <a href="{{ route('foods.index') }}" class="px-4 py-2 rounded-full app-muted hover:text-brand-start hover:bg-white/5 transition-colors font-medium text-sm">Đồ ăn</a>
                     <a href="{{ route('user.ai.recommend') }}" class="px-4 py-2 rounded-full flex items-center gap-1.5 app-muted hover:text-ai-start hover:bg-ai-start/10 transition-colors font-medium text-sm">
                         <i class="ph-fill ph-sparkle text-ai-start"></i> AI Gợi ý
                     </a>
@@ -48,6 +47,12 @@
                     </button>
 
                     @auth
+                        @if(strtolower(Auth::user()->role?->name ?? '') === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-start/10 border border-brand-start/30 text-brand-start hover:bg-brand-start hover:text-white transition-colors text-sm font-bold">
+                                <i class="ph-bold ph-arrow-left"></i>
+                                <span class="hidden xl:inline">Trang quản trị</span>
+                            </a>
+                        @endif
                         <a href="{{ route('user.bookings.history') }}" class="app-muted hover:app-text font-medium transition-colors text-sm">Tài khoản</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -81,13 +86,17 @@
                 <a href="{{ route('home') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-text hover:bg-brand-start/10 hover:text-brand-start transition-colors">Trang chủ</a>
                 <a href="{{ route('user.movies.index') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-muted hover:bg-brand-start/10 hover:text-brand-start transition-colors">Phim</a>
                 <a href="{{ route('user.showtimes.index') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-muted hover:bg-brand-start/10 hover:text-brand-start transition-colors">Lịch chiếu</a>
-                <a href="{{ route('foods.index') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-muted hover:bg-brand-start/10 hover:text-brand-start transition-colors">Đồ ăn</a>
                 <a href="{{ route('user.ai.recommend') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-ai-start hover:bg-ai-start/10 transition-colors">
                     <i class="ph-fill ph-sparkle"></i> AI Gợi ý
                 </a>
                 <a href="{{ route('user.bookings.history') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium app-muted hover:bg-brand-start/10 hover:text-brand-start transition-colors">Vé của tôi</a>
                 <div class="pt-3 mt-3 border-t app-border flex flex-col gap-2">
                     @auth
+                        @if(strtolower(Auth::user()->role?->name ?? '') === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-bold text-brand-start border border-brand-start/30 bg-brand-start/10 rounded-lg">
+                                <i class="ph-bold ph-arrow-left"></i> Quay lại trang quản trị
+                            </a>
+                        @endif
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="w-full block px-3 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-brand-start to-brand-end text-center rounded-lg">Đăng xuất</button>

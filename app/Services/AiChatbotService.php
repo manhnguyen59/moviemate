@@ -54,7 +54,7 @@ class AiChatbotService
                 $query->whereDate('show_date', '>', $now->toDateString())
                     ->orWhere(function ($query) use ($now) {
                         $query->whereDate('show_date', $now->toDateString())
-                            ->whereTime('show_time', '>=', $now->format('H:i:s'));
+                            ->whereTime('show_time', '>=', $now->copy()->subMinutes(30)->format('H:i:s'));
                     });
             })
             ->whereHas('movie', function ($query) {

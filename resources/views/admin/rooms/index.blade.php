@@ -57,7 +57,10 @@
                                 <p class="text-xs app-muted">{{ $room->cinema->city ?? '' }}</p>
                             </td>
                             <td class="font-extrabold">{{ $room->name }}</td>
-                            <td>{{ $room->room_type }}</td>
+                            <td>
+                                <p>{{ $room->room_type }}</p>
+                                <p class="text-xs app-muted">{{ ['standard' => 'Thẳng', 'staggered' => 'So le', 'curved' => 'Vòng cung'][$room->layout_style] ?? 'Thẳng' }}</p>
+                            </td>
                             <td>{{ $room->total_seats }}</td>
                             <td>
                                 @if($room->status === 'active')
@@ -77,7 +80,7 @@
                                     <form action="{{ route('admin.rooms.destroy', $room) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa phòng này?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl border app-border app-muted hover:bg-error hover:border-error hover:text-white transition-colors">
+                                        <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl border app-border app-muted hover:bg-error hover:border-error hover:text-white transition-colors" title="Xóa" aria-label="Xóa" data-tooltip="Xóa">
                                             <i class="ph ph-trash"></i>
                                         </button>
                                     </form>

@@ -31,8 +31,11 @@
 
             <div class="overflow-x-auto pb-4">
                 <div class="min-w-[560px] flex flex-col items-center gap-2.5">
-                    @foreach($seats->groupBy('row') as $row => $rowSeats)
-                        <div class="flex items-center gap-3">
+                    @php
+                        $seatRowGroups = $seats->groupBy('row');
+                    @endphp
+                    @foreach($seatRowGroups as $row => $rowSeats)
+                        <div class="flex items-center gap-3 transition-all" style="margin-left: {{ $room->seatRowOffset($loop->index, $seatRowGroups->count()) }}px">
                             <span class="w-6 text-center app-muted text-xs font-extrabold">{{ $row }}</span>
                             <div class="flex gap-1.5">
                                 @foreach($rowSeats->sortBy('number') as $seat)
@@ -44,7 +47,7 @@
                                             default => 'app-input app-border app-muted',
                                         };
                                     @endphp
-                                    <div class="w-9 h-9 rounded-t-xl border text-[11px] font-extrabold flex items-center justify-center {{ $seatClass }}" title="{{ $seat->seat_code }} - {{ $seat->type }} - {{ $seat->status }}">
+                                    <div class="{{ $seat->type === 'couple' ? 'w-[4.75rem]' : 'w-9' }} h-9 rounded-t-xl border text-[11px] font-extrabold flex items-center justify-center {{ $seatClass }}" title="{{ $seat->seat_code }} - {{ $seat->type }} - {{ $seat->status }}">
                                         {{ $seat->number }}
                                     </div>
                                 @endforeach
@@ -82,8 +85,14 @@
 
                 <div>
                     <label class="cinema-label">Hàng VIP</label>
-                    <input type="text" name="vip_rows" placeholder="E,F,G" class="cinema-input">
+                    <input type="text" name="vip_rows" value="{{ old('vip_rows') }}" placeholder="E,F,G" class="cinema-input">
                     <p class="app-muted text-xs mt-2">Nhập các hàng cách nhau bằng dấu phẩy.</p>
+                </div>
+
+                <div>
+                    <label class="cinema-label">Hàng ghế đôi</label>
+                    <input type="text" name="couple_rows" value="{{ old('couple_rows') }}" placeholder="H" class="cinema-input">
+                    <p class="app-muted text-xs mt-2">Mỗi vị trí là một ghế đôi, giá bằng 2 vé thường.</p>
                 </div>
 
                 <button type="submit" class="btn-primary w-full">Tạo ghế</button>

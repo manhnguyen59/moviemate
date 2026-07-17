@@ -5,10 +5,14 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\BookingSeat;
+use App\Models\FoodItem;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Seat;
 use App\Models\Showtime;
 use App\Services\LoyaltyPointService;
 use App\Services\PayosService;
+use App\Services\SeatHoldService;
 use App\Services\VoucherService;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
@@ -24,6 +28,7 @@ class BookingController extends Controller
      */
     public function selectSeat(Showtime $showtime)
     {
+        app(SeatHoldService::class)->expireStale($showtime->id);
         $showtime->load(['movie', 'cinema', 'room']);
 
         if (! $this->isShowtimeAvailable($showtime)) {
@@ -38,7 +43,10 @@ class BookingController extends Controller
             ->orderBy('number')
             ->get();
 
-        $bookedSeatIds = $this->bookedSeatQuery($showtime)->pluck('seat_id')->toArray();
+        $bookedSeatIds = array_values(array_unique(array_merge(
+            $this->bookedSeatQuery($showtime)->pluck('seat_id')->toArray(),
+            app(SeatHoldService::class)->activeHeldSeatIds($showtime, Auth::id())
+        )));
 
         $seatsByRow = $seats->groupBy('row');
 
@@ -55,6 +63,7 @@ class BookingController extends Controller
      */
     public function checkout(Request $request, Showtime $showtime)
     {
+        app(SeatHoldService::class)->expireStale($showtime->id);
         $showtime->load(['movie', 'cinema', 'room']);
 
         if (! $this->isShowtimeAvailable($showtime)) {
@@ -101,10 +110,10 @@ class BookingController extends Controller
                 ->with('error', 'Một số ghế bạn chọn đã được người khác đặt trước.');
         }
 
+        $seatHoldExpiresAt = app(SeatHoldService::class)->holdSeats(Auth::user(), $showtime, $seatIds);
+
         $seatSummaries = $seats->map(function ($seat) use ($showtime) {
-            $price = $seat->type === 'vip'
-                ? ($showtime->vip_price ?? $showtime->price)
-                : $showtime->price;
+            $price = $showtime->priceForSeatType($seat->type);
 
             return [
                 'id' => $seat->id,
@@ -114,19 +123,49 @@ class BookingController extends Controller
             ];
         });
 
-        $subtotalAmount = $seatSummaries->sum('price');
+        $foods = FoodItem::where('active', true)->orderBy('name')->get();
+        $foodQuantities = collect($request->query('foods', []))
+            ->map(fn ($quantity) => min(10, max(0, (int) $quantity)))
+            ->filter()
+            ->all();
+        $selectedFoods = $foods->filter(fn ($food) => isset($foodQuantities[$food->id]))
+            ->map(fn ($food) => [
+                'id' => $food->id,
+                'name' => $food->name,
+                'quantity' => $foodQuantities[$food->id],
+                'price' => (float) $food->price,
+                'total' => (float) $food->price * $foodQuantities[$food->id],
+            ])->values();
+        $seatSubtotalAmount = $seatSummaries->sum('price');
+        $foodSubtotalAmount = $selectedFoods->sum('total');
+        $subtotalAmount = $seatSubtotalAmount + $foodSubtotalAmount;
         $voucherCode = $request->query('voucher_code');
-        $voucherSummary = app(VoucherService::class)->resolve($voucherCode, $subtotalAmount);
-        $totalAmount = $voucherSummary['total'];
+        $voucherSummary = app(VoucherService::class)->resolve($voucherCode, $subtotalAmount, Auth::id());
+        $amountAfterVoucher = (float) $voucherSummary['total'];
+        $requestedPoints = max(0, (int) $request->query('loyalty_points', 0));
+        $maxRedeemablePoints = min((int) (Auth::user()->loyalty_points ?? 0), (int) floor($amountAfterVoucher / LoyaltyPointService::VALUE_PER_POINT));
+        $redeemedPoints = min($requestedPoints, $maxRedeemablePoints);
+        $pointDiscountAmount = $redeemedPoints * LoyaltyPointService::VALUE_PER_POINT;
+        $totalAmount = max(0, $amountAfterVoucher - $pointDiscountAmount);
 
         return view('user.bookings.checkout', [
             'showtime' => $showtime,
             'seats' => $seats,
             'seatSummaries' => $seatSummaries,
+            'foods' => $foods,
+            'foodQuantities' => $foodQuantities,
+            'selectedFoods' => $selectedFoods,
+            'seatSubtotalAmount' => $seatSubtotalAmount,
+            'foodSubtotalAmount' => $foodSubtotalAmount,
             'subtotalAmount' => $subtotalAmount,
             'totalAmount' => $totalAmount,
             'voucherSummary' => $voucherSummary,
             'voucherCode' => $voucherCode,
+            'amountAfterVoucher' => $amountAfterVoucher,
+            'maxRedeemablePoints' => $maxRedeemablePoints,
+            'redeemedPoints' => $redeemedPoints,
+            'pointDiscountAmount' => $pointDiscountAmount,
+            'seatHoldExpiresAt' => $seatHoldExpiresAt,
             'user' => Auth::user(),
         ]);
     }
@@ -138,12 +177,16 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
+        app(SeatHoldService::class)->expireStale((int) $request->input('showtime_id'));
         $validated = $request->validate([
             'showtime_id' => ['required', 'integer', 'exists:showtimes,id'],
             'seat_ids' => ['required', 'array', 'min:1'],
             'seat_ids.*' => ['integer', 'distinct'],
             'payment_method' => ['nullable', 'in:payos'],
             'voucher_code' => ['nullable', 'string', 'max:50'],
+            'loyalty_points' => ['nullable', 'integer', 'min:0'],
+            'foods' => ['nullable', 'array'],
+            'foods.*' => ['integer', 'min:1', 'max:10'],
         ], [
             'seat_ids.required' => 'Vui lòng chọn ít nhất một ghế.',
             'seat_ids.array' => 'Dữ liệu ghế không hợp lệ.',
@@ -167,6 +210,9 @@ class BookingController extends Controller
                     ->unique()
                     ->values()
                     ->all();
+
+                $user = \App\Models\User::whereKey(Auth::id())->lockForUpdate()->firstOrFail();
+                $holdExpiresAt = app(SeatHoldService::class)->assertHeldBy($user, $showtime, $seatIds);
 
                 $seats = Seat::where('room_id', $showtime->room_id)
                     ->whereIn('id', $seatIds)
@@ -204,19 +250,46 @@ class BookingController extends Controller
                 $totalAmount = 0;
 
                 foreach ($seats as $seat) {
-                    $price = $seat->type === 'vip'
-                        ? (float) ($showtime->vip_price ?? $showtime->price)
-                        : (float) $showtime->price;
+                    $price = $showtime->priceForSeatType($seat->type);
 
                     $seatPrices[$seat->id] = $price;
                     $totalAmount += $price;
                 }
 
+                $foodQuantities = collect($validated['foods'] ?? [])
+                    ->mapWithKeys(fn ($quantity, $foodId) => [(int) $foodId => (int) $quantity])
+                    ->filter(fn ($quantity) => $quantity > 0);
+                $foods = FoodItem::where('active', true)
+                    ->whereIn('id', $foodQuantities->keys())
+                    ->lockForUpdate()
+                    ->get();
+
+                if ($foods->count() !== $foodQuantities->count()) {
+                    throw ValidationException::withMessages(['foods' => 'Có món ăn không còn khả dụng.']);
+                }
+
+                $foodTotal = $foods->sum(fn ($food) => (float) $food->price * $foodQuantities[$food->id]);
+                $totalAmount += $foodTotal;
+
                 $subtotalAmount = $totalAmount;
-                $voucherSummary = app(VoucherService::class)->resolve($validated['voucher_code'] ?? null, $subtotalAmount);
+                $voucherSummary = app(VoucherService::class)->resolve(
+                    $validated['voucher_code'] ?? null,
+                    $subtotalAmount,
+                    $user->id,
+                    true
+                );
                 $voucher = $voucherSummary['voucher'];
                 $discountAmount = (float) $voucherSummary['discount'];
                 $totalAmount = (float) $voucherSummary['total'];
+                $requestedPoints = (int) ($validated['loyalty_points'] ?? 0);
+                $maxRedeemablePoints = min((int) $user->loyalty_points, (int) floor($totalAmount / LoyaltyPointService::VALUE_PER_POINT));
+
+                if ($requestedPoints > $maxRedeemablePoints) {
+                    throw ValidationException::withMessages(['loyalty_points' => 'Số điểm muốn dùng vượt quá mức khả dụng.']);
+                }
+
+                $pointDiscountAmount = $requestedPoints * LoyaltyPointService::VALUE_PER_POINT;
+                $totalAmount = max(0, $totalAmount - $pointDiscountAmount);
                 $loyaltyPoints = app(LoyaltyPointService::class)->calculate($totalAmount);
 
                 $booking = Booking::create([
@@ -226,11 +299,18 @@ class BookingController extends Controller
                     'booking_code' => $this->generateBookingCode(),
                     'total_amount' => $totalAmount,
                     'loyalty_points_earned' => $loyaltyPoints,
+                    'loyalty_points_redeemed' => $requestedPoints,
                     'voucher_code' => $voucher?->code,
                     'discount_amount' => $discountAmount,
+                    'point_discount_amount' => $pointDiscountAmount,
                     'payment_status' => 'pending',
                     'booking_status' => 'pending',
+                    'hold_expires_at' => $holdExpiresAt,
                 ]);
+
+                if ($requestedPoints > 0) {
+                    app(LoyaltyPointService::class)->redeemForBooking($user, $booking, $requestedPoints);
+                }
 
                 foreach ($seats as $seat) {
                     BookingSeat::create([
@@ -240,6 +320,32 @@ class BookingController extends Controller
                         'price' => $seatPrices[$seat->id],
                     ]);
                 }
+
+                if ($foods->isNotEmpty()) {
+                    $order = Order::create([
+                        'booking_id' => $booking->id,
+                        'user_id' => $user->id,
+                        'customer_name' => $user->name,
+                        'customer_phone' => $user->phone,
+                        'customer_email' => $user->email,
+                        'pickup_cinema_id' => $showtime->cinema_id,
+                        'total_amount' => $foodTotal,
+                        'status' => 'pending',
+                    ]);
+
+                    foreach ($foods as $food) {
+                        $quantity = $foodQuantities[$food->id];
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'food_item_id' => $food->id,
+                            'quantity' => $quantity,
+                            'price' => $food->price,
+                            'total' => (float) $food->price * $quantity,
+                        ]);
+                    }
+                }
+
+                app(SeatHoldService::class)->release($user, $showtime, $seatIds);
 
                 $booking->payment()->create([
                     'payment_method' => 'payos',
@@ -260,6 +366,20 @@ class BookingController extends Controller
             }
 
             throw $exception;
+        }
+
+        if ((float) $booking->total_amount <= 0) {
+            DB::transaction(function () use ($booking) {
+                $lockedBooking = Booking::whereKey($booking->id)->lockForUpdate()->firstOrFail();
+                $lockedBooking->update(['payment_status' => 'paid', 'booking_status' => 'paid']);
+                $lockedBooking->payment()->update(['status' => 'success', 'paid_at' => now()]);
+                $lockedBooking->foodOrder()->update(['status' => 'paid']);
+                if ($lockedBooking->voucher_id) {
+                    $lockedBooking->voucher()->increment('used_count');
+                }
+            });
+
+            return redirect()->route('user.bookings.success', $booking)->with('success', 'Thanh toán hoàn tất bằng điểm thành viên.');
         }
 
         try {
@@ -287,6 +407,8 @@ class BookingController extends Controller
                 ]);
 
                 $booking->payment?->update(['status' => 'failed']);
+                $booking->foodOrder()->update(['status' => 'cancelled']);
+                app(LoyaltyPointService::class)->restoreRedeemedPoints($booking);
                 $booking->bookingSeats()->delete();
             });
 
@@ -310,6 +432,7 @@ class BookingController extends Controller
             'showtime.cinema',
             'showtime.room',
             'bookingSeats.seat',
+            'foodOrder.items.food',
         ]);
 
         return view('user.bookings.success', compact('booking'));
@@ -342,6 +465,7 @@ class BookingController extends Controller
      */
     public function history(Request $request)
     {
+        app(SeatHoldService::class)->expireStale();
         $query = Booking::where('user_id', Auth::id());
 
         if ($request->filled('status')) {
@@ -386,8 +510,10 @@ class BookingController extends Controller
             $booking->payment?->update([
                 'status' => $wasPaid ? 'success' : 'failed',
             ]);
+            $booking->foodOrder()->update(['status' => 'cancelled']);
 
             app(LoyaltyPointService::class)->reverseForCancelledBooking($booking);
+            app(LoyaltyPointService::class)->restoreRedeemedPoints($booking);
 
             if ($wasPaid && $booking->voucher_id) {
                 \App\Models\Voucher::whereKey($booking->voucher_id)
@@ -415,7 +541,12 @@ class BookingController extends Controller
     protected function bookedSeatQuery(Showtime $showtime)
     {
         return BookingSeat::whereHas('booking', function ($query) {
-            $query->whereNotIn('booking_status', ['cancelled', 'expired']);
+            $query->whereIn('booking_status', ['paid', 'used'])
+                ->orWhere(function ($query) {
+                    $query->where('booking_status', 'pending')
+                        ->where('payment_status', 'pending')
+                        ->where('hold_expires_at', '>', now());
+                });
         })->where(function ($query) use ($showtime) {
             $query->where('showtime_id', $showtime->id)
                 ->orWhereHas('booking', function ($bookingQuery) use ($showtime) {
@@ -448,7 +579,7 @@ class BookingController extends Controller
             'Asia/Ho_Chi_Minh'
         );
 
-        return $showDateTime->isFuture();
+        return now('Asia/Ho_Chi_Minh')->lt($showDateTime->copy()->addMinutes(30));
     }
 
     /**

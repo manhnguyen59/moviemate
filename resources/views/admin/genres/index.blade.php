@@ -58,14 +58,14 @@
                         </td>
                         <td>
                             <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('admin.genres.edit', $genre) }}" class="admin-btn-warning admin-action-btn" title="Sửa">
+                                <a href="{{ route('admin.genres.edit', $genre) }}" class="admin-btn-warning admin-action-btn" title="Sửa" aria-label="Sửa" data-tooltip="Sửa">
                                     <i class="ph ph-pencil-simple"></i>
                                 </a>
                                 <form action="{{ route('admin.genres.destroy', $genre) }}" method="POST"
                                       onsubmit="return confirm('Bạn có chắc muốn xóa thể loại này?');" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="admin-btn-danger admin-action-btn" title="Xóa">
+                                    <button type="submit" class="admin-btn-danger admin-action-btn" title="Xóa" aria-label="Xóa" data-tooltip="Xóa">
                                         <i class="ph ph-trash"></i>
                                     </button>
                                 </form>

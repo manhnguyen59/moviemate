@@ -7,7 +7,7 @@ use Illuminate\Validation\ValidationException;
 
 class VoucherService
 {
-    public function resolve(?string $code, float|int $subtotal): array
+    public function resolve(?string $code, float|int $subtotal, ?int $userId = null, bool $lockForUpdate = false): array
     {
         $code = trim((string) $code);
 
@@ -20,7 +20,13 @@ class VoucherService
             ];
         }
 
-        $voucher = Voucher::where('code', strtoupper($code))->first();
+        $voucherQuery = Voucher::where('code', strtoupper($code));
+
+        if ($lockForUpdate) {
+            $voucherQuery->lockForUpdate();
+        }
+
+        $voucher = $voucherQuery->first();
 
         if (! $voucher) {
             throw ValidationException::withMessages([
@@ -51,6 +57,26 @@ class VoucherService
             throw ValidationException::withMessages([
                 'voucher_code' => 'Mã voucher đã hết lượt sử dụng.',
             ]);
+        }
+
+        if ($userId && ! is_null($voucher->per_user_limit)) {
+            $userUsageCount = $voucher->bookings()
+                ->where('user_id', $userId)
+                ->where(function ($query) {
+                    $query->whereIn('booking_status', ['paid', 'used'])
+                        ->orWhere(function ($query) {
+                            $query->where('booking_status', 'pending')
+                                ->where('payment_status', 'pending')
+                                ->where('hold_expires_at', '>', now());
+                        });
+                })
+                ->count();
+
+            if ($userUsageCount >= $voucher->per_user_limit) {
+                throw ValidationException::withMessages([
+                    'voucher_code' => 'Bạn đã sử dụng hết số lượt cho phép của voucher này.',
+                ]);
+            }
         }
 
         if ((float) $subtotal < (float) $voucher->min_order_amount) {

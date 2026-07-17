@@ -85,10 +85,9 @@ class MovieController extends Controller
             if ($showDate->isAfter($now->toDateString())) {
                 return true;
             }
-            if ($showDate->isSameDay($now) && $show->show_time >= $now->format('H:i:s')) {
-                return true;
-            }
-            return false;
+            $startsAt = Carbon::parse($showDate->format('Y-m-d').' '.$show->show_time, 'Asia/Ho_Chi_Minh');
+
+            return $startsAt->copy()->addMinutes(30)->isFuture();
         });
 
         return view('user.movies.show', compact('movie', 'showtimes'));
